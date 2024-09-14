@@ -41,17 +41,27 @@ jobs:
           chmod +x gradlew 
           ./gradlew build
 
-      - name: Save SSH key
+#      - name: Save SSH key
+#        run: |
+#          touch ./key
+#          echo "${{ secrets.KEY }}" > ./key
+#          chmod 600 key
+
+      - name: Add SSH known hosts
         run: |
-          touch ./key
-          echo "${{ secrets.KEY }}" > ./key
-          chmod 600 key
+          mkdir -p ~/.ssh
+          echo "${{ secrets.KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "Scanning host: ${{ secrets.HOST }}"
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          echo "Known hosts after scanning:"
+          cat ~/.ssh/known_hosts
     
 
     # WAR 파일을 서버로 옮기기
       - name: Copy WAR file to server
         run : |
-          scp -i ./key ./build/libs/*.war ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/dhbs1010a/war
+          scp -i ~/.ssh/id_rsa ./build/libs/*.war ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/dhbs1010a/war
 
       ## 도커허브 로그
 #      - name: Login to DockerHub
