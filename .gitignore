@@ -41,4 +41,4 @@ bin/
 ### Mac OS ###
 .DS_Store
 docker-compose.yml
-*.properties
+application.properties
