@@ -36,24 +36,18 @@
         <level value="warn" />
     </logger>
 
-    <logger name="org.springframework.web.servlet.DispatcherServlet">
+    <logger name="jdbc.resultset">
         <level value="warn" />
     </logger>
 
-    <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
-        <level value="warn" />
-    </logger>
-
-    <logger name="_org.springframework.web.servlet.HandlerMapping.Mappings">
-        <level value="debug" />
-    </logger>
-    <logger name="jdbc">
+    <logger name="jdbc.connection">
         <level value="warn" />
     </logger>
 
     <logger name="jdbc.sqlonly">
         <level value="info" />
     </logger>
+
 
     <!-- Root Logger -->
     <root>
