@@ -20,7 +20,7 @@ services:
       - team-mysql-vol:/var/lib/mysql
 
   app:
-    image: dh1010a/team2
+    image: tomcat:9
     container_name: team-spring
     ports:
       - "8080:8080"
