@@ -27,7 +27,7 @@ services:
     networks:
       - team-network
     volumes:
-      - team-app-vol:/root
+      - team-app-vol:/usr/local/tomcat/webapps
 
   redis:
     image: redis:latest
