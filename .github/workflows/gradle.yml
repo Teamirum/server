@@ -41,10 +41,17 @@ jobs:
           chmod +x gradlew 
           ./gradlew build
 
-      # WAR 파일을 서버로 옮기기
+      - name: Save SSH key
+        run: |
+          touch ./key.pem
+          echo "${{ secrets.KEY }}" > ./key.pem
+          chmod 600 key.pem
+    
+
+    # WAR 파일을 서버로 옮기기
       - name: Copy WAR file to server
         run : |
-          scp -i ${{ secrets.KEY }} ./build/libs/*.war ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/war/
+          scp -i key.pem ./build/libs/*.war ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/war/
 
       ## 도커허브 로그
 #      - name: Login to DockerHub
