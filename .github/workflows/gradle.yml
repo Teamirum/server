@@ -43,15 +43,15 @@ jobs:
 
       - name: Save SSH key
         run: |
-          touch ./key.pem
-          echo "${{ secrets.KEY }}" > ./key.pem
-          chmod 600 key.pem
+          touch ./key
+          echo "${{ secrets.KEY }}" > ./key
+          chmod 600 key
     
 
     # WAR 파일을 서버로 옮기기
       - name: Copy WAR file to server
         run : |
-          scp -i key.pem ./build/libs/*.war ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/war/
+          scp -i ./key ./build/libs/*.war ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/dhbs1010a/war
 
       ## 도커허브 로그
 #      - name: Login to DockerHub
