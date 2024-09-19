@@ -10,8 +10,8 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "index";
-       // return "redirect:/board/list";
-
+        log.info("================> HomController /");
+        return "index";		// View의 이름
     }
+
 }

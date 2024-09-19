@@ -14,10 +14,12 @@ ext {
   junitVersion = '5.9.2'
   springVersion = '5.3.37'
   lombokVersion = '1.18.30'
+  springSecurityVersion='5.8.13'
+
 }
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
+sourceCompatibility = '1.17'
+targetCompatibility = '1.17'
 
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
@@ -31,8 +33,8 @@ dependencies {
   implementation 'javax.inject:javax.inject:1'
 
   // AOP
-  runtimeOnly 'org.aspectj:aspectjrt:1.9.20'
-  runtimeOnly 'org.aspectj:aspectjweaver:1.9.20'
+  implementation 'org.aspectj:aspectjrt:1.9.20'
+  implementation 'org.aspectj:aspectjweaver:1.9.20'
 
   // JSP, SERVLET, JSTL
   implementation('javax.servlet:javax.servlet-api:4.0.1')
@@ -69,6 +71,15 @@ dependencies {
   implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4:1.16'
   implementation 'org.apache.logging.log4j:log4j-api:2.0.1'
   implementation 'org.apache.logging.log4j:log4j-core:2.0.1'
+
+  // 보안
+  implementation("org.springframework.security:spring-security-web:${springSecurityVersion}")
+  implementation("org.springframework.security:spring-security-config:${springSecurityVersion}")
+  implementation("org.springframework.security:spring-security-core:${springSecurityVersion}")
+  implementation("org.springframework.security:spring-security-taglibs:${springSecurityVersion}")
+
+
+
 
 
   // 테스트
