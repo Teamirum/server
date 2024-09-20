@@ -65,43 +65,9 @@ public enum ErrorStatus implements BaseErrorCode {
     KAKAO_SOCIAL_UNLINK_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "SOCIAL5001", "KAKAO 소셜 연동 해제에 실패하였습니다."),
     NAVER_SOCIAL_UNLINK_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "SOCIAL5002", "NAVER 소셜 연동 해제에 실패하였습니다."),
     GOOGLE_SOCIAL_UNLINK_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "SOCIAL5003", "GOOGLE 소셜 연동 해제에 실패하였습니다."),
-
-    // 게시물 응답
-    POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST4001", "존재하지 않는 게시물입니다."),
-    NO_PERMISSION__FOR_POST(HttpStatus.BAD_REQUEST, "POST4002", "해당 게시물에 권한이 없는 유저입니다."),
-    TICKET_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST4003", "존재하지 않는 티켓입니다."),
-    POST_TYPE_ERROR(HttpStatus.BAD_REQUEST, "POST4001", "게시물 타입이 아닙니다."),
-
-    // OOTD 응답
-    OOTD_TYPE_ERROR(HttpStatus.BAD_REQUEST, "OOTD4001", "OOTD 타입이 아닙니다."),
-    OOTD_NOT_FOUND(HttpStatus.BAD_REQUEST, "OOTD4002", "존재하지 않는 OOTD 정보입니다."),
-    NO_PERMISSION_NATION(HttpStatus.BAD_REQUEST, "OOTD4003", "날씨 정보를 불러올 수 없는 국가입니다."),
-    ERROR_WHILE_GET_WEATHER(HttpStatus.BAD_REQUEST, "OOTD4004", "날씨 정보를 불러오는데에 실패하였습니다."),
-
-
-    // 댓글 응답
-    PARENT_COMMENT_AND_POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMENT4001", "존재하지 않는 댓글이거나 부모 댓글이 게시글과 일치하지 않습니다."),
-    COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMENT4002", "존재하지 않는 댓글입니다."),
-    PARENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMENT4003", "부모 댓글이 삭제되었기 때문에 대댓글을 달 수 없습니다."),
-    COMMENT_IS_DELETED(HttpStatus.BAD_REQUEST, "COMMENT4004", "댓글이 삭제되었습니다."),
-    COMMENT_CHILD_CANNOT_BE_PARENT(HttpStatus.BAD_REQUEST, "COMMENT4005", "대댓글은 부모 댓글이 될 수 없습니다."),
-    COMMENT_MENTION_COMMENT_INFO_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMENT4006", "멘션할 댓글 정보가 존재하지 않습니다."),
-    COMMNET_MENTION_MEMBER_INFO_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMENT4007", "멘션 대상인 회원이 존재하지 않습니다."),
-
-    // 좋아요 응답
-    ALREADY_LIKED(HttpStatus.BAD_REQUEST, "LIKE4001", "이미 좋아요를 누른 게시물입니다."),
-    POST_NOT_LIKED(HttpStatus.BAD_REQUEST, "LIKE4002", "좋아요를 누르지 않은 게시물입니다."),
-
     // FCM 응답
     FCM_TOKEN_NOT_FOUND(HttpStatus.BAD_REQUEST, "FCM4001", "FCM 토큰이 존재하지 않습니다."),
     FCM_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "FCM4002", "FCM 권한이 없습니다."),
-
-    // 북마크 응답
-    BOOKMARK_TYPE_ERROR(HttpStatus.BAD_REQUEST, "BOOKMARK4001", "조회하려는 북마크 타입이 올바르지 않습니다."),
-    BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOOKMARK4002", "북마크가 존재하지 않습니다"),
-    BOOKMARK_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "BOOKMARK4003", "이미 북마크한 게시물입니다."),
-    BOOKMARK_NOT_EXIST(HttpStatus.BAD_REQUEST, "BOOKMARK4004", "북마크한 게시물이 존재하지 않습니다."),
-
 
     // 시간 제한
     TIME_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST,"TIME4001", "시간 제한"),

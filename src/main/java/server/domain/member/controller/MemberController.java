@@ -17,8 +17,8 @@ public class MemberController {
 
     @PostMapping("/signUp")
     public ApiResponse<?> signUp(@RequestBody MemberRequestDto.MemberSignupRequestDto requestDto) {
-        memberService.signUp(requestDto);
-        return ApiResponse.onSuccess("signUp");
+        log.info("회원가입 요청 : memberId = {}", requestDto.getMemberId());
+        return ApiResponse.onSuccess(memberService.signUp(requestDto));
     }
 
     @GetMapping("/test")

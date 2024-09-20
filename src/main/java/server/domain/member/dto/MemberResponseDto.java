@@ -10,9 +10,8 @@ public class MemberResponseDto {
     @Data
     @Builder
     public static class MemberTaskResultResponseDto {
-        private Long idx;
         private String memberId;
-        private String email;
+        private Boolean isSuccess;
     }
 
     @Data

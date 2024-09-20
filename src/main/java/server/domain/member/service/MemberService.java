@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import server.domain.member.domain.Member;
+import server.domain.member.dto.MemberDtoConverter;
 import server.domain.member.dto.MemberRequestDto;
+import server.domain.member.dto.MemberResponseDto;
 import server.domain.member.mapper.MemberMapper;
 import server.domain.member.model.Role;
 
@@ -19,7 +21,7 @@ public class MemberService {
     private final MemberMapper memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public String signUp(MemberRequestDto.MemberSignupRequestDto requestDto) {
+    public MemberResponseDto.MemberTaskResultResponseDto signUp(MemberRequestDto.MemberSignupRequestDto requestDto) {
 
         log.info("signup");
         Member member = Member.builder()
@@ -35,6 +37,6 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        return "signup";
+        return MemberDtoConverter.convertToMemberTaskResultResponseDto(member);
     }
 }
