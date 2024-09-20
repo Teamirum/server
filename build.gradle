@@ -3,7 +3,7 @@ plugins {
   id 'war'
 }
 
-group 'org.scoula'
+group 'server'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -83,6 +83,14 @@ dependencies {
   implementation 'javax.validation:validation-api:2.0.1.Final'
   implementation 'org.glassfish:javax.el:3.0.0' // EL API
 
+  // jjwt
+  implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+  runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+  implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
+  // Spring Data Redis
+  implementation 'org.springframework.data:spring-data-redis:2.7.2' // 최신 버전의 Spring Data Redis
+  implementation 'io.lettuce:lettuce-core:6.4.0.RELEASE' // 최신 버전의 Lettuce
 
 
   // 테스트

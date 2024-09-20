@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.member.mapper.MemberMapper">
+
+    <!-- Result Mapping with Enum TypeHandler -->
+    <resultMap id="MemberResultMap" type="server.domain.member.domain.Member">
+        <id property="idx" column="idx" />
+        <result property="memberId" column="member_id" />
+        <result property="email" column="email" />
+        <result property="password" column="password" />
+        <result property="name" column="name" />
+        <result property="phoneNum" column="phone_num" />
+        <!-- Role Enum mapping using the key field -->
+        <result property="role" column="role"/>
+        <result property="refreshToken" column="refresh_token" />
+        <result property="createdAt" column="created_at" />
+        <result property="modifiedAt" column="modified_at" />
+    </resultMap>
+
+    <!-- Select Member by ID -->
+    <select id="findByMemberId" parameterType="string" resultMap="MemberResultMap">
+        SELECT *
+        FROM member
+        WHERE member_id = #{memberId}
+    </select>
+
+    <!-- Insert Member -->
+    <insert id="save" parameterType="server.domain.member.domain.Member">
+        INSERT INTO member (
+            member_id, email, password, name, phone_num, role, created_at, modified_at
+        ) VALUES (
+                     #{memberId}, #{email}, #{password}, #{name}, #{phoneNum}, #{role.key}, #{createdAt}, #{modifiedAt}
+                 )
+    </insert>
+
+    <!-- Update Member -->
+    <update id="updateMember" parameterType="server.domain.member.domain.Member">
+        UPDATE member
+        SET
+            email = #{email},
+            password = #{password},
+            name = #{name},
+            phone_num = #{phoneNum},
+            role = #{role.key},
+            modified_at = #{modifiedAt}
+        WHERE member_id = #{memberId}
+    </update>
+
+    <!-- Delete Member by ID -->
+    <delete id="deleteMemberById" parameterType="string">
+        DELETE FROM member WHERE member_id = #{memberId}
+    </delete>
+
+    <!-- update refresh token -->
+    <update id="updateRefreshToken" parameterType="server.domain.member.domain.Member">
+        UPDATE member
+        SET
+            refresh_token = #{refreshToken}
+        WHERE member_id = #{memberId}
+    </update>
+
+</mapper>

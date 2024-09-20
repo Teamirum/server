@@ -9,7 +9,8 @@
     </settings>
 
     <typeAliases>
-        <package name="org.scoula.security.account.domain" />
+        <package name="server.domain.member.domain" />
+        <package name="server.global.security.mapper" />
     </typeAliases>
 
 </configuration>
