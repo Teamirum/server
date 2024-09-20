@@ -21,13 +21,13 @@
     <!-- Select Member by ID -->
     <select id="findByMemberId" parameterType="string" resultMap="MemberResultMap">
         SELECT *
-        FROM member
+        FROM Member
         WHERE member_id = #{memberId}
     </select>
 
     <!-- Insert Member -->
     <insert id="save" parameterType="server.domain.member.domain.Member">
-        INSERT INTO member (
+        INSERT INTO Member (
             member_id, email, password, name, phone_num, role, created_at, modified_at
         ) VALUES (
                      #{memberId}, #{email}, #{password}, #{name}, #{phoneNum}, #{role.key}, #{createdAt}, #{modifiedAt}
@@ -36,7 +36,7 @@
 
     <!-- Update Member -->
     <update id="updateMember" parameterType="server.domain.member.domain.Member">
-        UPDATE member
+        UPDATE Member
         SET
             email = #{email},
             password = #{password},
@@ -49,12 +49,12 @@
 
     <!-- Delete Member by ID -->
     <delete id="deleteMemberById" parameterType="string">
-        DELETE FROM member WHERE member_id = #{memberId}
+        DELETE FROM Member WHERE member_id = #{memberId}
     </delete>
 
     <!-- update refresh token -->
     <update id="updateRefreshToken" parameterType="server.domain.member.domain.Member">
-        UPDATE member
+        UPDATE Member
         SET
             refresh_token = #{refreshToken}
         WHERE member_id = #{memberId}

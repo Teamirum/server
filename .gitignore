@@ -42,3 +42,4 @@ bin/
 .DS_Store
 docker-compose.yml
 application.properties
+src/main/resources/application-dev.properties
