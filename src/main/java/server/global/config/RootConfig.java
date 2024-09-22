@@ -27,7 +27,7 @@ import javax.sql.DataSource;
 })
 @ComponentScan(basePackages = {
     "server.domain",
-    "server.global",
+    "server.global"
 })
 @Slf4j
 @EnableTransactionManagement

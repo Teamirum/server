@@ -38,60 +38,60 @@ public class JwtTokenProvider implements InitializingBean {
 	private long REFRESH_TOKEN_EXPIRE_DATE;
 	@Value("${jwt.secret}")
 	private String secret;
-	@Value("${jwt.secret_email}")
-	private String secretEmail;
+	@Value("${jwt.secret_phone}")
+	private String secretPhone;
 
 	private static final String MEMBER_ID_CLAIM = "memberId";
 	private static final String REFRESH_TOKEN_CLAIM = "RefreshToken";
 	private static final String ACCESS_TOKEN_CLAIM = "AccessToken";
-	private static final String EMAIL_AUTH_TOKEN_CLAIM = "EmailAuthToken";
+	private static final String PHONE_AUTH_TOKEN_CLAIM = "PhoneAuthToken";
 	private static final String REVOKE_TOKEN_CLAIM = "isRevoke";
-	private static final String EMAIL_CLAIM = "email";
+	private static final String PHONE_CLAIM = "phone";
 	private final MemberRepository memberRepository;
 
 
 	private Key key;
 
-	private Key emailKey;
+	private Key phoneKey;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		byte[] keyBytes = Decoders.BASE64URL.decode(secret);
-		byte[] keyBytes_email = Decoders.BASE64URL.decode(secretEmail);
+		byte[] keyBytes_phone = Decoders.BASE64URL.decode(secretPhone);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
-		this.emailKey = Keys.hmacShaKeyFor(keyBytes_email);
+		this.phoneKey = Keys.hmacShaKeyFor(keyBytes_phone);
 	}
 
-	public String createEmailAuthToken(String email) {
+	public String createPhoneAuthToken(String phoneNum) {
 		Date now = new Date();
 		Date authTokenExpiration = new Date(now.getTime() + 30 * 60 * 1000); // 30분
 
 		return Jwts.builder()
-				.setSubject(EMAIL_AUTH_TOKEN_CLAIM)
-				.claim(EMAIL_CLAIM, email)
+				.setSubject(PHONE_AUTH_TOKEN_CLAIM)
+				.claim(PHONE_CLAIM, phoneNum)
 				.claim(REVOKE_TOKEN_CLAIM, false)
 				.setIssuedAt(now)
 				.setExpiration(authTokenExpiration)
-				.signWith(emailKey, SignatureAlgorithm.HS256)
+				.signWith(phoneKey, SignatureAlgorithm.HS256)
 				.compact();
 	}
 
 	// Jwt 토큰을 복호화하여 이메일 정보가 유효한지 검증하는 메서드
-	public boolean isValidEmailAuthToken(String accessToken, String email) {
+	public boolean isValidPhoneAuthToken(String accessToken, String memberPhoneNum) {
 		// Jwt 토큰 복호화
 //		accessToken = "Bearer " + accessToken;
-		Claims claims = parseEmailClaims(accessToken);
+		Claims claims = parsePhoneClaims(accessToken);
 
-		if (!claims.getSubject().equals(EMAIL_AUTH_TOKEN_CLAIM) || claims.get(EMAIL_CLAIM) == null) {
+		if (!claims.getSubject().equals(PHONE_AUTH_TOKEN_CLAIM) || claims.get(PHONE_CLAIM) == null) {
 			return false;
 		}
 
-		if (!validateEmailToken(accessToken, emailKey)) {
+		if (!validatePhoneToken(accessToken, phoneKey)) {
 			return false;
 		}
 
-		String memberId = (String) claims.get(EMAIL_CLAIM);
-		return memberId.equals(email);
+		String phoneNum = (String) claims.get(PHONE_CLAIM);
+		return phoneNum.equals(memberPhoneNum);
 	}
 
 	public JwtToken createToken(Authentication authentication) {
@@ -242,9 +242,9 @@ public class JwtTokenProvider implements InitializingBean {
 		}
 	}
 
-	public boolean validateEmailToken(String token, Key keyType) {
+	public boolean validatePhoneToken(String token, Key keyType) {
 		try {
-			Claims claims = parseEmailClaims(token);
+			Claims claims = parsePhoneClaims(token);
 
 			Jws<Claims> claimsJws = Jwts.parserBuilder()
 					.setSigningKey(keyType)
@@ -308,11 +308,11 @@ public class JwtTokenProvider implements InitializingBean {
 		}
 	}
 
-	// emailToken
-	private Claims parseEmailClaims(String accessToken) {
+	// phoneToken
+	private Claims parsePhoneClaims(String accessToken) {
 		try {
 			return Jwts.parserBuilder()
-					.setSigningKey(emailKey)
+					.setSigningKey(phoneKey)
 					.build()
 					.parseClaimsJws(accessToken)
 					.getBody();

@@ -171,13 +171,13 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	@Override
-	public String createEmailAuthToken(String email) {
-		return jwtTokenProvider.createEmailAuthToken(email);
+	public String createPhoneAuthToken(String email) {
+		return jwtTokenProvider.createPhoneAuthToken(email);
 	}
 
 	@Override
-	public boolean isValidEmailAuthToken(String accessToken, String email) {
-		return jwtTokenProvider.isValidEmailAuthToken(accessToken, email);
+	public boolean isValidPhoneAuthToken(String accessToken, String email) {
+		return jwtTokenProvider.isValidPhoneAuthToken(accessToken, email);
 	}
 
 }

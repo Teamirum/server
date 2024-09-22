@@ -34,8 +34,8 @@ public interface JwtService {
 
 	long getAccessTokenExpirationTime();
 
-	String createEmailAuthToken(String email);
+	String createPhoneAuthToken(String email);
 
-	boolean isValidEmailAuthToken(String accessToken, String email);
+	boolean isValidPhoneAuthToken(String accessToken, String email);
 
 }
