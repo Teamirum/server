@@ -6,7 +6,7 @@ import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import server.domain.message.dto.MessageDtoConverter;
@@ -20,7 +20,7 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class MessageService {
+public class MessageService implements InitializingBean {
 
     @Value("${coolsms.api_key}")
     private String apiKey;
@@ -31,12 +31,18 @@ public class MessageService {
     @Value("${coolsms.from}")
     private String fromNumber;
 
-    private final DefaultMessageService defaultMessageService = new DefaultMessageService(apiKey, apiSecret, domain);
+
     private final RedisUtil redisUtil;
     private final JwtService jwtService;
+    private DefaultMessageService defaultMessageService;
 
     private static final String domain = "https://api.coolsms.co.kr";
     private static final int CODE_LENGTH = 6;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.defaultMessageService = new DefaultMessageService(apiKey, apiSecret, domain);
+    }
 
 
     public MessageResponseDto.SendMessageResponseDto sendMessage(String phoneNum) {
@@ -79,5 +85,4 @@ public class MessageService {
 
         return randomNumber.toString();
     }
-
 }
