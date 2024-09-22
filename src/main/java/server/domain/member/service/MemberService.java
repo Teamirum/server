@@ -22,8 +22,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     public MemberResponseDto.MemberTaskResultResponseDto signUp(MemberRequestDto.MemberSignupRequestDto requestDto) {
-
-        log.info("signup");
         Member member = Member.builder()
                 .memberId(requestDto.getMemberId())
                 .name(requestDto.getName())
