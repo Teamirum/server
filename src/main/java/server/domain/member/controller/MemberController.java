@@ -1,5 +1,9 @@
 package server.domain.member.controller;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,16 @@ public class MemberController {
     private final JwtService jwtService;
 
     @PostMapping("/signUp")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authToken", value = "인증토큰", required = true, dataType = "String", paramType = "path"),
+    })
+    @ApiOperation(  // API에 대한 Swagger 설명
+            value="회원가입",
+            httpMethod = "POST",
+            consumes = "application/json",
+            produces = "application/json",
+            protocols = "http"
+            )
     public ApiResponse<?> signUp(@RequestBody MemberRequestDto.MemberSignupRequestDto requestDto
 //                                 ,@RequestParam(value = "authToken") String authToken
     ) {

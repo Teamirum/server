@@ -46,9 +46,10 @@ public class SwaggerConfig {
 	// 선택항목(responseMessage 리스트를 별도로 생성.(defaultResponseMessage 미사용))
 	private ArrayList<ResponseMessage> getArrayList() {
 		ArrayList<ResponseMessage> lists = new ArrayList<ResponseMessage>();
-		lists.add(new ResponseMessageBuilder().code(500).message("서버오류").build());
-		lists.add(new ResponseMessageBuilder().code(403).message("잘못된접근").build());
-		lists.add(new ResponseMessageBuilder().code(401).message("비인증된접근").build());
+		lists.add(new ResponseMessageBuilder().code(500).message("Internal Server Error").build());
+		lists.add(new ResponseMessageBuilder().code(403).message("UnAuthenticated: 권한 없음").build());
+		lists.add(new ResponseMessageBuilder().code(401).message("UnAuthorization: 인증 오류").build());
+		lists.add(new ResponseMessageBuilder().code(404).message("Bad Request: 잘못된 요청").build());
 		return lists;
 	}
 }
