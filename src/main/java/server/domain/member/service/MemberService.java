@@ -8,7 +8,6 @@ import server.domain.member.domain.Member;
 import server.domain.member.dto.MemberDtoConverter;
 import server.domain.member.dto.MemberRequestDto;
 import server.domain.member.dto.MemberResponseDto;
-import server.domain.member.mapper.MemberMapper;
 import server.domain.member.model.Role;
 import server.domain.member.repository.MemberRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
@@ -41,12 +40,11 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        Member savedMember = getMemberById(member.getMemberId());
-
+        Member savedMember = getMemberByMemberId(member.getMemberId());
         return MemberDtoConverter.convertToMemberTaskResultResponseDto(savedMember);
     }
 
-    private Member getMemberById(String memberId) {
+    private Member getMemberByMemberId(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 }
