@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface MemberMapper {
     Member findByMemberId(String memberId);
 
+    Member findByPhoneNum(String phoneNum);
+
     void save(Member member);
 
     void updateRefreshToken(Member member);

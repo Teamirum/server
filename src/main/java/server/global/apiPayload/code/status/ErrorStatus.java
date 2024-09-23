@@ -22,7 +22,7 @@ public enum ErrorStatus implements BaseErrorCode {
     //유저 응답
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "유저가 존재하지 않습니다."),
     MEMBER_EMAIL_PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, "MEMBER4002", "이메일 또는 비밀번호가 일치하지 않습니다."),
-    MEMBER_EMAIL_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4003", "중복된 이메일입니다."),
+    MEMBER_PHONE_NUM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4003", "중복된 휴대폰 번호입니다."),
     MEMBER_NICKNAME_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4004", "중복된 닉네임입니다."),
     MEMBER_PHONE_AUTH_NOT_VALID(HttpStatus.UNAUTHORIZED, "MEMBER4005", "유효하지 않은 전화번호 인증 토큰입니다"),
     MEMBER_PHONE_TOKEN_NOT_PROVIDED(HttpStatus.BAD_REQUEST, "MEMBER4006", "전화번호 인증 토큰이 제공되지 않았습니다."),
@@ -32,6 +32,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_EMAIL_AUTH_TOKEN_NOT_PROVIDED(HttpStatus.BAD_REQUEST, "MEMBER4010", "이메일 인증 토큰이 제공되지 않았습니다."),
     MEMBER_AUTHORIZATION_NOT_VALID(HttpStatus.UNAUTHORIZED, "MEMBER4011", "유효하지 않은 인증정보 입니다."),
     MEMBER_NOT_AUTHENTICATED(HttpStatus.FORBIDDEN, "MEMBER4012", "권한이 없는 사용자입니다."),
+    MEMBER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4013", "이미 존재하는 회원입니다."),
 
 
 

@@ -10,6 +10,9 @@ import server.domain.member.dto.MemberRequestDto;
 import server.domain.member.dto.MemberResponseDto;
 import server.domain.member.mapper.MemberMapper;
 import server.domain.member.model.Role;
+import server.domain.member.repository.MemberRepository;
+import server.global.apiPayload.code.status.ErrorStatus;
+import server.global.apiPayload.exception.handler.ErrorHandler;
 
 import java.time.LocalDateTime;
 
@@ -18,10 +21,13 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final MemberMapper memberRepository;
+    private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
     public MemberResponseDto.MemberTaskResultResponseDto signUp(MemberRequestDto.MemberSignupRequestDto requestDto) {
+        if (memberRepository.existsByMemberId(requestDto.getMemberId()) || memberRepository.existsByPhoneNum(requestDto.getPhoneNum())) {
+            throw new ErrorHandler(ErrorStatus.MEMBER_ALREADY_EXIST);
+        }
         Member member = Member.builder()
                 .memberId(requestDto.getMemberId())
                 .name(requestDto.getName())
@@ -35,6 +41,12 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        return MemberDtoConverter.convertToMemberTaskResultResponseDto(member);
+        Member savedMember = getMemberById(member.getMemberId());
+
+        return MemberDtoConverter.convertToMemberTaskResultResponseDto(savedMember);
+    }
+
+    private Member getMemberById(String memberId) {
+        return memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 }

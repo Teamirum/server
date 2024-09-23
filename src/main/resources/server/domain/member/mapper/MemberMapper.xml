@@ -25,6 +25,13 @@
         WHERE member_id = #{memberId}
     </select>
 
+    <!-- Select Member by PhoneNum -->
+    <select id="findByPhoneNum" parameterType="string" resultMap="MemberResultMap">
+        SELECT *
+        FROM Member
+        WHERE phone_num = #{phoneNum}
+    </select>
+
     <!-- Insert Member -->
     <insert id="save" parameterType="server.domain.member.domain.Member">
         INSERT INTO Member (

@@ -7,6 +7,7 @@ public class MemberDtoConverter {
 
     public static MemberResponseDto.MemberTaskResultResponseDto convertToMemberTaskResultResponseDto(Member member) {
         return MemberResponseDto.MemberTaskResultResponseDto.builder()
+                .idx(member.getIdx())
                 .memberId(member.getMemberId())
                 .isSuccess(true)
                 .build();
