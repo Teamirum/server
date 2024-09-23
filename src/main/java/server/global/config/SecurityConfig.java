@@ -75,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/member/signUp").permitAll()
+                .antMatchers("/api/member/signUp", "/oauth/kakao").permitAll()
                 .anyRequest().authenticated();
 
         http

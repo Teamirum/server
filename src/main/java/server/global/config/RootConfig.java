@@ -16,18 +16,24 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import server.global.oauth.domain.authcode.AuthCodeRequestUrlProvider;
+import server.global.oauth.domain.authcode.AuthCodeRequestUrlProviderComposite;
+import server.global.oauth.infra.oauth.kakao.authcode.KakaoAuthCodeRequestUrlProvider;
 
 import javax.sql.DataSource;
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"})
 @MapperScan(basePackages  = {
-    "server.domain.member.mapper",
-    "server.global.security.mapper"
+        "server.domain.member.mapper",
+        "server.global.security.mapper"
 })
 @ComponentScan(basePackages = {
-    "server.domain",
-    "server.global"
+        "server.domain",
+        "server.global",
+        "server.global.oauth.infra.oauth.kakao" // Kakao 관련 패키지 추가
 })
 @Slf4j
 @EnableTransactionManagement
@@ -40,10 +46,12 @@ public class RootConfig {
     @Autowired
     ApplicationContext applicationContext;
 
+    @Autowired
+    private KakaoOauthConfig kakaoOauthConfig; // KakaoOauthConfig 주입
+
     @Bean
     public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
-
         config.setDriverClassName(driver);
         config.setJdbcUrl(url);
         config.setUsername(username);
@@ -68,10 +76,23 @@ public class RootConfig {
     }
 
     @Bean
-    public DataSourceTransactionManager transactionManager(){
-        DataSourceTransactionManager manager = new DataSourceTransactionManager(dataSource());
-        return manager;
+    public DataSourceTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(dataSource());
     }
 
-}
+    // KakaoAuthCodeRequestUrlProvider 빈 등록
+    @Bean
+    public KakaoAuthCodeRequestUrlProvider kakaoAuthCodeRequestUrlProvider() {
+        return new KakaoAuthCodeRequestUrlProvider(kakaoOauthConfig);
+    }
 
+    // AuthCodeRequestUrlProviderComposite 빈 등록
+    @Bean
+    public AuthCodeRequestUrlProviderComposite authCodeRequestUrlProviderComposite() {
+        Set<AuthCodeRequestUrlProvider> providers = new HashSet<>();
+        providers.add(kakaoAuthCodeRequestUrlProvider());
+        // 추가적인 AuthCodeRequestUrlProvider 구현체를 여기에 추가
+
+        return new AuthCodeRequestUrlProviderComposite(providers);
+    }
+}
