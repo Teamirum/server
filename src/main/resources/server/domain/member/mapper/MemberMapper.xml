@@ -16,6 +16,7 @@
         <result property="refreshToken" column="refresh_token" />
         <result property="createdAt" column="created_at" />
         <result property="modifiedAt" column="modified_at" />
+        <result property="socialType" column="social_type" typeHandler="server.global.auth.oauth2.model.SocialTypeHandler"/>
     </resultMap>
 
     <!-- Select Member by ID -->
@@ -32,12 +33,19 @@
         WHERE phone_num = #{phoneNum}
     </select>
 
+    <!-- Select Member by SocialTypeAndMemberId -->
+    <select id="findBySocialTypeAndMemberId" parameterType="map" resultMap="MemberResultMap">
+        SELECT *
+        FROM Member
+        WHERE social_type = #{socialType} AND member_id = #{memberId}
+    </select>
+
     <!-- Insert Member -->
     <insert id="save" parameterType="server.domain.member.domain.Member">
         INSERT INTO Member (
-            member_id, email, password, name, phone_num, role, created_at, modified_at
+            member_id, email, password, name, phone_num, role, created_at, modified_at, social_type
         ) VALUES (
-                     #{memberId}, #{email}, #{password}, #{name}, #{phoneNum}, #{role.key}, #{createdAt}, #{modifiedAt}
+                     #{memberId}, #{email}, #{password}, #{name}, #{phoneNum}, #{role.key}, #{createdAt}, #{modifiedAt}, #{socialType.socialName}
                  )
     </insert>
 

@@ -3,15 +3,13 @@ package server.domain.member.controller;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import server.domain.member.dto.MemberRequestDto;
 import server.domain.member.service.MemberService;
 import server.global.apiPayload.ApiResponse;
-import server.global.apiPayload.code.status.ErrorStatus;
-import server.global.security.service.JwtService;
+import server.global.auth.security.service.JwtService;
 
 @RestController
 @RequestMapping("/api/member")
@@ -24,7 +22,7 @@ public class MemberController {
 
     @PostMapping("/signUp")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "authToken", value = "인증토큰", required = true, dataType = "String", paramType = "path"),
+            @ApiImplicitParam(name = "authToken", value = "인증토큰", required = true),
     })
     @ApiOperation(  // API에 대한 Swagger 설명
             value="회원가입",
@@ -44,6 +42,7 @@ public class MemberController {
 //        if (!jwtService.isValidPhoneAuthToken(authToken, requestDto.getPhoneNum())) {
 //            return ApiResponse.onFailure(ErrorStatus.MEMBER_PHONE_AUTH_NOT_VALID.getCode(), ErrorStatus.MEMBER_PHONE_AUTH_NOT_VALID.getMessage(), "제공된 authToken 이 유효하지 않습니다.");
 //        }
+
         return ApiResponse.onSuccess(memberService.signUp(requestDto));
     }
 

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import server.domain.member.model.Role;
+import server.global.auth.oauth2.model.SocialType;
 
 import java.time.LocalDateTime;
 
@@ -33,6 +34,8 @@ public class Member {
     private LocalDateTime createdAt;
 
     private LocalDateTime modifiedAt;
+
+    private SocialType socialType;
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;

@@ -11,10 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import server.domain.message.dto.MessageDtoConverter;
 import server.domain.message.dto.MessageResponseDto;
-import server.global.security.service.JwtService;
+import server.global.auth.security.service.JwtService;
 import server.global.util.RedisUtil;
 
-import java.util.HashMap;
 import java.util.Random;
 
 @Service

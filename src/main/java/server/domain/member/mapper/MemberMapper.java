@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
 import server.domain.member.domain.Member;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Mapper
@@ -15,4 +16,6 @@ public interface MemberMapper {
     void save(Member member);
 
     void updateRefreshToken(Member member);
+
+    Member findBySocialTypeAndMemberId(Map<String, Object> map);
 }

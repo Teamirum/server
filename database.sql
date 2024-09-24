@@ -15,6 +15,7 @@ CREATE TABLE `Member` (
                           `phone_num` VARCHAR(15) NOT NULL,
                           `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                           `modified_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+                          `social_type` ENUM('KAKAO', 'NAVER', 'GOOGLE', 'LOCAL') NOT NULL,
                           PRIMARY KEY (`idx`)
 );
 

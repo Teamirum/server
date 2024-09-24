@@ -1,7 +1,7 @@
 package server.global.util;
 
 import org.springframework.security.core.context.SecurityContextHolder;
-import server.global.security.domain.CustomUserDetails;
+import server.global.auth.security.domain.CustomUserDetails;
 
 import java.util.Optional;
 
