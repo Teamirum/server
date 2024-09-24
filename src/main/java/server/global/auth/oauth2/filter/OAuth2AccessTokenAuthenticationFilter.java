@@ -1,6 +1,7 @@
 package server.global.auth.oauth2.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,11 @@ import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.auth.oauth2.domain.AccessTokenAuthenticationProvider;
 import server.global.auth.oauth2.domain.AccessTokenSocialTypeToken;
 import server.global.auth.oauth2.model.SocialType;
+import server.global.auth.oauth2.model.socialLoader.GoogleLoadStrategy;
+import server.global.auth.oauth2.model.socialLoader.KakaoLoadStrategy;
+import server.global.auth.oauth2.model.socialLoader.NaverLoadStrategy;
+import server.global.auth.oauth2.model.socialLoader.SocialLoadStrategy;
+import server.global.config.OAuthProperties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,10 +39,11 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
 
     private static final String HTTP_METHOD = "POST";
 
-    private static final String ACCESS_TOKEN_HEADER_NAME = "Authorization";
+//    private static final String ACCESS_TOKEN_HEADER_NAME = "Authorization";
 
     private static final String ACCESS_TOKEN_PREFIX= "Bearer ";
 
+    private final OAuthProperties oAuthProperties;
 
 
 
@@ -46,9 +53,10 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
 
     public OAuth2AccessTokenAuthenticationFilter(AccessTokenAuthenticationProvider accessTokenAuthenticationProvider,
                                                  AuthenticationSuccessHandler authenticationSuccessHandler,
-                                                 AuthenticationFailureHandler authenticationFailureHandler) {
+                                                 AuthenticationFailureHandler authenticationFailureHandler, OAuthProperties oAuthProperties) {
 
         super(DEFAULT_OAUTH2_LOGIN_PATH_REQUEST_MATCHER);
+        this.oAuthProperties = oAuthProperties;
 
         this.setAuthenticationManager(new ProviderManager(accessTokenAuthenticationProvider));
 
@@ -64,10 +72,13 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
         SocialType socialType = extractSocialType(request, response);
         try {
 
-//          String accessToken = request.getHeader(ACCESS_TOKEN_HEADER_NAME).substring(ACCESS_TOKEN_PREFIX.length()); // Bearer이 두번 붙게되어, 최초 한번은 제외 (POSTMAN으로 테스트 시)
-            String accessToken = request.getHeader(ACCESS_TOKEN_HEADER_NAME); // Bearer이 두번 붙게되어, 최초 한번은 제외 (POSTMAN으로 테스트 시)
+            String authCode = request.getParameter("code");
 
-            return this.getAuthenticationManager().authenticate(new AccessTokenSocialTypeToken(accessToken, socialType));
+            SocialLoadStrategy socialLoadStrategy = getSocialLoadStrategy(socialType);
+            String accessToken = socialLoadStrategy.getAccessToken(authCode);
+//          String accessToken = request.getHeader(ACCESS_TOKEN_HEADER_NAME).substring(ACCESS_TOKEN_PREFIX.length()); // Bearer이 두번 붙게되어, 최초 한번은 제외 (POSTMAN으로 테스트 시)
+
+            return this.getAuthenticationManager().authenticate(new AccessTokenSocialTypeToken(ACCESS_TOKEN_PREFIX + accessToken, socialType));
 
         } catch (Exception e) {
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
@@ -80,7 +91,6 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
         }
     }
 
-
     private SocialType extractSocialType(HttpServletRequest request, HttpServletResponse response) {
         log.info(request.getRequestURI().substring(DEFAULT_OAUTH2_LOGIN_REQUEST_URL_PREFIX.length()));
         return Arrays.stream(SocialType.values())
@@ -89,6 +99,16 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
                                 .equals(request.getRequestURI().substring(DEFAULT_OAUTH2_LOGIN_REQUEST_URL_PREFIX.length())))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 URL 주소입니다"));
+    }
+
+    private SocialLoadStrategy getSocialLoadStrategy(SocialType socialType) {
+        return switch (socialType){
+
+            case KAKAO -> new KakaoLoadStrategy(oAuthProperties.getKakaoClientId(), oAuthProperties.getKakaoClientSecret());
+            case GOOGLE ->  new GoogleLoadStrategy(oAuthProperties.getGoogleClientId(), oAuthProperties.getGoogleClientSecret());
+            case NAVER ->  new NaverLoadStrategy(oAuthProperties.getNaverClientId(), oAuthProperties.getNaverClientSecret());
+            default -> throw new IllegalArgumentException("지원하지 않는 로그인 형식입니다");
+        };
     }
 
 }

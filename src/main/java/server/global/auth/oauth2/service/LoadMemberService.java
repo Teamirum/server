@@ -12,6 +12,7 @@ import server.global.auth.oauth2.model.socialLoader.KakaoLoadStrategy;
 import server.global.auth.oauth2.model.socialLoader.NaverLoadStrategy;
 import server.global.auth.oauth2.model.socialLoader.SocialLoadStrategy;
 import server.global.auth.security.domain.CustomUserDetails;
+import server.global.config.OAuthProperties;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class LoadMemberService {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final PasswordEncoder passwordEncoder;
+    private final OAuthProperties oAuthProperties;
 
     private static final String OAUTH2_USER_PASSWORD = "TEAM_OAUTH2_PW";
 
@@ -43,9 +45,9 @@ public class LoadMemberService {
     private SocialLoadStrategy getSocialLoadStrategy(SocialType socialType) {
         return switch (socialType){
 
-            case KAKAO -> new KakaoLoadStrategy();
-            case GOOGLE ->  new GoogleLoadStrategy();
-            case NAVER ->  new NaverLoadStrategy();
+            case KAKAO -> new KakaoLoadStrategy(oAuthProperties.getKakaoClientId(), oAuthProperties.getKakaoClientSecret());
+            case GOOGLE ->  new GoogleLoadStrategy(oAuthProperties.getGoogleClientId(), oAuthProperties.getGoogleClientSecret());
+            case NAVER ->  new NaverLoadStrategy(oAuthProperties.getNaverClientId(), oAuthProperties.getNaverClientSecret());
             default -> throw new IllegalArgumentException("지원하지 않는 로그인 형식입니다");
         };
     }

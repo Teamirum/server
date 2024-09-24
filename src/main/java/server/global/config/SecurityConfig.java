@@ -50,6 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final MemberRepository memberRepository;
     private final RedisUtil redisUtil;
     private final AccessTokenAuthenticationProvider provider;
+    private final OAuthProperties oAuthProperties;
 
 
     // 문자셋 필터
@@ -101,7 +102,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     OAuth2AccessTokenAuthenticationFilter auth2AccessTokenAuthenticationFilter() {
-        return new OAuth2AccessTokenAuthenticationFilter(provider, loginSuccessJWTProvideHandler(), loginFailureHandler());
+        return new OAuth2AccessTokenAuthenticationFilter(provider, loginSuccessJWTProvideHandler(), loginFailureHandler(), oAuthProperties);
     }
 
     @Bean
