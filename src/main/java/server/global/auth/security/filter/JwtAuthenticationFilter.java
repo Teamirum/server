@@ -59,21 +59,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		try {
-			String device = DeviceUtil.getDevice(request);
+//			String device = DeviceUtil.getDevice(request);
+//			jwtService.extractAccessToken(request)
+//					.filter(jwtService::isTokenValid)
+//					.flatMap(accessToken -> {
+//						// Redis에서 accessToken이 존재하는지 확인
+//						String memberId = jwtService.extractMemberId(accessToken).orElse(null);
+//						if (memberId != null) {
+//							String redisKey = device + ACCESS_TOKEN_KEY + memberId;
+//							List<String> tokens = redisUtil.getAllData(redisKey);
+//							if (!tokens.isEmpty() && tokens.contains(accessToken)) {
+//								return jwtService.extractMemberId(accessToken);
+//							}
+//						}
+//						return Optional.empty();
+//					})
+//					.flatMap(memberRepository::findByMemberId)
+//					.ifPresent(this::saveAuthentication);
+//			filterChain.doFilter(request, response);
+
 			jwtService.extractAccessToken(request)
 					.filter(jwtService::isTokenValid)
-					.flatMap(accessToken -> {
-						// Redis에서 accessToken이 존재하는지 확인
-						String memberId = jwtService.extractMemberId(accessToken).orElse(null);
-						if (memberId != null) {
-							String redisKey = device + ACCESS_TOKEN_KEY + memberId;
-							List<String> tokens = redisUtil.getAllData(redisKey);
-							if (!tokens.isEmpty() && tokens.contains(accessToken)) {
-								return jwtService.extractMemberId(accessToken);
-							}
-						}
-						return Optional.empty();
-					})
+					.flatMap(jwtService::extractMemberId)
 					.flatMap(memberRepository::findByMemberId)
 					.ifPresent(this::saveAuthentication);
 			filterChain.doFilter(request, response);
