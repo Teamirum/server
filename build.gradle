@@ -109,6 +109,10 @@ dependencies {
   implementation 'io.springfox:springfox-swagger-ui:2.9.2'
 
 //  implementation 'org.springframework.security:spring-security-oauth2-client:6.3.3'
+
+  // gcp storage
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter', version: '1.2.5.RELEASE'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-storage', version: '1.2.5.RELEASE'
 }
 
 

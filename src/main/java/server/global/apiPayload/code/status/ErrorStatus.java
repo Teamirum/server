@@ -34,6 +34,10 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_AUTHORIZATION_NOT_VALID(HttpStatus.UNAUTHORIZED, "MEMBER4012", "유효하지 않은 인증정보 입니다."),
 
 
+    // 가맹점 응답
+    MARKET_NOT_FOUND(HttpStatus.BAD_REQUEST, "MARKET4001", "해당 가맹점이 존재하지 않습니다."),
+    MARKET_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MARKET4002", "이미 가맹점을 보유한 회원입니다"),
+
 
     //사진 응답
     IMAGE_UPLOAD_FAIL(HttpStatus.BAD_REQUEST, "IMG4001", "사진 업로드에 실패하였습니다."),

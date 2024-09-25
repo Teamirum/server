@@ -40,7 +40,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @Log4j
-@ComponentScan(basePackages  = {"server.global.security"})
+@ComponentScan(basePackages  = {"server.global.auth"})
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -74,6 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/member/signUp", "/api/member/login/oauth2").permitAll()
+                .antMatchers("/api/market/register").hasRole("ADMIN")
                 .antMatchers("/swagger-resources/**", "/swagger-ui.html", "/v2/api-docs", "/webjars/**").permitAll()
                 .anyRequest().authenticated();
 
