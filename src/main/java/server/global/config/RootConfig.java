@@ -23,7 +23,8 @@ import javax.sql.DataSource;
 @PropertySource({"classpath:/application.properties"})
 @MapperScan(basePackages  = {
     "server.domain.member.mapper",
-    "server.global.auth.security.mapper"
+    "server.global.auth.security.mapper",
+    "server.domain.market.mapper",
 })
 @ComponentScan(basePackages = {
     "server.domain",

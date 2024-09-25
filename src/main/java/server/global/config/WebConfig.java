@@ -1,6 +1,7 @@
 package server.global.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
@@ -13,7 +14,9 @@ import javax.servlet.ServletRegistration;
 @Configuration
 //@PropertySource({"classpath:/application.properties"})
 public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
-    final String LOCATION = "~/upload";
+    @Value("${file.location}")
+    String LOCATION ;
+
     final long MAX_FILE_SIZE = 1024 * 1024 * 10L;
     final long MAX_REQUEST_SIZE =  1024 * 1024 * 20L;
     final int FILE_SIZE_THRESHOLD = 1024 * 1024 * 5;;

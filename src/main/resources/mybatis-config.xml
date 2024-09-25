@@ -10,7 +10,8 @@
 
     <typeAliases>
         <package name="server.domain.member.domain" />
-        <package name="server.global.auth.security.mapper" />
+        <package name="server.global.auth.security.domain" />
+        <package name="server.domain.market.domain" />
     </typeAliases>
 
 </configuration>
