@@ -17,25 +17,21 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import server.domain.member.dto.MemberResponseDto;
-import server.domain.member.mapper.MemberMapper;
 import server.domain.member.repository.MemberRepository;
-import server.global.apiPayload.ApiResponse;
-import server.global.security.filter.CustomAccessDeniedHandler;
-import server.global.security.filter.CustomAuthenticationEntryPoint;
-import server.global.security.filter.JsonUsernamePasswordAuthenticationFilter;
-import server.global.security.filter.JwtAuthenticationFilter;
-import server.global.security.handler.LoginFailureHandler;
-import server.global.security.handler.LoginSuccessJWTProvideHandler;
-import server.global.security.service.JwtService;
+import server.global.auth.oauth2.domain.AccessTokenAuthenticationProvider;
+import server.global.auth.oauth2.filter.OAuth2AccessTokenAuthenticationFilter;
+import server.global.auth.security.filter.CustomAccessDeniedHandler;
+import server.global.auth.security.filter.CustomAuthenticationEntryPoint;
+import server.global.auth.security.filter.JsonUsernamePasswordAuthenticationFilter;
+import server.global.auth.security.filter.JwtAuthenticationFilter;
+import server.global.auth.security.handler.LoginFailureHandler;
+import server.global.auth.security.handler.LoginSuccessJWTProvideHandler;
+import server.global.auth.security.service.JwtService;
 import server.global.util.RedisUtil;
 
 import java.util.Arrays;
@@ -44,7 +40,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @Log4j
-@ComponentScan(basePackages  = {"server.global.security"})
+@ComponentScan(basePackages  = {"server.global.auth"})
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -53,6 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
     private final RedisUtil redisUtil;
+    private final AccessTokenAuthenticationProvider provider;
+    private final OAuthProperties oAuthProperties;
 
 
     // 문자셋 필터
@@ -75,7 +73,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/member/signUp", "/oauth/kakao").permitAll()
+                .antMatchers("/api/member/signUp", "/api/member/login/oauth2").permitAll()
+                .antMatchers("/api/market/register").hasRole("ADMIN")
+                .antMatchers("/swagger-resources/**", "/swagger-ui.html", "/v2/api-docs", "/webjars/**").permitAll()
                 .anyRequest().authenticated();
 
         http
@@ -85,7 +85,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .addFilterAfter(jsonUsernamePasswordLoginFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(auth2AccessTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
     }
 
@@ -98,6 +99,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
 
         return daoAuthenticationProvider;
+    }
+
+    @Bean
+    OAuth2AccessTokenAuthenticationFilter auth2AccessTokenAuthenticationFilter() {
+        return new OAuth2AccessTokenAuthenticationFilter(provider, loginSuccessJWTProvideHandler(), loginFailureHandler(), oAuthProperties);
     }
 
     @Bean

@@ -17,15 +17,14 @@ public class Market {
 
     private Long memberIdx;
 
-    private String accountHolderName;
+    private String name;
 
-    private int amount;
+    private String address;
 
-    private String bankName;
-
-    private String accountNumber;
+    public String kakaoCid;
 
     private LocalDateTime createdAt;
 
+    private LocalDateTime modifiedAt;
 
 }
