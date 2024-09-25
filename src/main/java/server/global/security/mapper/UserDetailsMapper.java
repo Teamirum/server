@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @Mapper
 public interface UserDetailsMapper {
-    Member findByMemberId(String username);
+    Member findByMemberId(String memberId);
 }

@@ -13,8 +13,8 @@ public class UserDetailsRepository {
 
     private final UserDetailsMapper userDetailsMapper;
 
-    public Optional<Member> findByMemberId(String username) {
-        Member member = userDetailsMapper.findByMemberId(username);
+    public Optional<Member> findByMemberId(String memberId) {
+        Member member = userDetailsMapper.findByMemberId(memberId);
         if (member != null) {
             return Optional.of(member);
         }
