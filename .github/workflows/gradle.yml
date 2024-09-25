@@ -36,6 +36,13 @@ jobs:
           echo "${{ secrets.PROPERTIES }}" > ./application.properties
         shell: bash
 
+      - name: Make Gcs credentials
+        run: |
+          cd ./src/main/resources
+          touch ./gcs_secret.json
+          echo "${{ secrets.GCS_JSON }}" | base64 -d > ./gcs_secret.json
+        shell: bash
+
       - name: Build with Gradle Wrapper
         run: |
           chmod +x gradlew 

@@ -25,7 +25,7 @@ public class GoogleCloudStorageConfig {
     @Bean
     public Storage storage() throws IOException {
 
-        ClassPathResource resource = new ClassPathResource("versatile-cove-435402-p2-393dc0733e19.json");
+        ClassPathResource resource = new ClassPathResource("gcs_secret.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(resource.getInputStream());
         return StorageOptions.newBuilder()
                 .setProjectId(projectId)
