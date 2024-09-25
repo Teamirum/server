@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import server.domain.image.dto.ImageResponseDto;
 import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
@@ -38,7 +39,7 @@ public class ImageService {
 
 
 
-    public String uploadImg(MultipartFile image, String memberId) {
+    public ImageResponseDto.ImageUploadSuccessResponseDto uploadImg(MultipartFile image, String memberId) {
         Member member = getMemberByMemberId(memberId);
 
         String uuid = UUID.randomUUID().toString();
@@ -59,7 +60,10 @@ public class ImageService {
             log.info("이미지 업로드 실패: " + ex.getMessage());
             throw new ErrorHandler(ErrorStatus.IMAGE_UPLOAD_FAIL);
         }
-        return DEFAULT_DOMAIN + bucketName + "/" + fileName;
+        String imgUlr = DEFAULT_DOMAIN + bucketName + "/" + fileName;
+        return ImageResponseDto.ImageUploadSuccessResponseDto.builder()
+                .imgUrl(imgUlr)
+                .build();
     }
 
     private Member getMemberByMemberId(String memberId) {
