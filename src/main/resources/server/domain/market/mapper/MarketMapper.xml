@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.market.mapper.MarketMapper">
+
+    <!-- Result Mapping with Enum TypeHandler -->
+    <resultMap id="MarketResultMap" type="server.domain.market.domain.Market">
+        <id property="idx" column="idx" />
+        <result property="memberIdx" column="member_idx" />
+        <result property="name" column="name" />
+        <result property="address" column="address" />
+        <result property="kakaoCid" column="kakao_cid" />
+        <result column="created_at" property="createdAt" />
+        <result column="modified_at" property="modifiedAt" />
+    </resultMap>
+
+    <!-- Select Market by ID -->
+    <select id="findByMarketIdx" parameterType="Long" resultMap="MarketResultMap">
+        SELECT *
+        FROM Market
+        WHERE idx = #{idx}
+    </select>
+
+    <!-- Select Market by MemberIdx -->
+    <select id="findByMemberIdx" parameterType="Long" resultMap="MarketResultMap">
+        SELECT *
+        FROM Market
+        WHERE member_idx = #{memberIdx}
+    </select>
+
+    <!-- Select All Market-->
+    <select id="findAll" resultMap="MarketResultMap">
+        SELECT *
+        FROM Market
+    </select>
+
+
+
+
+    <!-- insert Market -->
+    <insert id="save" parameterType="server.domain.market.domain.Market">
+        INSERT INTO Market (
+            member_idx, name, address, kakao_cid
+        ) VALUES (
+            #{memberIdx}, #{name}, #{address}, #{kakaoCid}
+                 )
+    </insert>
+
+</mapper>
