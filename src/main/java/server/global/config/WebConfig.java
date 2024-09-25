@@ -1,13 +1,10 @@
 package server.global.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
-import server.global.oauth.infra.presentation.OauthServerTypeConverter;
 
 import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
@@ -16,8 +13,10 @@ import javax.servlet.ServletRegistration;
 @Slf4j
 @Configuration
 //@PropertySource({"classpath:/application.properties"})
-public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer implements WebMvcConfigurer {
-    final String LOCATION = "~/upload";
+public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
+    @Value("${file.location}")
+    String LOCATION ;
+
     final long MAX_FILE_SIZE = 1024 * 1024 * 10L;
     final long MAX_REQUEST_SIZE =  1024 * 1024 * 20L;
     final int FILE_SIZE_THRESHOLD = 1024 * 1024 * 5;;
@@ -66,30 +65,5 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
         registration.setMultipartConfig(multipartConfig);
     }
 
-    // CORS 설정 추가
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173")
-                .allowedMethods(
-                        "GET", "POST", "PUT", "DELETE", "PATCH"
-                )
-                .allowCredentials(true)
-                .exposedHeaders("*");
-    }
-
-    // 포맷터 등록
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new OauthServerTypeConverter());
-    }
-    // POST body 문자 인코딩 필터 설정
-    @Override
-    protected Filter[] getServletFilters() {
-        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-        characterEncodingFilter.setEncoding("UTF-8");
-        characterEncodingFilter.setForceEncoding(true);
-        return new Filter[] { characterEncodingFilter }; // 필터 등록
-    }
 
 }
