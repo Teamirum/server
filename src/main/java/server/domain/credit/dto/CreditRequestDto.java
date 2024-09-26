@@ -12,6 +12,7 @@ public class CreditRequestDto {
         public String creditName;
         public String companyName;
         public String creditSecret;
+        public String expirationDate;
         public String imgUrl;
     }
 

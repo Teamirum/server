@@ -25,6 +25,13 @@ public class CreditController {
         return ApiResponse.onSuccess(creditService.upload(requestDto, loginMemberId));
     }
 
+    @GetMapping("/all")
+    public ApiResponse<?> getCreditList() {
+        String loginMemberId = getLoginMemberId();
+        log.info("신용카드 리스트 조회 요청 : loginMemberId = {}", loginMemberId);
+        return ApiResponse.onSuccess(creditService.getCreditList(loginMemberId));
+    }
+
     @DeleteMapping
     public ApiResponse<?> deleteCredit(@RequestParam(value = "idx") Long idx) {
         String loginMemberId = getLoginMemberId();

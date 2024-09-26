@@ -3,6 +3,7 @@ package server.domain.credit.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import server.domain.credit.domain.Credit;
+import server.domain.credit.dto.CreditDtoConverter;
 import server.domain.credit.dto.CreditRequestDto;
 import server.domain.credit.dto.CreditResponseDto;
 import server.domain.credit.repository.CreditRepository;
@@ -10,6 +11,8 @@ import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +39,13 @@ public class CreditService {
                 .idx(savedCredit.getIdx())
                 .build();
     }
+
+    public CreditResponseDto.CreditListResponseDto getCreditList(String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId);
+        List<Credit> creditList = creditRepository.findAllCreditByMemberIdx(memberIdx);
+        return CreditDtoConverter.convertToCreditListResponseDto(creditList);
+    }
+
 
     public CreditResponseDto.CreditTaskSuccessResponseDto delete(Long creditIdx, String memberId) {
         Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
