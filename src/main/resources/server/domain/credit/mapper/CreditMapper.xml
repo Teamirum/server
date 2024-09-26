@@ -53,5 +53,18 @@
         WHERE idx = #{idx}
     </update>
 
+    <!-- delete Credit -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM Credit
+        WHERE idx = #{idx}
+    </delete>
+
+    <!-- get Credit by Idx And MemberIdx -->
+    <select id="findByIdxAndMemberIdx" parameterType="map" resultMap="CreditResultMap">
+        SELECT *
+        FROM Credit
+        WHERE idx = #{idx} AND member_idx = #{memberIdx}
+    </select>
+
 
 </mapper>

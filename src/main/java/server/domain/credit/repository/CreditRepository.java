@@ -32,6 +32,16 @@ public class CreditRepository {
         creditMapper.updateCreditImage(map);
     }
 
+    public boolean existsByCreditIdxAndMemberIdx(Long creditIdx, Long memberIdx) {
+        Map<String, Object> map = Map.of("creditIdx", creditIdx, "memberIdx", memberIdx);
+        Credit credit = creditMapper.findByIdxAndMemberIdx(map);
+        return credit != null;
+    }
+
+    public void deleteCredit(Long creditIdx) {
+        creditMapper.deleteCredit(creditIdx);
+    }
+
     public List<Credit> findAllByMemberIdx(Long memberIdx) {
         return creditMapper.findAllByMemberIdx(memberIdx);
     }

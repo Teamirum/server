@@ -25,6 +25,13 @@ public class CreditController {
         return ApiResponse.onSuccess(creditService.upload(requestDto, loginMemberId));
     }
 
+    @DeleteMapping
+    public ApiResponse<?> deleteCredit(@RequestParam(value = "idx") Long idx) {
+        String loginMemberId = getLoginMemberId();
+        log.info("신용카드 삭제 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
+        return ApiResponse.onSuccess(creditService.delete(idx, loginMemberId));
+    }
+
     private String getLoginMemberId() {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
