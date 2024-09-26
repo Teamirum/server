@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.account.mapper.AccountMapper">
+    <!-- Result Mapping for Account -->
+    <resultMap id="AccountResultMap" type="server.domain.account.domain.Account">
+        <id property="idx" column="idx" />
+        <result property="memberIdx" column="member_idx" />
+        <result property="accountHolderName" column="account_holder_name" />
+        <result property="amount" column="amount" />
+        <result property="bankName" column="bank_name" />
+        <result property="accountNumber" column="account_number" />
+        <result property="createdAt" column="created_at" />
+    </resultMap>
+
+    <!-- 계좌 저장 (Insert 또는 Update) -->
+    <insert id="save" parameterType="server.domain.account.domain.Account">
+        INSERT INTO account (member_idx, account_holder_name, amount, bank_name, account_number, created_at)
+        VALUES (#{memberIdx}, #{accountHolderName}, #{amount}, #{bankName}, #{accountNumber}, #{createdAt})
+            ON DUPLICATE KEY UPDATE
+                                 account_holder_name = #{accountHolderName},
+                                 amount = #{amount},
+                                 bank_name = #{bankName},
+                                 account_number = #{accountNumber},
+                                 created_at = #{createdAt};
+    </insert>
+
+    <!-- 특정 회원의 계좌 조회 -->
+    <select id="findByMemberId" resultType="server.domain.account.domain.Account">
+        SELECT * FROM account WHERE member_idx = #{memberId}
+    </select>
+
+
+
+    <!-- 계좌 ID로 계좌 조회 -->
+    <select id="findById" resultType="server.domain.account.domain.Account">
+        SELECT * FROM account WHERE idx = #{accountId};
+    </select>
+
+    <!-- 계좌 삭제 -->
+    <delete id="deleteById">
+        DELETE FROM account WHERE idx = #{accountId};
+    </delete>
+
+    <update id="update" parameterType="server.domain.account.domain.Account">
+        UPDATE Account
+        SET amount = #{amount},
+            modified_at = #{modifiedAt}
+        WHERE idx = #{idx}
+    </update>
+
+</mapper>
