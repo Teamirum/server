@@ -27,6 +27,14 @@ public class CreditRepository {
         return Optional.empty();
     }
 
+    public Optional<Credit> findByCreditNumber(String creditNumber) {
+        Credit credit = creditMapper.findByCreditNumber(creditNumber);
+        if (credit != null) {
+            return Optional.of(credit);
+        }
+        return Optional.empty();
+    }
+
     public List<Credit> findAllCreditByMemberIdx(Long memberIdx) {
         return creditMapper.findAllByMemberIdx(memberIdx);
     }
@@ -34,6 +42,11 @@ public class CreditRepository {
     public void updateCreditImage(Long idx, String imgUrl) {
         Map<String, Object> map = Map.of("creditIdx", idx, "imgUrl", imgUrl);
         creditMapper.updateCreditImage(map);
+    }
+
+    public boolean existsByCreditNumber(String creditNumber) {
+        Credit credit = creditMapper.findByCreditNumber(creditNumber);
+        return credit != null;
     }
 
     public boolean existsByCreditIdxAndMemberIdx(Long creditIdx, Long memberIdx) {

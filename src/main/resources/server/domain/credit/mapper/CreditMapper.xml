@@ -30,12 +30,18 @@
         WHERE idx = #{idx}
     </select>
 
+    <select id="findByCreditNumber" parameterType="String" resultMap="CreditResultMap">
+        SELECT *
+        FROM Credit
+        WHERE credit_number = #{creditNumber}
+    </select>
+
     <!-- insert Credit -->
     <insert id="save" parameterType="server.domain.credit.domain.Credit">
         INSERT INTO Credit (
             member_idx,credit_name, credit_number, company_name, credit_secret, amount_sum, created_at, expiration_date
         ) VALUES (
-            #{memberIdx}, #{creditName},#{credit_Number}, #{companyName}, #{creditSecret},#{amountSum}, #{createdAt}, #{expirationDate}
+            #{memberIdx}, #{creditName},#{creditNumber}, #{companyName}, #{creditSecret},#{amountSum}, #{createdAt}, #{expirationDate}
         )
     </insert>
 

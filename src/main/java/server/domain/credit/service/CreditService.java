@@ -12,6 +12,7 @@ import server.domain.member.repository.MemberRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,6 +24,9 @@ public class CreditService {
 
     public CreditResponseDto.CreditTaskSuccessResponseDto upload(CreditRequestDto.UploadCreditRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId);
+        if (creditRepository.existsByCreditNumber(requestDto.getCreditNumber())) {
+            throw new ErrorHandler(ErrorStatus.CREDIT_CARD_DUPLICATE);
+        }
         Credit credit = Credit.builder()
                 .memberIdx(memberIdx)
                 .creditNumber(requestDto.getCreditNumber())
@@ -30,10 +34,13 @@ public class CreditService {
                 .companyName(requestDto.getCompanyName())
                 .creditSecret(requestDto.getCreditSecret())
                 .amountSum(0)
+                .expirationDate(requestDto.getExpirationDate())
+                .imgUrl(requestDto.getImgUrl())
+                .createdAt(LocalDateTime.now())
                 .build();
         creditRepository.save(credit);
 
-        Credit savedCredit = creditRepository.findByCreditIdx(credit.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_SAVE_FAIL));
+        Credit savedCredit = creditRepository.findByCreditNumber(credit.getCreditNumber()).orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_SAVE_FAIL));
         return CreditResponseDto.CreditTaskSuccessResponseDto.builder()
                 .isSuccess(true)
                 .idx(savedCredit.getIdx())

@@ -38,7 +38,6 @@ CREATE TABLE `Credit` (
                           `credit_name` VARCHAR(50) NOT NULL,
                           `company_name` VARCHAR(20) NOT NULL,
                           `credit_secret` VARCHAR(20) NOT NULL,
-                          `company_code` VARCHAR(50) NOT NULL,
                           `amount_sum` BIGINT NOT NULL,
                           `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                           `img_url` VARCHAR(255),
