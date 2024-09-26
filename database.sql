@@ -82,11 +82,11 @@ CREATE TABLE `Market` (
 CREATE TABLE `Order` (
                          `idx` BIGINT AUTO_INCREMENT NOT NULL,
                          `market_idx` BIGINT NOT NULL,
-                         `order_id` VARCHAR(100) NOT NULL,
                          `name` VARCHAR(100) NOT NULL,
+                          `member_cnt` INT NOT NULL,
                          `amount` INT NOT NULL,
                          `tax_free_amount` INT NOT NULL,
-                         `vat_amount` INT,
+                         `vat_amount` INT NOT NULL,
                          `order_member_idx` BIGINT NOT NULL,
                          `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                          PRIMARY KEY (`idx`),

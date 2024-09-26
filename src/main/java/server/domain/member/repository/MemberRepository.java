@@ -39,8 +39,12 @@ public class MemberRepository {
         return memberMapper.findByPhoneNum(memberId) != null;
     }
 
-    public Long getIdxByMemberId(String memberId) {
-        return memberMapper.getIdxByMemberId(memberId);
+    public Optional<Long> getIdxByMemberId(String memberId) {
+        Long idxByMemberId = memberMapper.getIdxByMemberId(memberId);
+        if (idxByMemberId != null) {
+            return Optional.of(idxByMemberId);
+        }
+        return Optional.empty();
     }
 
     public Optional<Member> findBySocialTypeAndMemberId(SocialType socialType, String memberId) {
