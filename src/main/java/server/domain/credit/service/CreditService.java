@@ -37,4 +37,16 @@ public class CreditService {
                 .build();
     }
 
+    public CreditResponseDto.CreditTaskSuccessResponseDto delete(Long creditIdx, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!creditRepository.existsByCreditIdxAndMemberIdx(creditIdx, member.getIdx())) {
+            throw new ErrorHandler(ErrorStatus.CREDIT_CARD_NOT_FOUND);
+        }
+        creditRepository.deleteCredit(creditIdx);
+        return CreditResponseDto.CreditTaskSuccessResponseDto.builder()
+                .isSuccess(true)
+                .idx(creditIdx)
+                .build();
+    }
+
 }

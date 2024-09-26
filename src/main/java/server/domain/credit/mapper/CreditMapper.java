@@ -13,7 +13,11 @@ public interface CreditMapper {
 
     Credit findByCreditIdx(Long creditIdx);
 
+    Credit findByIdxAndMemberIdx(Map<String, Object> map);
+
     List<Credit> findAllByMemberIdx(Long memberIdx);
 
     void updateCreditImage(Map<String, Object> map);
+
+    void deleteCredit(Long creditIdx);
 }
