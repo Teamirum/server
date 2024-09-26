@@ -26,6 +26,7 @@ CREATE TABLE `Account` (
                            `bank_name` VARCHAR(20) NOT NULL,
                            `account_number` VARCHAR(20) NOT NULL,
                            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                            `account_secret` VARCHAR(20) NOT NULL,
                            PRIMARY KEY (`idx`),
                            FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
 );
@@ -41,6 +42,7 @@ CREATE TABLE `Credit` (
                           `amount_sum` BIGINT NOT NULL,
                           `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                           `img_url` VARCHAR(255),
+                          `expiration_date` VARCHAR(20) NOT NULL,
                           PRIMARY KEY (`idx`),
                           FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
 );

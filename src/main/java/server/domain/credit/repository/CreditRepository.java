@@ -27,6 +27,10 @@ public class CreditRepository {
         return Optional.empty();
     }
 
+    public List<Credit> findAllCreditByMemberIdx(Long memberIdx) {
+        return creditMapper.findAllByMemberIdx(memberIdx);
+    }
+
     public void updateCreditImage(Long idx, String imgUrl) {
         Map<String, Object> map = Map.of("creditIdx", idx, "imgUrl", imgUrl);
         creditMapper.updateCreditImage(map);

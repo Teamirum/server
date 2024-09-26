@@ -33,16 +33,17 @@
     <!-- insert Credit -->
     <insert id="save" parameterType="server.domain.credit.domain.Credit">
         INSERT INTO Credit (
-            member_idx,credit_name, credit_number, company_name, credit_secret, amount_sum, created_at
+            member_idx,credit_name, credit_number, company_name, credit_secret, amount_sum, created_at, expiration_date
         ) VALUES (
-            #{memberIdx}, #{creditName},#{credit_Number}, #{companyName}, #{creditSecret},#{amountSum}, #{createdAt}
+            #{memberIdx}, #{creditName},#{credit_Number}, #{companyName}, #{creditSecret},#{amountSum}, #{createdAt}, #{expirationDate}
         )
     </insert>
 
     <!-- update Credit -->
     <update id="update" parameterType="server.domain.credit.domain.Credit">
         UPDATE Credit
-        SET  credit_number = #{creditNumber}, credit_name = #{creditName}, company_name = #{companyName}, amount_sum = #{amountSum},credit_secret = #{creditSecret}
+        SET  credit_number = #{creditNumber}, credit_name = #{creditName}, company_name = #{companyName}, amount_sum = #{amountSum},credit_secret = #{creditSecret}, expiration_date = #{expirationDate}
+        WHERE idx = #{idx}
         WHERE member_idx = #{memberIdx}
     </update>
 

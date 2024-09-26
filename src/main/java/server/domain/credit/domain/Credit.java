@@ -27,5 +27,9 @@ public class Credit {
 
     private int amountSum;
 
+    private String imgUrl;
+
+    private String expirationDate;
+
     private LocalDateTime createdAt;
 }
