@@ -33,6 +33,12 @@
         WHERE phone_num = #{phoneNum}
     </select>
 
+    <select id="getIdxByMemberId" parameterType="string" resultType="Long">
+        SELECT idx
+        FROM Member
+        WHERE member_id = #{memberId}
+    </select>
+
     <!-- Select Member by SocialTypeAndMemberId -->
     <select id="findBySocialTypeAndMemberId" parameterType="map" resultMap="MemberResultMap">
         SELECT *

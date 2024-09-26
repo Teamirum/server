@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,4 +14,18 @@ import lombok.NoArgsConstructor;
 public class Credit {
 
     private Long idx;
+
+    private Long memberIdx;
+
+    private String creditNumber;
+
+    private String creditName;
+
+    private String companyName;
+
+    private String creditSecret;
+
+    private int amountSum;
+
+    private LocalDateTime createdAt;
 }

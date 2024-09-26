@@ -63,6 +63,7 @@ public class ImageService {
         String imgUlr = DEFAULT_DOMAIN + bucketName + "/" + fileName;
         return ImageResponseDto.ImageUploadSuccessResponseDto.builder()
                 .imgUrl(imgUlr)
+                .isSuccess(true)
                 .build();
     }
 

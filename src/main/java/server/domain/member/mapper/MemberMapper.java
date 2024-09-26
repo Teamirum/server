@@ -18,4 +18,6 @@ public interface MemberMapper {
     void updateRefreshToken(Member member);
 
     Member findBySocialTypeAndMemberId(Map<String, Object> map);
+
+    Long getIdxByMemberId(String memberId);
 }

@@ -33,12 +33,14 @@ CREATE TABLE `Account` (
 CREATE TABLE `Credit` (
                           `idx` BIGINT AUTO_INCREMENT NOT NULL,
                           `member_idx` BIGINT NOT NULL,
-                          `card_number` VARCHAR(250) NOT NULL,
-                          `card_name` VARCHAR(50) NOT NULL,
+                          `credit_number` VARCHAR(250) NOT NULL,
+                          `credit_name` VARCHAR(50) NOT NULL,
                           `company_name` VARCHAR(20) NOT NULL,
+                          `credit_secret` VARCHAR(20) NOT NULL,
                           `company_code` VARCHAR(50) NOT NULL,
                           `amount_sum` BIGINT NOT NULL,
                           `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                          `img_url` VARCHAR(255),
                           PRIMARY KEY (`idx`),
                           FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
 );
