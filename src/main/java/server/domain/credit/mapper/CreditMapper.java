@@ -13,6 +13,8 @@ public interface CreditMapper {
 
     Credit findByCreditIdx(Long creditIdx);
 
+    Credit findByCreditNumber(String creditNumber);
+
     Credit findByIdxAndMemberIdx(Map<String, Object> map);
 
     List<Credit> findAllByMemberIdx(Long memberIdx);
