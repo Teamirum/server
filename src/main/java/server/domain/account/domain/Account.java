@@ -27,20 +27,6 @@ public class Account {
 
     private LocalDateTime createdAt;
 
-    
-
-    // 입금
-//    public void deposit(int amount) {
-//        this.amount += amount;
-//    }
-//
-//    // 출금
-//    public void withdraw(int amount) {
-//        if (this.amount >= amount) {
-//            this.amount -= amount;
-//        } else {
-//            throw new IllegalArgumentException("Insufficient balance.");
-//        }
-//    }
+    private String accountSecret;
 
 }

@@ -26,6 +26,7 @@ import javax.sql.DataSource;
     "server.global.auth.security.mapper",
     "server.domain.market.mapper",
     "server.domain.credit.mapper",
+    "server.domain.account.mapper",
 })
 @ComponentScan(basePackages = {
     "server.domain",

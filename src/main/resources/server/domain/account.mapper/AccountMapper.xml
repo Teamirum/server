@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.account.mapper.AccountMapper">
+
+    <!-- Result Mapping for Account -->
+    <resultMap id="AccountResultMap" type="server.domain.account.domain.Account">
+        <id property="idx" column="idx" />
+        <result property="memberIdx" column="member_idx" />
+        <result property="accountHolderName" column="account_holder_name" />
+        <result property="amount" column="amount" />
+        <result property="bankName" column="bank_name" />
+        <result property="accountNumber" column="account_number" />
+        <result property="createdAt" column="created_at" />
+        <result property="accountSecret" column="account_secret" />
+    </resultMap>
+
+    <!-- Select All Accounts by MemberIdx -->
+    <select id="findAllByMemberIdx" parameterType="Long" resultMap="AccountResultMap">
+        SELECT *
+        FROM Account
+        WHERE member_idx = #{memberIdx}
+    </select>
+
+    <!-- Select Account by AccountIdx -->
+    <select id="findByAccountIdx" parameterType="Long" resultMap="AccountResultMap">
+        SELECT *
+        FROM Account
+        WHERE idx = #{idx}
+    </select>
+
+    <!-- Select Account by AccountNumber -->
+<!--    <select id="findByAccountNumber" parameterType="String" resultMap="AccountResultMap">-->
+<!--        SELECT *-->
+<!--        FROM Account-->
+<!--        WHERE account_number = #{accountNumber}-->
+<!--    </select>-->
+
+    <!-- Insert Account -->
+    <insert id="save" parameterType="server.domain.account.domain.Account">
+        INSERT INTO Account (
+            member_idx, account_holder_name, amount, bank_name, account_number, account_secret, created_at
+        ) VALUES (
+                     #{memberIdx}, #{accountHolderName}, #{amount}, #{bankName}, #{accountNumber}, #{accountSecret}, #{createdAt}
+                 )
+    </insert>
+
+    <!-- Update Account -->
+    <update id="update" parameterType="server.domain.account.domain.Account">
+        UPDATE Account
+        SET account_holder_name = #{accountHolderName}, amount = #{amount}, bank_name = #{bankName},
+            account_number = #{accountNumber}, account_secret = #{accountSecret}
+        WHERE idx = #{idx}
+          AND member_idx = #{memberIdx}
+    </update>
+
+    <!-- Delete Account -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM Account
+        WHERE idx = #{idx}
+    </delete>
+
+    <!-- Get Account by Idx and MemberIdx -->
+    <select id="findByIdxAndMemberIdx" parameterType="map" resultMap="AccountResultMap">
+        SELECT *
+        FROM Account
+        WHERE idx = #{idx} AND member_idx = #{memberIdx}
+    </select>
+
+    <!-- Get Account by AccountNumber -->
+    <select id="findByAccountNumber" resultType="server.domain.account.domain.Account">
+        SELECT *
+        FROM Account
+        WHERE account_number = #{accountNumber}
+    </select>
+
+
+    <!-- Update account -->
+    <update id="updateAccountAmount" parameterType="server.domain.account.domain.Account">
+        UPDATE Account
+        SET amount = #{amount}
+        WHERE idx = #{idx}
+    </update>
+
+</mapper>
