@@ -12,6 +12,7 @@
         <package name="server.domain.member.domain" />
         <package name="server.global.auth.security.domain" />
         <package name="server.domain.market.domain" />
+        <package name="server.domain.credit.domain" />
     </typeAliases>
 
 </configuration>

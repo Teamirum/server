@@ -39,6 +39,10 @@ public class MemberRepository {
         return memberMapper.findByPhoneNum(memberId) != null;
     }
 
+    public Long getIdxByMemberId(String memberId) {
+        return memberMapper.getIdxByMemberId(memberId);
+    }
+
     public Optional<Member> findBySocialTypeAndMemberId(SocialType socialType, String memberId) {
         Map<String, Object> map = Map.of("socialType", socialType.name(), "memberId", memberId);
         Member member = memberMapper.findBySocialTypeAndMemberId(map);
