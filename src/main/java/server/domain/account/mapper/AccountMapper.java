@@ -1,10 +1,12 @@
 package server.domain.account.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import server.domain.account.domain.Account;
+import server.domain.account.dto.AccountRequestDto;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Mapper
 public interface AccountMapper {
@@ -15,12 +17,13 @@ public interface AccountMapper {
 
     Account findByAccountNumber(String accountNumber);
 
-    Account findByIdxAndMemberIdx(Long accountIdx, Long memberIdx);
+    Account findByIdxAndMemberIdx(Map<String, Object> map);
 
     void save(Account account);
 
-    void delete(Long accountIdx);
+    void delete(Long idx);
 
-    void updateAccountAmount(Long idx, Integer amount);
+    void updateAccountAmount(@Param("idx") Long idx, @Param("amount") Integer amount);
+
 
 }

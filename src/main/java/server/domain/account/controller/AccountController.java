@@ -3,8 +3,10 @@ package server.domain.account.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.domain.account.dto.AccountRequestDto;
+import server.domain.account.dto.AccountResponseDto;
 import server.domain.account.service.AccountService;
 import server.global.apiPayload.ApiResponse;
 import server.global.apiPayload.code.status.ErrorStatus;
@@ -19,11 +21,6 @@ import server.global.util.SecurityUtil;
 public class AccountController {
 
     private final AccountService accountService;
-
-//    @GetMapping
-//    public AccountResponseDto.AccountListResponseDto getAccountList(@AuthenticationPrincipal String memberId) {
-//        return accountService.getAccountList(memberId);
-//    }
 
     private String getLoginMemberId() {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -50,13 +47,17 @@ public class AccountController {
         return ApiResponse.onSuccess(accountService.delete(idx, loginMemberId));
     }
 
-    //계좌 amount 수정
-    @PutMapping
-    public ApiResponse<?> updateAccountAmount(@RequestBody AccountRequestDto.UpdateAccountAmountRequestDto requestDto) {
-        String loginMemberId = getLoginMemberId();
-        log.info("계좌 amount 수정 요청 : loginMemberId = {}, idx = {}, amount = {}", loginMemberId, requestDto.idx, requestDto.amount);
-        return ApiResponse.onSuccess(accountService.updateAmount(requestDto, loginMemberId));
+
+    //계좌 amount
+    @PutMapping("/{idx}/update")
+    public ResponseEntity<AccountResponseDto.AccountTaskSuccessResponseDto> updateAccountAmount(
+            @PathVariable Long idx,
+            @RequestBody AccountRequestDto.UpdateAccountAmountRequestDto requestDto) {
+        requestDto.setIdx(idx);
+        AccountResponseDto.AccountTaskSuccessResponseDto responseDto = accountService.updateAmount(requestDto);
+        return ResponseEntity.ok(responseDto);
     }
+
 
 
 

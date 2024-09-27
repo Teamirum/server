@@ -26,11 +26,14 @@ public class AccountService {
     public AccountResponseDto.AccountTaskSuccessResponseDto upload(AccountRequestDto.UploadAccountRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        // memberIdx 값 출력
-        System.out.println("Member Index: " + memberIdx);
         if (accountRepository.existsByAccountNumber(requestDto.getAccountNumber())) {
             throw new ErrorHandler(ErrorStatus.ACCOUNT_DUPLICATE);
         }
+
+        if (existsByAccountNumber(requestDto.getAccountNumber())) {
+            throw new ErrorHandler(ErrorStatus.ACCOUNT_DUPLICATE);
+        }
+
         Account account = Account.builder()
                 .memberIdx(memberIdx)
                 .accountHolderName(requestDto.getAccountHolderName())
@@ -49,32 +52,35 @@ public class AccountService {
                 .build();
     }
 
+    private boolean existsByAccountNumber(String accountNumber) {
+        return accountRepository.existsByAccountNumber(accountNumber);
+    }
+
     public AccountResponseDto.AccountListResponseDto getAccountList(String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         List<Account> accountList = accountRepository.findAllAccountByMemberIdx(memberIdx);
         return AccountDtoConverter.convertToAccountListResponseDto(accountList);
     }
 
-    public AccountResponseDto.AccountTaskSuccessResponseDto delete(Long accountIdx, String memberId) {
+    public AccountResponseDto.AccountTaskSuccessResponseDto delete(Long idx, String memberId) {
        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        if (!accountRepository.existsByAccountIdxAndMemberIdx(accountIdx, member.getIdx())) {
+        if (!accountRepository.existsByAccountIdxAndMemberIdx(idx, member.getIdx())) {
             throw new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND);
         }
-        accountRepository.delete(accountIdx);
+        accountRepository.delete(idx);
         return AccountResponseDto.AccountTaskSuccessResponseDto.builder()
                 .isSuccess(true)
                 .build();
     }
 
 
-    public AccountResponseDto.AccountTaskSuccessResponseDto updateAmount(AccountRequestDto.UpdateAccountAmountRequestDto requestDto, String memberId) {
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        if (!accountRepository.existsByAccountIdxAndMemberIdx(requestDto.getIdx(), member.getIdx())) {
-            throw new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND);
-        }
-        accountRepository.updateAccountAmount(requestDto.getIdx(), Integer.valueOf(requestDto.getAmount()));
+    public AccountResponseDto.AccountTaskSuccessResponseDto updateAmount(AccountRequestDto.UpdateAccountAmountRequestDto requestDto) {
+        // 주어진 idx로 계좌 금액 업데이트
+        accountRepository.updateAccountAmount(requestDto.getIdx(), Integer.parseInt(requestDto.getAmount()));
         return AccountResponseDto.AccountTaskSuccessResponseDto.builder()
                 .isSuccess(true)
+                .idx(requestDto.getIdx())
                 .build();
     }
+
 }
