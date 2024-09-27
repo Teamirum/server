@@ -3,7 +3,17 @@ package server.domain.order.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 public class OrderResponseDto {
+
+    @Data
+    @Builder
+    public static class OrderListResponseDto {
+        public List<OrderInfoResponseDto> orderList;
+        public int totalOrderCnt;
+        public Boolean isSuccess;
+    }
 
     @Data
     @Builder

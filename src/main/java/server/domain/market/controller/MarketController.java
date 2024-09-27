@@ -21,6 +21,13 @@ public class MarketController {
 
     private final MarketService marketService;
 
+    @GetMapping
+    public ApiResponse<?> getMarketInfo() {
+        String memberId = getLoginMemberId();
+        log.info("마켓 조회 요청 : memberId = {}", memberId);
+        return ApiResponse.onSuccess(marketService.getMarketInfoByMemberId(memberId));
+    }
+
     private String getLoginMemberId() {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }

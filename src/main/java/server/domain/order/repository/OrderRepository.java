@@ -26,11 +26,11 @@ public class OrderRepository {
         return Optional.empty();
     }
 
-    List<Order> findAllByMarketIdx(Long marketIdx) {
+    public List<Order> findAllByMarketIdx(Long marketIdx) {
         return orderMapper.findAllByMarketIdx(marketIdx);
     }
 
-    List<Order> findAllByOrderMemberIdx(Long orderMemberIdx) {
+    public List<Order> findAllByOrderMemberIdx(Long orderMemberIdx) {
         return orderMapper.findAllByOrderMemberIdx(orderMemberIdx);
     }
 }
