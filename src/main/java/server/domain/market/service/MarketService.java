@@ -7,6 +7,7 @@ import server.domain.market.dto.MarketDtoConverter;
 import server.domain.market.dto.MarketRequestDto;
 import server.domain.market.dto.MarketResponseDto;
 import server.domain.market.repository.MarketRepository;
+import server.domain.member.repository.MemberRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
@@ -18,6 +19,7 @@ import java.util.List;
 public class MarketService {
 
     private final MarketRepository marketRepository;
+    private final MemberRepository memberRepository;
 
     public MarketResponseDto.MarketTaskSuccessResponseDto registerMarket(MarketRequestDto.MarketCreateRequestDto requestDto) {
         if (marketRepository.existsByMemberIdx(requestDto.getMemberIdx())) {
@@ -52,7 +54,8 @@ public class MarketService {
         return MarketDtoConverter.convertToMarketInfoResponseDto(market);
     }
 
-    public MarketResponseDto.MarketInfoResponseDto getMarketInfoByMemberIdx(Long memberIdx) {
+    public MarketResponseDto.MarketInfoResponseDto getMarketInfoByMemberId(String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Market market = marketRepository.findByMemberIdx(memberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MARKET_NOT_FOUND));
         return MarketDtoConverter.convertToMarketInfoResponseDto(market);
     }
