@@ -151,7 +151,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS","PATCH"));
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
         corsConfiguration.setExposedHeaders(Arrays.asList("Authorization", "Authorization-refresh"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setMaxAge(corsConfiguration.getMaxAge());
