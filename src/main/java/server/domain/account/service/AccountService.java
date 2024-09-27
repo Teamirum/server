@@ -24,7 +24,7 @@ public class AccountService {
     private final MemberRepository memberRepository;
 
     public AccountResponseDto.AccountTaskSuccessResponseDto upload(AccountRequestDto.UploadAccountRequestDto requestDto, String memberId) {
-        Long memberIdx = memberRepository.getIdxByMemberId(memberId);
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // memberIdx 값 출력
         System.out.println("Member Index: " + memberIdx);
@@ -50,7 +50,7 @@ public class AccountService {
     }
 
     public AccountResponseDto.AccountListResponseDto getAccountList(String memberId) {
-        Long memberIdx = memberRepository.getIdxByMemberId(memberId);
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         List<Account> accountList = accountRepository.findAllAccountByMemberIdx(memberIdx);
         return AccountDtoConverter.convertToAccountListResponseDto(accountList);
     }

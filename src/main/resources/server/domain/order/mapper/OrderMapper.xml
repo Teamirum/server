@@ -4,7 +4,7 @@
 <mapper namespace="server.domain.order.mapper.OrderMapper">
 
     <!-- Result Mapping with Enum TypeHandler -->
-    <resultMap id="MarketResultMap" type="server.domain.market.domain.Order">
+    <resultMap id="MarketResultMap" type="server.domain.order.domain.Order">
         <id property="idx" column="idx" />
         <result property="marketIdx" column="market_idx" />
         <result property="name" column="name" />
