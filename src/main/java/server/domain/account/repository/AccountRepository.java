@@ -3,6 +3,7 @@ package server.domain.account.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import server.domain.account.domain.Account;
+import server.domain.account.dto.AccountRequestDto;
 import server.domain.account.mapper.AccountMapper;
 
 import java.util.List;
@@ -48,6 +49,7 @@ public class AccountRepository {
         accountMapper.updateAccountAmount(idx, amount);
     }
 
+
     public boolean existsByAccountNumber(String accountNumber) {
         Account account = accountMapper.findByAccountNumber(accountNumber);
         return account != null;
@@ -58,10 +60,5 @@ public class AccountRepository {
         Account account = accountMapper.findByIdxAndMemberIdx(map);
         return account != null;
     }
-
-
-//    public void updateAccountSecret(Long idx, String accountSecret) {
-//        accountMapper.updateAccountSecret(idx, accountSecret);
-//    }
 
 }

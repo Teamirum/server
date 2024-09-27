@@ -69,11 +69,14 @@
     </select>
 
 
-    <!-- Update account -->
+<!--     Update account -->
     <update id="updateAccountAmount" parameterType="server.domain.account.domain.Account">
         UPDATE Account
         SET amount = #{amount}
         WHERE idx = #{idx}
     </update>
+
+
+
 
 </mapper>

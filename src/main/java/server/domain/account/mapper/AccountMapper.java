@@ -1,7 +1,9 @@
 package server.domain.account.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import server.domain.account.domain.Account;
+import server.domain.account.dto.AccountRequestDto;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,7 @@ public interface AccountMapper {
 
     void delete(Long idx);
 
-    void updateAccountAmount(Long idx, Integer amount);
+    void updateAccountAmount(@Param("idx") Long idx, @Param("amount") Integer amount);
+
 
 }

@@ -66,14 +66,15 @@ public class AccountService {
     }
 
 
-    public AccountResponseDto.AccountTaskSuccessResponseDto updateAmount(AccountRequestDto.UpdateAccountAmountRequestDto requestDto, String memberId) {
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        if (!accountRepository.existsByAccountIdxAndMemberIdx(requestDto.getIdx(), member.getIdx())) {
-            throw new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND);
-        }
-        accountRepository.updateAccountAmount(requestDto.getIdx(), Integer.valueOf(requestDto.getAmount()));
+    public AccountResponseDto.AccountTaskSuccessResponseDto updateAmount(AccountRequestDto.UpdateAccountAmountRequestDto requestDto) {
+        // 주어진 idx로 계좌 금액 업데이트
+        accountRepository.updateAccountAmount(requestDto.getIdx(), Integer.parseInt(requestDto.getAmount()));
+
+        // 성공 응답 생성
         return AccountResponseDto.AccountTaskSuccessResponseDto.builder()
                 .isSuccess(true)
+                .idx(requestDto.getIdx())
                 .build();
     }
+
 }
