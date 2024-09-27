@@ -8,19 +8,20 @@
         <id property="idx" column="idx" />
         <result property="marketIdx" column="market_idx" />
         <result property="name" column="name" />
+        <result property="memberCnt" column="member_cnt" />
         <result property="amount" column="amount" />
         <result property="taxFreeAmount" column="tax_free_amount" />
         <result property="vatAmount" column="vat_amount" />
         <result property="orderMemberIdx" column="order_member_idx" />
-        <result column="createdAt" property="createdAt" />
+        <result property="createdAt" column="created_at" />
     </resultMap>
 
     <!-- save Order -->
     <insert id="save" parameterType="server.domain.order.domain.Order">
         INSERT INTO Order (
-            market_idx, name, amount, tax_free_amount, vat_amount, order_member_idx, created_at
+            market_idx, name, member_cnt, amount, tax_free_amount, vat_amount, order_member_idx, created_at
         ) VALUES (
-            #{marketIdx}, #{name}, #{amount}, #{taxFreeAmount}, #{vatAmount}, #{orderMemberIdx}, #{createdAt}
+            #{marketIdx}, #{name}, #{memberCnt}, #{amount}, #{taxFreeAmount}, #{vatAmount}, #{orderMemberIdx}, #{createdAt}
         )
     </insert>
 
@@ -32,14 +33,14 @@
     </select>
 
     <!-- Select Order by MarketIdx -->
-    <select id="findByMarketIdx" parameterType="Long" resultMap="OrderResultMap">
+    <select id="findAllByMarketIdx" parameterType="Long" resultMap="OrderResultMap">
         SELECT *
         FROM Order
         WHERE market_idx = #{marketIdx}
     </select>
 
     <!-- Select Order by OrderMemberIdx -->
-    <select id="findByOrderMemberIdx" parameterType="Long" resultMap="OrderResultMap">
+    <select id="findAllByOrderMemberIdx" parameterType="Long" resultMap="OrderResultMap">
         SELECT *
         FROM Order
         WHERE order_member_idx = #{orderMemberIdx}
