@@ -64,12 +64,11 @@
     <!-- Get Account by AccountNumber -->
     <select id="findByAccountNumber" resultType="server.domain.account.domain.Account">
         SELECT *
-        FROM Account
+        FROM account
         WHERE account_number = #{accountNumber}
     </select>
 
-
-<!--     Update account -->
+    <!--     Update account -->
     <update id="updateAccountAmount" parameterType="server.domain.account.domain.Account">
         UPDATE Account
         SET amount = #{amount}

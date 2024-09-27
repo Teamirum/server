@@ -7,7 +7,6 @@ import server.domain.account.dto.AccountRequestDto;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Mapper
 public interface AccountMapper {
