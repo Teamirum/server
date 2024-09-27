@@ -53,6 +53,7 @@
         WHERE idx = #{idx}
     </delete>
 
+
     <!-- Get Account by Idx and MemberIdx -->
     <select id="findByIdxAndMemberIdx" parameterType="map" resultMap="AccountResultMap">
         SELECT *

@@ -20,11 +20,6 @@ public class AccountController {
 
     private final AccountService accountService;
 
-//    @GetMapping
-//    public AccountResponseDto.AccountListResponseDto getAccountList(@AuthenticationPrincipal String memberId) {
-//        return accountService.getAccountList(memberId);
-//    }
-
     private String getLoginMemberId() {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
@@ -50,8 +45,9 @@ public class AccountController {
         return ApiResponse.onSuccess(accountService.delete(idx, loginMemberId));
     }
 
+
     //계좌 amount 수정
-    @PutMapping
+    @PutMapping("/{id}/update")
     public ApiResponse<?> updateAccountAmount(@RequestBody AccountRequestDto.UpdateAccountAmountRequestDto requestDto) {
         String loginMemberId = getLoginMemberId();
         log.info("계좌 amount 수정 요청 : loginMemberId = {}, idx = {}, amount = {}", loginMemberId, requestDto.idx, requestDto.amount);
