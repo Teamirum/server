@@ -23,7 +23,7 @@ public class CreditService {
     private final MemberRepository memberRepository;
 
     public CreditResponseDto.CreditTaskSuccessResponseDto upload(CreditRequestDto.UploadCreditRequestDto requestDto, String memberId) {
-        Long memberIdx = memberRepository.getIdxByMemberId(memberId);
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         if (creditRepository.existsByCreditNumber(requestDto.getCreditNumber())) {
             throw new ErrorHandler(ErrorStatus.CREDIT_CARD_DUPLICATE);
         }
@@ -48,7 +48,7 @@ public class CreditService {
     }
 
     public CreditResponseDto.CreditListResponseDto getCreditList(String memberId) {
-        Long memberIdx = memberRepository.getIdxByMemberId(memberId);
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         List<Credit> creditList = creditRepository.findAllCreditByMemberIdx(memberIdx);
         return CreditDtoConverter.convertToCreditListResponseDto(creditList);
     }
