@@ -14,6 +14,7 @@
         <package name="server.domain.market.domain" />
         <package name="server.domain.credit.domain" />
         <package name="server.domain.account.domain" />
+        <package name="server.domain.order.domain" />
     </typeAliases>
 
 </configuration>
