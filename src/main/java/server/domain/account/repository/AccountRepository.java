@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import server.domain.account.domain.Account;
 import server.domain.account.mapper.AccountMapper;
-import server.domain.credit.domain.Credit;
 
 import java.util.List;
 import java.util.Optional;

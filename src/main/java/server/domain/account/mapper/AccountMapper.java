@@ -23,6 +23,4 @@ public interface AccountMapper {
 
     void updateAccountAmount(Long idx, Integer amount);
 
-//    void updateAccountSecret(Long idx, String accountSecret);
-
 }

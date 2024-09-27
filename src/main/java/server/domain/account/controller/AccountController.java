@@ -3,10 +3,8 @@ package server.domain.account.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import server.domain.account.dto.AccountRequestDto;
-import server.domain.account.dto.AccountResponseDto;
 import server.domain.account.service.AccountService;
 import server.global.apiPayload.ApiResponse;
 import server.global.apiPayload.code.status.ErrorStatus;
