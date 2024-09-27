@@ -24,13 +24,7 @@ public class MemberController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authToken", value = "인증토큰", required = true),
     })
-    @ApiOperation(  // API에 대한 Swagger 설명
-            value="회원가입",
-            httpMethod = "POST",
-            consumes = "application/json",
-            produces = "application/json",
-            protocols = "http"
-            )
+    @ApiOperation(value="회원가입")
     public ApiResponse<?> signUp(@RequestBody MemberRequestDto.MemberSignupRequestDto requestDto
 //                                 ,@RequestParam(value = "authToken") String authToken
     ) {
@@ -46,9 +40,4 @@ public class MemberController {
         return ApiResponse.onSuccess(memberService.signUp(requestDto));
     }
 
-    @GetMapping("/test")
-    public ApiResponse<?> test() {
-        log.info("test");
-        return ApiResponse.onSuccess("test");
-    }
 }

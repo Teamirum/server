@@ -22,6 +22,8 @@ public class CreditService {
     private final CreditRepository creditRepository;
     private final MemberRepository memberRepository;
 
+    // 신용카드 등록
+    // POST /api/credit
     public CreditResponseDto.CreditTaskSuccessResponseDto upload(CreditRequestDto.UploadCreditRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         if (creditRepository.existsByCreditNumber(requestDto.getCreditNumber())) {
@@ -47,6 +49,8 @@ public class CreditService {
                 .build();
     }
 
+    // 신용카드 조회
+    // GET /api/credit
     public CreditResponseDto.CreditListResponseDto getCreditList(String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         List<Credit> creditList = creditRepository.findAllCreditByMemberIdx(memberIdx);
