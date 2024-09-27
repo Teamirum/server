@@ -9,15 +9,18 @@ import java.util.Optional;
 @Mapper
 public interface AccountMapper {
 
-    // 계좌 저장 (Insert 또는 Update)
-//    void save(Account account);
+    List<Account> findAllByMemberIdx(Long memberIdx);
 
-   // 내 계좌 조회
-   List<Account> findByMemberId(Long memberId);
+    Account findByAccountIdx(Long accountIdx);
 
-    // 계좌 ID로 계좌 조회
-//    Optional<Account> findById(Long accountId);
+    Account findByAccountNumber(String accountNumber);
 
-    // 계좌 삭제
-//    void deleteById(Long accountId);
+    Account findByIdxAndMemberIdx(Long accountIdx, Long memberIdx);
+
+    void save(Account account);
+
+    void delete(Long accountIdx);
+
+    void updateAccountAmount(Long idx, Integer amount);
+
 }
