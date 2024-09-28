@@ -49,7 +49,7 @@ public class AccountController {
 
 
     //계좌 amount
-    @PutMapping("/{idx}/update")
+    @PatchMapping("/{idx}/update")
     public ResponseEntity<AccountResponseDto.AccountTaskSuccessResponseDto> updateAccountAmount(
             @PathVariable Long idx,
             @RequestBody AccountRequestDto.UpdateAccountAmountRequestDto requestDto) {
