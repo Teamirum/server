@@ -20,5 +20,4 @@ public interface MemberMapper {
 
     Long getIdxByMemberId(String memberId);
 
-    Optional<String> findPhoneNumByMemberIdx(String memberId);
 }

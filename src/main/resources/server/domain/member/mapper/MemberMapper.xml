@@ -81,11 +81,4 @@
         WHERE member_id = #{memberId}
     </update>
 
-    <!-- Select PhoneNum by MemberIdx -->
-    <select id="findPhoneNumByMemberIdx" parameterType="Long" resultType="String">
-        SELECT phone_num
-        FROM Member
-        WHERE idx = #{memberIdx}
-    </select>
-
 </mapper>
