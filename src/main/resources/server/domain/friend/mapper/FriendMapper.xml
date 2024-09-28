@@ -1,0 +1,55 @@
+<mapper namespace="server.domain.friend.mapper.FriendMapper">
+
+    <!-- Result Mapping for Friend -->
+    <resultMap id="FriendResultMap" type="server.domain.friend.domain.Friend">
+        <id property="idx" column="idx" />
+        <result property="memberIdx" column="member_idx" />
+        <result property="friendMemberId" column="friend_member_id" />
+        <result property="createdAt" column="created_at" />
+        <result property="isFavorite" column="is_favorite" typeHandler="org.apache.ibatis.type.BooleanTypeHandler" />
+    </resultMap>
+
+    <!-- Select All Friends by MemberIdx -->
+    <select id="findAllByMemberIdx" parameterType="Long" resultMap="FriendResultMap">
+        SELECT *
+        FROM Friend
+        WHERE member_idx = #{memberIdx}
+    </select>
+
+    <!-- Select Friend by FriendIdx -->
+    <select id="findByFriendIdx" parameterType="Long" resultMap="FriendResultMap">
+        SELECT *
+        FROM Friend
+        WHERE idx = #{idx}
+    </select>
+
+    <!-- Insert Friend -->
+    <insert id="save" parameterType="server.domain.friend.domain.Friend">
+        INSERT INTO Friend (
+        member_idx, friend_member_id, created_at, is_favorite
+        ) VALUES (
+        #{memberIdx}, #{friendMemberId}, #{createdAt}, #{isFavorite}
+        )
+    </insert>
+
+    <!-- Update Friend's Favorite Status -->
+    <update id="updateFavoriteStatus" parameterType="server.domain.friend.domain.Friend">
+        UPDATE Friend
+        SET is_favorite = #{isFavorite}
+        WHERE idx = #{idx}
+    </update>
+
+    <!-- Delete Friend -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM Friend
+        WHERE idx = #{idx}
+    </delete>
+
+    <!-- Find Friend by MemberIdx and FriendMemberId -->
+    <select id="findByMemberIdxAndFriendMemberId" parameterType="map" resultMap="FriendResultMap">
+        SELECT *
+        FROM Friend
+        WHERE member_idx = #{memberIdx} AND friend_member_id = #{friendMemberId}
+    </select>
+
+</mapper>

@@ -1,7 +1,6 @@
 package server.domain.member.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.data.repository.query.Param;
 import server.domain.member.domain.Member;
 
 import java.util.Map;
@@ -20,4 +19,6 @@ public interface MemberMapper {
     Member findBySocialTypeAndMemberId(Map<String, Object> map);
 
     Long getIdxByMemberId(String memberId);
+
+    Optional<String> findPhoneNumByMemberIdx(String memberId);
 }

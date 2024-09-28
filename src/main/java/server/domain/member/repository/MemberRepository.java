@@ -55,4 +55,9 @@ public class MemberRepository {
         }
         return Optional.empty();
     }
+
+    // memberIdx로 Member에서 전화번호 가져오기
+    public Optional<Optional<String>> findPhoneNumByMemberIdx(String memberId) {
+        return Optional.ofNullable(memberMapper.findPhoneNumByMemberIdx(memberId));
+    }
 }
