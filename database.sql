@@ -92,15 +92,7 @@ CREATE TABLE `Order` (
                          PRIMARY KEY (`idx`),
                          FOREIGN KEY (`market_idx`) REFERENCES `Market`(`idx`) ON DELETE CASCADE
 );
--- SocialPay 테이블
-CREATE TABLE `SocialPay` (
-                             `idx` BIGINT AUTO_INCREMENT NOT NULL,
-                             `platform` ENUM('KPAY', 'NPAY', 'TOSSPAY') NOT NULL,
-                             `aid` VARCHAR(100) NOT NULL,
-                             `tid` VARCHAR(100) NOT NULL,
-                             `access_token` VARCHAR(255),
-                             PRIMARY KEY (`idx`)
-);
+
 -- BusinessCard 테이블
 CREATE TABLE `BusinessCard` (
                                 `idx` BIGINT AUTO_INCREMENT NOT NULL,
@@ -136,7 +128,6 @@ CREATE TABLE `Pay` (
                        `order_idx` BIGINT NOT NULL,
                        `credit_idx` BIGINT,
                        `account_idx` BIGINT,
-                       `socialpay_idx` BIGINT,
                        `pay_method` ENUM('card', 'account', 'npay', 'kpay') NOT NULL,
                        `aid` VARCHAR(100) NOT NULL,
                        `tid` VARCHAR(100) NOT NULL,
@@ -149,29 +140,13 @@ CREATE TABLE `Pay` (
                        FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE,
                        FOREIGN KEY (`credit_idx`) REFERENCES `Credit`(`idx`) ON DELETE CASCADE,
                        FOREIGN KEY (`account_idx`) REFERENCES `Account`(`idx`) ON DELETE CASCADE,
-                       FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
-                       FOREIGN KEY (`socialpay_idx`) REFERENCES `SocialPay`(`idx`) ON DELETE CASCADE
-);
--- TogetherPay 테이블
-CREATE TABLE `TogetherPay` (
-                               `idx` BIGINT AUTO_INCREMENT NOT NULL,
-                               `member_idx` BIGINT NOT NULL,
-                               `order_idx` BIGINT NOT NULL,
-                               `pay_idx` BIGINT NOT NULL,
-                               `amount` BIGINT NOT NULL,
-                               `member_cnt` INT NOT NULL,
-                               `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                               PRIMARY KEY (`idx`),
-                               FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE,
-                               FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
-                               FOREIGN KEY (`pay_idx`) REFERENCES `Pay`(`idx`) ON DELETE CASCADE
+                       FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE
 );
 -- Transaction 테이블
 CREATE TABLE `Transaction` (
                                `idx` BIGINT AUTO_INCREMENT NOT NULL,
                                `member_idx` BIGINT NOT NULL,
                                `credit_idx` BIGINT NOT NULL,
-                               `socialPay_idx` BIGINT NOT NULL,
                                `account_idx` BIGINT NOT NULL,
                                `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                `pay_method` ENUM('CARD', 'ACCOUNT', 'NPAY', 'KPAY', 'TogetherPay') NOT NULL,
@@ -183,5 +158,4 @@ CREATE TABLE `Transaction` (
                                FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE,
                                FOREIGN KEY (`credit_idx`) REFERENCES `Credit`(`idx`) ON DELETE CASCADE,
                                FOREIGN KEY (`account_idx`) REFERENCES `Account`(`idx`) ON DELETE CASCADE,
-                               FOREIGN KEY (`socialPay_idx`) REFERENCES `SocialPay`(`idx`) ON DELETE CASCADE
 );

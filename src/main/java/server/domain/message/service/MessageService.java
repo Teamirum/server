@@ -66,7 +66,7 @@ public class MessageService implements InitializingBean {
         String data = redisUtil.getData(phoneNum);
         if (data == null || !data.equals(authNum)) {
             log.info("인증에 실패하였습니다. phoneNum = {}", phoneNum);
-            return MessageDtoConverter.convertToCheckMessageSuccessResponseDto(true, null);
+            return MessageDtoConverter.convertToCheckMessageSuccessResponseDto(false, null);
         }
         redisUtil.deleteData(phoneNum);
         String phoneAuthToken = jwtService.createPhoneAuthToken(phoneNum);
