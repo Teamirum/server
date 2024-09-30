@@ -93,6 +93,28 @@ CREATE TABLE `Order` (
                          FOREIGN KEY (`market_idx`) REFERENCES `Market`(`idx`) ON DELETE CASCADE
 );
 
+-- Menu 테이블
+CREATE TABLE `Menu` (
+                        `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                        `market_idx` BIGINT NOT NULL,
+                        `name` VARCHAR(100) NOT NULL,
+                        `price` INT NOT NULL,
+                        PRIMARY KEY (`idx`),
+                        FOREIGN KEY (`market_idx`) REFERENCES `Market`(`idx`) ON DELETE CASCADE
+);
+
+-- OrderMenu 테이블
+CREATE TABLE `OrderMenu` (
+                            `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                            `order_idx` BIGINT NOT NULL,
+                            `menu_idx` BIGINT NOT NULL,
+                            `price` INT NOT NULL,
+                            `amount` INT NOT NULL,
+                            PRIMARY KEY (`idx`),
+                            FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
+                            FOREIGN KEY (`menu_idx`) REFERENCES `Menu`(`idx`) ON DELETE CASCADE
+);
+
 -- BusinessCard 테이블
 CREATE TABLE `BusinessCard` (
                                 `idx` BIGINT AUTO_INCREMENT NOT NULL,
@@ -157,5 +179,5 @@ CREATE TABLE `Transaction` (
                                PRIMARY KEY (`idx`),
                                FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE,
                                FOREIGN KEY (`credit_idx`) REFERENCES `Credit`(`idx`) ON DELETE CASCADE,
-                               FOREIGN KEY (`account_idx`) REFERENCES `Account`(`idx`) ON DELETE CASCADE,
+                               FOREIGN KEY (`account_idx`) REFERENCES `Account`(`idx`) ON DELETE CASCADE
 );
