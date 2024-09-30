@@ -34,6 +34,12 @@
         FROM Market
     </select>
 
+    <!-- Select Market by memberId -->
+    <select id="findByMemberId" parameterType="string" resultMap="MarketResultMap">
+        SELECT *
+        FROM Market
+        WHERE member_idx = (SELECT idx FROM Member WHERE member_id = #{memberId})
+    </select>
 
 
 
