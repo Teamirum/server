@@ -27,4 +27,19 @@ public class OrderRequestDto {
         }
 
     }
+
+    @Data
+    public static class OrderMenuDto {
+        public Long menuIdx;
+        public int cnt;
+
+        @JsonCreator
+        public OrderMenuDto(
+                @JsonProperty("menuIdx") Long menuIdx,
+                @JsonProperty("cnt") int cnt
+        ) {
+            this.menuIdx = menuIdx;
+            this.cnt = cnt;
+        }
+    }
 }
