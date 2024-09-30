@@ -13,7 +13,4 @@ public interface OrderMapper {
     Order findByOrderIdx(Long orderIdx);
 
     List<Order> findAllByMarketIdx(Long marketIdx);
-
-    List<Order> findAllByOrderMemberIdx(Long orderMemberIdx);
-
 }

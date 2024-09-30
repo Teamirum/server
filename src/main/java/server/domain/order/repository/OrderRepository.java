@@ -29,8 +29,4 @@ public class OrderRepository {
     public List<Order> findAllByMarketIdx(Long marketIdx) {
         return orderMapper.findAllByMarketIdx(marketIdx);
     }
-
-    public List<Order> findAllByOrderMemberIdx(Long orderMemberIdx) {
-        return orderMapper.findAllByOrderMemberIdx(orderMemberIdx);
-    }
 }

@@ -20,7 +20,7 @@ public class Order {
 
     private String name;
 
-    private int memberCnt;
+    private int tableNumber;
 
     private int amount;
 
@@ -28,8 +28,12 @@ public class Order {
 
     private int vatAmount;
 
-    private Long orderMemberIdx;
-
     private LocalDateTime createdAt;
+
+    public void updateAmount(int amount) {
+        this.amount = amount;
+        this.taxFreeAmount =  Math.round(amount * 0.9f);
+        this.vatAmount = amount - taxFreeAmount;
+    }
 
 }

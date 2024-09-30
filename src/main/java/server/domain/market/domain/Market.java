@@ -23,6 +23,8 @@ public class Market {
 
     public String kakaoCid;
 
+    public int maxTableCnt;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime modifiedAt;
