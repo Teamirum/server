@@ -109,6 +109,7 @@ CREATE TABLE `OrderMenu` (
                             `idx` BIGINT AUTO_INCREMENT NOT NULL,
                             `order_idx` BIGINT NOT NULL,
                             `menu_idx` BIGINT NOT NULL,
+                            `menu_name` VARCHAR(100) NOT NULL,
                             `price` INT NOT NULL,
                             `amount` INT NOT NULL,
                             PRIMARY KEY (`idx`),

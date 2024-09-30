@@ -101,6 +101,7 @@ public class OrderService {
             OrderMenu orderMenu = OrderMenu.builder()
                     .orderIdx(order.getIdx())
                     .menuIdx(menu.getIdx())
+                    .menuName(menu.getName())
                     .amount(menuDto.getAmount())
                     .build();
             orderMenuRepository.save(orderMenu);
@@ -113,6 +114,25 @@ public class OrderService {
                 .build();
     }
 
+    public OrderResponseDto.OrderInfoResponseDto getOrderInfo(Long orderIdx) {
+        Order order = orderRepository.findByOrderIdx(orderIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_NOT_FOUND));
+        List<OrderMenu> orderMenuList = orderMenuRepository.findAllByOrderIdx(order.getIdx());
+        return OrderResponseDto.OrderInfoResponseDto.builder()
+                .idx(order.getIdx())
+                .marketIdx(order.getMarketIdx())
+                .name(order.getName())
+                .amount(order.getAmount())
+                .taxFreeAmount(order.getTaxFreeAmount())
+                .vatAmount(order.getVatAmount())
+                .tableNumber(order.getTableNumber())
+                .menuCnt(orderMenuList.size())
+                .orderMenuList(orderMenuList.stream()
+                        .map(OrderDtoConverter::convertToOrderMenuResponseDto)
+                        .toList())
+                .createdAt(order.getCreatedAt().toString())
+                .build();
+    }
+
 
 
     // 마켓에서 주문 리스트 조회하는 메서드
@@ -122,7 +142,12 @@ public class OrderService {
         Market market = marketRepository.findByMemberIdx(memberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MARKET_NOT_FOUND));
         List<Order> orderList = orderRepository.findAllByMarketIdx(market.getIdx());
         List <OrderResponseDto.OrderInfoResponseDto> orderInfoResponseDtoList = orderList.stream()
-                .map(OrderDtoConverter::convertToOrderInfoResponseDto)
+                .map(order -> {
+                    List<OrderMenu> orderMenuList = orderMenuRepository.findAllByOrderIdx(order.getIdx());
+                    return OrderDtoConverter.convertToOrderInfoResponseDto(order, orderMenuList.stream()
+                            .map(OrderDtoConverter::convertToOrderMenuResponseDto)
+                            .toList());
+                })
                 .toList();
         return OrderResponseDto.OrderListResponseDto.builder()
                 .orderList(orderInfoResponseDtoList)

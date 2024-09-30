@@ -8,6 +8,7 @@
         <id property="idx" column="idx" />
         <result property="orderIdx" column="order_idx" />
         <result property="menuIdx" column="menu_idx" />
+        <result property="menuName" column="menu_name" />
         <result property="price" column="price" />
         <result property="amount" column="amount" />
     </resultMap>

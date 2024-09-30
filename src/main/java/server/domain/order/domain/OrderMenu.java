@@ -19,6 +19,8 @@ public class OrderMenu {
 
     private Long menuIdx;
 
+    private String menuName;
+
     private int price;
 
     private int amount;
