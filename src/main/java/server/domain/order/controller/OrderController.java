@@ -47,6 +47,14 @@ public class OrderController {
         return ApiResponse.onSuccess(orderService.getOrderDetail(orderIdx, marketIdx));
     }
 
+    @PostMapping("/update")
+    @ApiOperation(value="주문 수정")
+    public ApiResponse<?> updateOrder(@RequestBody OrderRequestDto.UpdateOrderRequestDto requestDto) {
+        String memberId = getLoginMemberId();
+        log.info("주문 수정 요청 : memberId = {}", memberId);
+        return ApiResponse.onSuccess(orderService.updateOrderMenu(requestDto));
+    }
+
     private String getLoginMemberId() {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
