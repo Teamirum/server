@@ -4,7 +4,17 @@ package server.domain.menu.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 public class MenuResponseDto {
+
+    @Data
+    @Builder
+    public static class AllMenuInfoResponseDto {
+        private int totalCnt;
+        private List<MenuInfoResponseDto> menuList;
+        private Boolean isSuccess;
+    }
 
     @Data
     @Builder

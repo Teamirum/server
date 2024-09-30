@@ -20,7 +20,7 @@
     </select>
 
     <!-- Select Menu by marketIdx -->
-    <select id="findByMarketIdx" parameterType="Long" resultMap="MenuResultMap">
+    <select id="findAllByMarketIdx" parameterType="Long" resultMap="MenuResultMap">
         SELECT *
         FROM Menu
         WHERE market_idx = #{marketIdx}

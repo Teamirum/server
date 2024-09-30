@@ -19,8 +19,8 @@ public class MenuRepository {
         return Optional.ofNullable(menuMapper.findByMarketIdxAndName(marketIdx, name));
     }
 
-    public List<Menu> findByMarketIdx(Long marketIdx) {
-        return menuMapper.findByMarketIdx(marketIdx);
+    public List<Menu> findAllByMarketIdx(Long marketIdx) {
+        return menuMapper.findAllByMarketIdx(marketIdx);
     }
 
     public Optional<Menu> findByIdx(Long idx) {

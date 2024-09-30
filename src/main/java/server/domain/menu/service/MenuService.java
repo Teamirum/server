@@ -7,12 +7,15 @@ import server.domain.market.repository.MarketRepository;
 import server.domain.member.mapper.MemberMapper;
 import server.domain.member.repository.MemberRepository;
 import server.domain.menu.domain.Menu;
+import server.domain.menu.dto.MenuDtoConverter;
 import server.domain.menu.dto.MenuRequestDto;
 import server.domain.menu.dto.MenuResponseDto;
 import server.domain.menu.model.MenuType;
 import server.domain.menu.repository.MenuRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +25,7 @@ public class MenuService {
     private final MarketRepository marketRepository;
     private final MemberRepository memberRepository;
 
-    public MenuResponseDto.MenuTaskSuccessResponseDto registerMarket(MenuRequestDto.CreateMenuRequestDto requestDto, String memberId) {
+    public MenuResponseDto.MenuTaskSuccessResponseDto registerMenu(MenuRequestDto.CreateMenuRequestDto requestDto, String memberId) {
         Long marketIdx = getMarketIdx(memberId);
         if (menuRepository.existsByMarketIdxAndName(marketIdx, requestDto.getName())) {
             throw new ErrorHandler(ErrorStatus.MENU_ALREADY_EXIST);
@@ -42,6 +45,14 @@ public class MenuService {
                 .idx(savedMenu.getIdx())
                 .isSuccess(true)
                 .build();
+    }
+
+    public MenuResponseDto.AllMenuInfoResponseDto getAllMenu(String memberId) {
+        Long marketIdx = getMarketIdx(memberId);
+        List<Menu> menuList = menuRepository.findAllByMarketIdx(marketIdx);
+
+        return MenuDtoConverter.convertToAllMenuInfoResponseDto(menuList);
+
     }
 
     private Long getMarketIdx(String memberId) {

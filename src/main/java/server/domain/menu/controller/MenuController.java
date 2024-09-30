@@ -2,10 +2,7 @@ package server.domain.menu.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import server.domain.menu.dto.MenuRequestDto;
 import server.domain.menu.service.MenuService;
 import server.global.apiPayload.ApiResponse;
@@ -25,7 +22,14 @@ public class MenuController {
     public ApiResponse<?> registerMenu(@RequestBody MenuRequestDto.CreateMenuRequestDto requestDto) {
         String memberId = getLoginMemberId();
         log.info("메뉴 등록 요청 : memberId = {}", memberId);
-        return ApiResponse.onSuccess(menuService.registerMarket(requestDto, memberId));
+        return ApiResponse.onSuccess(menuService.registerMenu(requestDto, memberId));
+    }
+
+    @GetMapping("/all")
+    public ApiResponse<?> getAllMenu() {
+        String memberId = getLoginMemberId();
+        log.info("메뉴 전체 조회 요청 : memberId = {}", memberId);
+        return ApiResponse.onSuccess(menuService.getAllMenu(memberId));
     }
 
     private String getLoginMemberId() {

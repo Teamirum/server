@@ -11,7 +11,7 @@ public interface MenuMapper {
 
     Menu findByMarketIdxAndName(Long marketIdx, String name);
 
-    List<Menu> findByMarketIdx(Long marketIdx);
+    List<Menu> findAllByMarketIdx(Long marketIdx);
 
     Menu findByIdx(Long idx);
 
