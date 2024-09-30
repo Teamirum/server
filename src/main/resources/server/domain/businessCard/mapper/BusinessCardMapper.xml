@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.businessCard.mapper.BusinessCardMapper">
+
+    <!-- Result Mapping -->
+    <resultMap id="BusinessCardResultMap" type="server.domain.businessCard.domain.BusinessCard">
+        <id property="idx" column="idx" />
+        <result property="memberIdx" column="member_idx" />
+        <result property="name" column="name" />
+        <result property="company" column="company" />
+        <result property="phoneNum" column="phone_num" />
+        <result property="email" column="email" />
+        <result property="telNum" column="tel_num" />
+        <result property="faxNum" column="fax_num" />
+        <result property="part" column="part" />
+        <result property="position" column="position" />
+        <result property="address" column="address" />
+
+    </resultMap>
+
+    <!-- Select All BusinessCards by MemberIdx -->
+    <select id="findByMemberIdx" parameterType="Long" resultMap="BusinessCardResultMap">
+        SELECT *
+        FROM BusinessCard
+        WHERE member_idx = #{memberIdx}
+    </select>
+
+    <!-- Select BusinessCard by CardIdx -->
+    <select id="findAllByMemberIdx" parameterType="Long" resultMap="BusinessCardResultMap">
+        SELECT *
+        FROM BusinessCard
+        WHERE idx = #{idx}
+    </select>
+
+    <!-- insert BusinessCard -->
+    <insert id="save" parameterType="server.domain.businessCard.domain.BusinessCard">
+        INSERT INTO BusinessCard (member_idx, name, company, phone_num, email, tel_num, fax_num, part, position, address)
+        VALUES (#{memberIdx}, #{name}, #{company}, #{phoneNum}, #{email}, #{telNum}, #{faxNum}, #{part}, #{position}, #{address})
+    </insert>
+
+
+
+    <!-- update BusinessCard -->
+    <update id="updateBusinessCard" parameterType="server.domain.businessCard.domain.BusinessCard">
+        UPDATE BusinessCard
+        SET name = #{name}, company = #{company}, phone_num = #{phoneNum}, email = #{email}, tel_num = #{telNum},
+            fax_num = #{faxNum}, part = #{part}, position = #{position}, address = #{address}, img_url = #{imgUrl}
+        WHERE idx = #{idx}
+          AND member_idx = #{memberIdx}
+    </update>
+
+
+    <!-- update BusinessCard Image -->
+<!--    <update id="updateBusinessCardImage" parameterType="map">-->
+<!--        UPDATE BusinessCard-->
+<!--        SET img_url = #{imgUrl}-->
+<!--        WHERE idx = #{idx}-->
+<!--    </update>-->
+
+    <!-- delete BusinessCard -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM BusinessCard
+        WHERE idx = #{idx}
+    </delete>
+
+    <!-- get BusinessCard by Idx And MemberIdx -->
+    <select id="findByIdxAndMemberIdx" parameterType="map" resultMap="BusinessCardResultMap">
+        SELECT *
+        FROM BusinessCard
+        WHERE idx = #{idx} AND member_idx = #{memberIdx}
+    </select>
+
+    <select id="findByBusinessCardIdx" parameterType="Long" resultMap="BusinessCardResultMap">
+        SELECT *
+        FROM BusinessCard
+        WHERE idx = #{idx}
+    </select>
+
+</mapper>

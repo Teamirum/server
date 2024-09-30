@@ -40,7 +40,6 @@ CREATE TABLE `Credit` (
                           `credit_secret` VARCHAR(20) NOT NULL,
                           `amount_sum` BIGINT NOT NULL,
                           `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                          `img_url` VARCHAR(255),
                           `expiration_date` VARCHAR(20) NOT NULL,
                           PRIMARY KEY (`idx`),
                           FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
@@ -114,7 +113,6 @@ CREATE TABLE `BusinessCard` (
                                 `part` VARCHAR(50),
                                 `position` VARCHAR(100),
                                 `address` VARCHAR(255),
-                                `img_url` VARCHAR(255),
                                 PRIMARY KEY (`idx`),
                                 FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
 );

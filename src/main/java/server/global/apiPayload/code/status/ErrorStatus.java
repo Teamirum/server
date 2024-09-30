@@ -55,6 +55,14 @@ public enum ErrorStatus implements BaseErrorCode {
 
     ORDER_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5001", "주문 저장에 실패하였습���다."),
 
+    // 명함 응답
+    BUSINESS_CARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "BUSINESSCARD4001", "해당 명함이 존재하지 않습니다."),
+    BUSINESS_CARD_DUPLICATE(HttpStatus.BAD_REQUEST, "BUSINESSCARD4002", "이미 등록된 명함입니다."),
+
+    BUSINESS_CARD_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "BUSINESSCARD5001", "명함 저장에 실패하였습니다."),
+
+
+
 
     //사진 응답
     IMAGE_UPLOAD_FAIL(HttpStatus.BAD_REQUEST, "IMG4001", "사진 업로드에 실패하였습니다."),

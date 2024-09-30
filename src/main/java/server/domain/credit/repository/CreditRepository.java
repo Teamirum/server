@@ -39,10 +39,6 @@ public class CreditRepository {
         return creditMapper.findAllByMemberIdx(memberIdx);
     }
 
-    public void updateCreditImage(Long idx, String imgUrl) {
-        Map<String, Object> map = Map.of("creditIdx", idx, "imgUrl", imgUrl);
-        creditMapper.updateCreditImage(map);
-    }
 
     public boolean existsByCreditNumber(String creditNumber) {
         Credit credit = creditMapper.findByCreditNumber(creditNumber);

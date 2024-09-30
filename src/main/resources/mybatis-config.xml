@@ -15,6 +15,7 @@
         <package name="server.domain.credit.domain" />
         <package name="server.domain.account.domain" />
         <package name="server.domain.order.domain" />
+        <package name="server.domain.businessCard.domain"/>
     </typeAliases>
 
 </configuration>
