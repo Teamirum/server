@@ -114,8 +114,13 @@ public class OrderService {
                 .build();
     }
 
-    public OrderResponseDto.OrderInfoResponseDto getOrderInfo(Long orderIdx) {
+    public OrderResponseDto.OrderInfoResponseDto getOrderDetail(Long orderIdx, Long marketIdx) {
         Order order = orderRepository.findByOrderIdx(orderIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_NOT_FOUND));
+        // 주문이 해당 마켓에 속해있지 않을 경우
+        // 보안적인 측면 추가로 고려
+        if (!order.getMarketIdx().equals(marketIdx)) {
+            throw new ErrorHandler(ErrorStatus.ORDER_NOT_FOUND);
+        }
         List<OrderMenu> orderMenuList = orderMenuRepository.findAllByOrderIdx(order.getIdx());
         return OrderResponseDto.OrderInfoResponseDto.builder()
                 .idx(order.getIdx())

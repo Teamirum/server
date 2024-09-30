@@ -30,12 +30,21 @@ public class OrderController {
         return ApiResponse.onSuccess(orderService.createOrder(requestDto, memberId));
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @ApiOperation(value="마켓에서 주문 리스트 조회")
     public ApiResponse<?> getOrderList() {
         String memberId = getLoginMemberId();
         log.info("주문 리스트 조회 요청 : memberId = {}", memberId);
         return ApiResponse.onSuccess(orderService.getMarketOrderList(memberId));
+    }
+
+    @GetMapping
+    @ApiOperation(value="주문 상세내역 조회")
+    public ApiResponse<?> getOrderDetail(@RequestParam Long orderIdx,
+                                         @RequestParam Long marketIdx) {
+        String memberId = getLoginMemberId();
+        log.info("주문 상세내역 조회 요청 : memberId = {}", memberId);
+        return ApiResponse.onSuccess(orderService.getOrderDetail(orderIdx, marketIdx));
     }
 
     private String getLoginMemberId() {
