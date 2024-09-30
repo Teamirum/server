@@ -99,6 +99,7 @@ CREATE TABLE `Menu` (
                         `market_idx` BIGINT NOT NULL,
                         `name` VARCHAR(100) NOT NULL,
                         `price` INT NOT NULL,
+                        `menu_type` ENUM('FOOD', 'DRINK', 'MAIN') NOT NULL,
                         PRIMARY KEY (`idx`),
                         FOREIGN KEY (`market_idx`) REFERENCES `Market`(`idx`) ON DELETE CASCADE
 );

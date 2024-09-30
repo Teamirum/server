@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.menu.mapper.MenuMapper">
+
+    <!-- Result Mapping with Enum TypeHandler -->
+    <resultMap id="MenuResultMap" type="server.domain.menu.domain.Menu">
+        <id property="idx" column="idx" />
+        <result property="marketIdx" column="market_idx" />
+        <result property="name" column="name" />
+        <result property="price" column="price" />
+        <result property="menuType" column="menu_type"/>
+    </resultMap>
+
+    <!-- Select Menu by marketIdx and name -->
+    <select id="findByMarketIdxAndName" parameterType="map" resultMap="MenuResultMap">
+        SELECT *
+        FROM Menu
+        WHERE market_idx = #{marketIdx} AND name = #{name}
+    </select>
+
+    <!-- Select Menu by marketIdx -->
+    <select id="findByMarketIdx" parameterType="Long" resultMap="MenuResultMap">
+        SELECT *
+        FROM Menu
+        WHERE market_idx = #{marketIdx}
+    </select>
+
+    <!-- Select Menu by idx -->
+    <select id="findByIdx" parameterType="Long" resultMap="MenuResultMap">
+        SELECT *
+        FROM Menu
+        WHERE idx = #{idx}
+    </select>
+
+    <!-- Insert Menu -->
+    <insert id="save" parameterType="server.domain.menu.domain.Menu">
+        INSERT INTO Menu (
+            market_idx, name, price, menu_type
+        ) VALUES (
+                     #{marketIdx}, #{name}, #{price}, #{menuType}
+                 )
+    </insert>
+
+    <!-- delete Menu by idx -->
+    <delete id="deleteByIdx" parameterType="Long">
+        DELETE
+        FROM Menu
+        WHERE idx = #{idx}
+    </delete>
+
+
+</mapper>

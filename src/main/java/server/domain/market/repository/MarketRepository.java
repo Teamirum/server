@@ -38,6 +38,14 @@ public class MarketRepository {
         return Optional.empty();
     }
 
+    public Optional<Market> findByMemberId(String memberId) {
+        Market market = marketMapper.findByMemberId(memberId);
+        if (market != null) {
+            return Optional.of(market);
+        }
+        return Optional.empty();
+    }
+
     public boolean existsByMarketIdx(Long marketIdx) {
         return marketMapper.findByMarketIdx(marketIdx) != null;
     }

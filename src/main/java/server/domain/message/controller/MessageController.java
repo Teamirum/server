@@ -29,7 +29,7 @@ public class MessageController {
     }
 
     @ApiOperation(value="인증번호 확인")
-    @GetMapping("/confirm")
+    @PostMapping("/confirm")
     public ApiResponse<?> confirmMessage(@RequestBody MessageRequestDto.CheckMessageRequestDto requestDto) {
         log.info("인증번호 확인 요청 : phoneNum = {}", requestDto.getPhoneNum());
         return ApiResponse.onSuccess(messageService.checkMessage(requestDto.getPhoneNum(), requestDto.getAuthNum()));
