@@ -2,12 +2,10 @@ package server.domain.businessCard.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import server.domain.account.domain.Account;
 import server.domain.businessCard.domain.BusinessCard;
 import server.domain.businessCard.mapper.BusinessCardMapper;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -50,9 +48,12 @@ public class BusinessCardRepository {
         businessCardMapper.delete(idx);
     }
 
-    public void updateBusinessCard(BusinessCard businessCard) {
+    public BusinessCard updateBusinessCard(BusinessCard businessCard) {
         businessCardMapper.updateBusinessCard(businessCard);
+        return businessCard;
     }
+
+
 
 
 }

@@ -29,7 +29,7 @@ public class BusinessCardController {
         return ApiResponse.onSuccess(businessCardService.upload(requestDto, loginMemberId));
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ApiResponse<?> getBusinessCardList() {
         String loginMemberId = getLoginMemberId();
         log.info("명함 리스트 조회 요청 : loginMemberId = {}", loginMemberId);
@@ -43,14 +43,23 @@ public class BusinessCardController {
         return ApiResponse.onSuccess(businessCardService.delete(idx, loginMemberId));
     }
 
-//    @PatchMapping("/{idx}/update")
-//    public ApiResponse<?> updateBusinessCard(
-//            @PathVariable Long idx,
-//            @RequestBody BusinessCardRequestDto.UpdateBusinessCardRequestDto requestDto) {
-//        requestDto.setIdx(idx);
-//        BusinessCardResponseDto.BusinessCardTaskSuccessResponseDto responseDto = businessCardService.update(requestDto);
-//        return ApiResponse.onSuccess(responseDto);
-//
-//    }
+    @PatchMapping
+    public ApiResponse<?> updateBusinessCard(
+            @RequestParam(value = "idx") Long idx,
+            @RequestBody BusinessCardRequestDto.UpdateBusinessCardRequestDto requestDto) {
+        String loginMemberId = getLoginMemberId();
+        requestDto.setIdx(idx);
+        log.info("명함 수정 요청 : loginMemberId = {}, idx = {}, 수정 내용 = {}", loginMemberId, idx, requestDto);
+        return ApiResponse.onSuccess(businessCardService.update(requestDto, loginMemberId));
+    }
+
+    @GetMapping
+    public ApiResponse<?> getBusinessCard(@RequestParam(value = "idx") Long idx) {
+        String loginMemberId = getLoginMemberId();
+        log.info("명함 조회 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
+        return ApiResponse.onSuccess(businessCardService.getBusinessCard(idx, loginMemberId));
+    }
+
+
 
 }

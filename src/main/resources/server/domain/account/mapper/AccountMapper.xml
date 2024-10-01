@@ -19,7 +19,7 @@
     <select id="findAllByMemberIdx" parameterType="Long" resultMap="AccountResultMap">
         SELECT *
         FROM Account
-        WHERE member_idx = #{memberIdx}
+        WHERE member_idx = #{memberIdx} ORDER BY idx DESC
     </select>
 
     <!-- Select Account by AccountIdx -->

@@ -44,11 +44,14 @@
     <!-- update BusinessCard -->
     <update id="updateBusinessCard" parameterType="server.domain.businessCard.domain.BusinessCard">
         UPDATE BusinessCard
-        SET name = #{name}, company = #{company}, phone_num = #{phoneNum}, email = #{email}, tel_num = #{telNum},
-            fax_num = #{faxNum}, part = #{part}, position = #{position}, address = #{address}, img_url = #{imgUrl}
-        WHERE idx = #{idx}
-          AND member_idx = #{memberIdx}
+        SET name = #{name}, company = #{company}, phone_num = #{phoneNum}, email = #{email},
+            tel_num = IFNULL(#{telNum}, tel_num),
+            fax_num = IFNULL(#{faxNum}, fax_num),
+            part = IFNULL(#{part}, part),
+            position = #{position}, address = #{address}
+        WHERE idx = #{idx} AND member_idx = #{memberIdx}
     </update>
+
 
 
     <!-- delete BusinessCard -->
@@ -69,5 +72,6 @@
         FROM BusinessCard
         WHERE idx = #{idx}
     </select>
+
 
 </mapper>
