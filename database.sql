@@ -109,7 +109,6 @@ CREATE TABLE `BusinessCard` (
                                 `phone_num` VARCHAR(15),
                                 `email` VARCHAR(100),
                                 `tel_num` VARCHAR(100),
-                                `fax_num` VARCHAR(255),
                                 `part` VARCHAR(50),
                                 `position` VARCHAR(100),
                                 `address` VARCHAR(255),

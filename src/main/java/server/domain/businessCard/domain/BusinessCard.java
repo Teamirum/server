@@ -25,8 +25,6 @@ public class BusinessCard {
 
     private String telNum;       // 회사 전화번호
 
-    private String faxNum;       // 팩스 번호
-
     private String part;         // 부서
 
     private String position;     // 직위

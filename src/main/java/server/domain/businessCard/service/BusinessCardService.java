@@ -90,7 +90,6 @@ public class BusinessCardService {
         businessCard.setEmail(requestDto.getEmail());
         businessCard.setPhoneNum(requestDto.getPhoneNum());
         businessCard.setAddress(requestDto.getAddress());
-        businessCard.setFaxNum(requestDto.getFaxNum());
         businessCard.setPart(requestDto.getPart());
 
         businessCardRepository.updateBusinessCard(businessCard);

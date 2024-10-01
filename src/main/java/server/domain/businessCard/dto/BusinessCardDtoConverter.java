@@ -16,7 +16,6 @@ public class BusinessCardDtoConverter {
                 .part(businessCard.getPart())
                 .company(businessCard.getCompany())
                 .address(businessCard.getAddress())
-                .faxNumber(businessCard.getFaxNum())
                 .build();
     }
 

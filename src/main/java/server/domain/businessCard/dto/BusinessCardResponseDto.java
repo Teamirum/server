@@ -33,6 +33,5 @@ public class BusinessCardResponseDto {
         public String part;
         public String company;
         public String address;
-        public String faxNumber;
     }
 }
