@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.order.mapper.OrderMenuMapper">
+
+    <!-- Result Mapping with Enum TypeHandler -->
+    <resultMap id="OrderMenuResultMap" type="server.domain.order.domain.OrderMenu">
+        <id property="idx" column="idx" />
+        <result property="orderIdx" column="order_idx" />
+        <result property="menuIdx" column="menu_idx" />
+        <result property="menuName" column="menu_name" />
+        <result property="price" column="price" />
+        <result property="amount" column="amount" />
+    </resultMap>
+
+    <!-- save OrderMenu -->
+    <insert id="save" parameterType="server.domain.order.domain.OrderMenu">
+        INSERT INTO OrderMenu (
+            order_idx, menu_idx, price, amount
+        ) VALUES (
+            #{orderIdx}, #{menuIdx}, #{price}, #{amount}
+        )
+    </insert>
+
+    <!-- Select OrderMenu by orderIdx -->
+    <select id="findAllByOrderIdx" parameterType="Long" resultMap="OrderMenuResultMap">
+        SELECT *
+        FROM OrderMenu
+        WHERE order_idx = #{orderIdx}
+    </select>
+
+    <!-- Select OrderMenu by orderIdx And menuIdx -->
+    <select id="findByOrderIdxAndMenuIdx" parameterType="server.domain.order.domain.OrderMenu" resultMap="OrderMenuResultMap">
+        SELECT *
+        FROM OrderMenu
+        WHERE order_idx = #{orderIdx} AND menu_idx = #{menuIdx}
+    </select>
+
+
+
+</mapper>

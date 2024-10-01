@@ -10,6 +10,7 @@
         <result property="name" column="name" />
         <result property="address" column="address" />
         <result property="kakaoCid" column="kakao_cid" />
+        <result property="maxTableCnt" column="maxTable_cnt" />
         <result column="created_at" property="createdAt" />
         <result column="modified_at" property="modifiedAt" />
     </resultMap>
@@ -46,9 +47,9 @@
     <!-- insert Market -->
     <insert id="save" parameterType="server.domain.market.domain.Market">
         INSERT INTO Market (
-            member_idx, name, address, kakao_cid
+            member_idx, name, address, kakao_cid, maxTable_cnt
         ) VALUES (
-            #{memberIdx}, #{name}, #{address}, #{kakaoCid}
+            #{memberIdx}, #{name}, #{address}, #{kakaoCid}, #{maxTableCnt}
                  )
     </insert>
 

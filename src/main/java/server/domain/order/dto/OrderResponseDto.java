@@ -24,8 +24,20 @@ public class OrderResponseDto {
         public int amount;
         public int taxFreeAmount;
         public int vatAmount;
-        public Long orderMemberIdx;
+        public int tableNumber;
+        public int menuCnt;
+        public List<OrderMenuResponseDto> orderMenuList;
         public String createdAt;
+    }
+
+    @Data
+    @Builder
+    public static class OrderMenuResponseDto {
+        public Long idx;
+        public Long menuIdx;
+        public String menuName;
+        public int price;
+        public int amount;
     }
 
     @Data

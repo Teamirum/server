@@ -16,7 +16,11 @@ public class MenuRepository {
     private final MenuMapper menuMapper;
 
     public Optional<Menu> findByMarketIdxAndName(Long marketIdx, String name) {
-        return Optional.ofNullable(menuMapper.findByMarketIdxAndName(marketIdx, name));
+        Menu menu = menuMapper.findByMarketIdxAndName(marketIdx, name);
+        if (menu != null) {
+            return Optional.of(menu);
+        }
+        return Optional.empty();
     }
 
     public List<Menu> findAllByMarketIdx(Long marketIdx) {
@@ -24,7 +28,11 @@ public class MenuRepository {
     }
 
     public Optional<Menu> findByIdx(Long idx) {
-        return Optional.ofNullable(menuMapper.findByIdx(idx));
+        Menu menu = menuMapper.findByIdx(idx);
+        if (menu != null) {
+            return Optional.of(menu);
+        }
+        return Optional.empty();
     }
 
     public boolean existsByMarketIdxAndName(Long marketIdx, String name) {
