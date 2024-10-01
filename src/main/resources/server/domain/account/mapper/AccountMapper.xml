@@ -38,15 +38,6 @@
                  )
     </insert>
 
-<!--    &lt;!&ndash; Update Account &ndash;&gt;-->
-<!--    <update id="update" parameterType="server.domain.account.domain.Account">-->
-<!--        UPDATE Account-->
-<!--        SET account_holder_name = #{accountHolderName}, amount = #{amount}, bank_name = #{bankName},-->
-<!--            account_number = #{accountNumber}, account_secret = #{accountSecret}-->
-<!--        WHERE idx = #{idx}-->
-<!--          AND member_idx = #{memberIdx}-->
-<!--    </update>-->
-
     <!-- Delete Account -->
     <delete id="delete" parameterType="Long">
         DELETE FROM Account

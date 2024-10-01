@@ -41,13 +41,6 @@ public class BusinessCardRepository {
         return businessCard != null;
     }
 
-//    public boolean existsBusinessCardIdxByMemberIdx(Long idx ,Long memberIdx) {
-//        Map<String, Object> map = Map.of("idx", idx, "memberIdx", memberIdx);
-//        BusinessCard businessCard = businessCardMapper.findByBusinessCardIdxAndMemberIdx(map);
-//        return businessCard != null;
-//    }
-
-
     public void save(BusinessCard businessCard) {
         businessCardMapper.save(businessCard);
         System.out.println("BusinessCard ID: " + businessCard.getIdx()); // 저장 후 idx 값 확인

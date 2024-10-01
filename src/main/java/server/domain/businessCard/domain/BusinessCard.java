@@ -33,6 +33,4 @@ public class BusinessCard {
 
     private String address;      // 주소
 
-    private String memo;         // 메모
-
 }

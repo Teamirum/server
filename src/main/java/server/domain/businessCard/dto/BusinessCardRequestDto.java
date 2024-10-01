@@ -16,7 +16,7 @@ public class BusinessCardRequestDto {
         public String part;
         public String company;
         public String address;
-        public String faxNumber;
+        public String faxNum;
         public String memo;
 
         @JsonCreator
@@ -29,7 +29,7 @@ public class BusinessCardRequestDto {
                 @JsonProperty("part") String part,
                 @JsonProperty("company") String company,
                 @JsonProperty("address") String address,
-                @JsonProperty("faxNumber") String faxNumber,
+                @JsonProperty("faxNum") String faxNumber,
                 @JsonProperty("memo") String memo
         ) {
             this.memberIdx = memberIdx;
@@ -40,9 +40,10 @@ public class BusinessCardRequestDto {
             this.part = part;
             this.company = company;
             this.address = address;
-            this.faxNumber = faxNumber;
+            this.faxNum = faxNum;
             this.memo = memo;
         }
+
     }
 
     @Data
@@ -55,8 +56,7 @@ public class BusinessCardRequestDto {
         public String part;
         public String company;
         public String address;
-        public String faxNumber;
-        public String memo;
+        public String faxNum;
 
         @JsonCreator
         public UpdateBusinessCardRequestDto(
@@ -68,8 +68,7 @@ public class BusinessCardRequestDto {
                 @JsonProperty("part") String part,
                 @JsonProperty("company") String company,
                 @JsonProperty("address") String address,
-                @JsonProperty("faxNumber") String faxNumber,
-                @JsonProperty("memo") String memo
+                @JsonProperty("faxNum") String faxNum
         ) {
             this.idx = idx;
             this.name = name;
@@ -79,8 +78,7 @@ public class BusinessCardRequestDto {
             this.part = part;
             this.company = company;
             this.address = address;
-            this.faxNumber = faxNumber;
-            this.memo = memo;
+            this.faxNum = faxNum;
         }
     }
 }
