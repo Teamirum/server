@@ -55,4 +55,14 @@ public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
 
         return (String) properties.get("thumbnail_image");
     }
+
+    public String getPhoneNum() {
+        Map<String, Object> account = (Map<String, Object>) attributes.get("kakao_account");
+
+        if (account == null) {
+            return null;
+        }
+
+        return (String) account.get("phone_number");
+    }
 }
