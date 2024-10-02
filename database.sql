@@ -93,6 +93,17 @@ CREATE TABLE `Order` (
                          FOREIGN KEY (`market_idx`) REFERENCES `Market`(`idx`) ON DELETE CASCADE
 );
 
+-- TogetherOrder 테이블
+CREATE TABLE `TogetherOrder` (
+                                `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                                `order_idx` BIGINT NOT NULL,
+                                `member_idx` BIGINT NOT NULL,
+                                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                                PRIMARY KEY (`idx`),
+                                FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
+                                FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
+);
+
 -- Menu 테이블
 CREATE TABLE `Menu` (
                         `idx` BIGINT AUTO_INCREMENT NOT NULL,
