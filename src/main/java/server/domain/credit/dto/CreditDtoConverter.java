@@ -35,37 +35,4 @@ public class CreditDtoConverter {
                 .build();
     }
 
-    // 카드 이름과 거래 내역을 반환하는 메소드
-    public static CreditResponseDto.CreditTransactionResponseDto convertToCreditTransactionResponseDto(Credit credit, List<Transaction> transactions) {
-        List<CreditResponseDto.TransactionDto> transactionDtos = transactions.stream().map(transaction -> {
-            return CreditResponseDto.TransactionDto.builder()
-                    .id(transaction.getIdx())
-                    .transactionDate(transaction.getTime().toLocalDate().toString())
-                    .amount(transaction.getAmount())
-                    .description(transaction.getMemo()) // memo를 description으로 변환
-                    .build();
-        }).collect(Collectors.toList());
-
-        return CreditResponseDto.CreditTransactionResponseDto.builder()
-                .cardName(credit.getCreditName())
-                .transactions(transactionDtos)
-                .build();
-    }
-
-    public static CreditResponseDto.CreditTransactionResponseDto convertToCreditTransactionResponseDto(List<Transaction> transactions, String cardName) {
-        List<CreditResponseDto.TransactionDto> transactionInfoList = transactions.stream()
-                .map(transaction -> CreditResponseDto.TransactionDto.builder()
-                        .id(transaction.getIdx())
-                        .transactionDate(String.valueOf(transaction.getTime())) // Assuming transaction.getTime() is of String type
-                        .amount(transaction.getAmount())
-                        .description(transaction.getMemo()) // Assuming transaction.getMemo() is description
-                        .build())
-                .toList();
-
-        return CreditResponseDto.CreditTransactionResponseDto.builder()
-                .isSuccess(true)
-                .cardName(cardName)
-                .transactions(transactionInfoList)
-                .build();
-    }
 }

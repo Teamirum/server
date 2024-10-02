@@ -37,18 +37,21 @@ public class CreditResponseDto {
 
     @Data
     @Builder
-    public static class CreditTransactionResponseDto {
+    public static class CreditHistoryTransactionResponseDto {
         private Boolean isSuccess;
-        private String cardName; // 카드 이름 추가
-        private List<TransactionDto> transactions; // 수정: transactions 필드 추가
-    }
+        private String cardName;
+        private int cnt;
+        private List<CreditHistoryInfoResponseDto> creditHistoryList;
 
-    @Data
-    @Builder
-    public static class TransactionDto {
-        private Long id;
-        private String transactionDate;
-        private int amount;
-        private String description;
+        @Data
+        @Builder
+        public static class CreditHistoryInfoResponseDto {
+            private Long idx;
+            private Long creditIdx;
+            private String name;
+            private int amount;
+            private int amountSum;
+            private String createdAt;
+        }
     }
 }

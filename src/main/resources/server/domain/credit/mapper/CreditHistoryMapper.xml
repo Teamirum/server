@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.credit.mapper.CreditHistoryMapper">
+
+    <!-- Result Mapping for CreditHistory -->
+    <resultMap id="CreditHistoryResultMap" type="server.domain.credit.domain.CreditHistory">
+        <id property="idx" column="idx" />
+        <result property="creditIdx" column="credit_idx" />
+        <result property="createdAt" column="created_at" />
+        <result property="amount" column="amount" />
+        <result property="amountSum" column="amount_sum" />
+        <result property="name" column="name" />
+    </resultMap>
+
+    <!-- Select all CreditHistory by CreditIdx -->
+    <select id="findAllByCreditIdx" parameterType="Long" resultMap="CreditHistoryResultMap">
+        SELECT *
+        FROM CreditHistory
+        WHERE credit_idx = #{creditIdx}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- Select CreditHistory by HistoryIdx -->
+    <select id="findByIdx" parameterType="Long" resultMap="CreditHistoryResultMap">
+        SELECT *
+        FROM CreditHistory
+        WHERE idx = #{idx}
+    </select>
+
+    <!-- Insert CreditHistory -->
+    <insert id="save" parameterType="server.domain.credit.domain.CreditHistory">
+        INSERT INTO CreditHistory (
+            credit_idx, created_at, amount, amount_sum, name
+        ) VALUES (
+                     #{creditIdx}, #{createdAt}, #{amount}, #{amountSum}, #{name}
+                 )
+    </insert>
+
+    <!-- Update CreditHistory by idx -->
+    <update id="update" parameterType="server.domain.credit.domain.CreditHistory">
+        UPDATE CreditHistory
+        SET credit_idx = #{creditIdx}, created_at = #{createdAt}, amount = #{amount}, amount_sum = #{amountSum}, name = #{name}
+        WHERE idx = #{idx}
+    </update>
+
+    <!-- Delete CreditHistory by idx -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM CreditHistory
+        WHERE idx = #{idx}
+    </delete>
+
+    <!-- Select all CreditHistory by CreditIdx and Date Range -->
+    <select id="findAllByCreditIdxAndDateRange" parameterType="map" resultMap="CreditHistoryResultMap">
+        SELECT *
+        FROM CreditHistory
+        WHERE credit_idx = #{creditIdx}
+          AND created_at BETWEEN #{startDate} AND #{endDate}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- CreditHistory 테이블에 데이터 삽입 -->
+    <insert id="insertCreditHistory" parameterType="CreditHistory">
+        INSERT INTO CreditHistory (credit_idx, created_at, amount, amount_sum, name)
+        VALUES (#{creditIdx}, NOW(), #{amount}, #{amountSum}, #{name})
+    </insert>
+
+
+</mapper>

@@ -47,16 +47,16 @@ public class CreditRepository {
         return credit != null;
     }
 
-    public boolean existsByCreditIdxAndMemberIdx(Long creditIdx, Long memberIdx) {
-        Map<String, Object> map = Map.of("creditIdx", creditIdx, "memberIdx", memberIdx);
+    public boolean existsByCreditIdxAndMemberIdx(Long idx, Long memberIdx) {
+        Map<String, Object> map = Map.of("idx", idx, "memberIdx", memberIdx);
         Credit credit = creditMapper.findByIdxAndMemberIdx(map);
         return credit != null;
     }
 
 
 
-    public void deleteCredit(Long creditIdx) {
-        creditMapper.deleteCredit(creditIdx);
+    public void delete(Long idx) {
+        creditMapper.delete(idx);
     }
 
     public List<Credit> findAllByMemberIdx(Long memberIdx) {
@@ -64,12 +64,14 @@ public class CreditRepository {
     }
 
 
-    public Optional<Object> findByCreditIdxAndMemberIdx(Long creditIdx, Long memberIdx) {
+    public Optional<Credit> findByCreditIdxAndMemberIdx(Long creditIdx, Long memberIdx) {
         Map<String, Object> map = Map.of("creditIdx", creditIdx, "memberIdx", memberIdx);
         Credit credit = creditMapper.findByIdxAndMemberIdx(map);
-        if (credit != null) {
-            return Optional.of(credit);
-        }
-        return Optional.empty();
+        return Optional.ofNullable(credit);
+    }
+
+
+    public Optional<Object> findMemberIdxByCreditIdx(Long creditIdx) {
+        return Optional.ofNullable(creditMapper.findMemberIdxByCreditIdx(creditIdx));
     }
 }

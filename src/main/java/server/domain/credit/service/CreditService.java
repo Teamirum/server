@@ -3,19 +3,21 @@ package server.domain.credit.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import server.domain.credit.domain.Credit;
+import server.domain.credit.domain.CreditHistory;
 import server.domain.credit.dto.CreditDtoConverter;
+import server.domain.credit.dto.CreditHistoryRequestDto;
 import server.domain.credit.dto.CreditRequestDto;
 import server.domain.credit.dto.CreditResponseDto;
+import server.domain.credit.mapper.CreditHistoryMapper;
 import server.domain.credit.repository.CreditRepository;
 import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
-import server.domain.transaction.domain.Transaction;
-import server.domain.transaction.repository.TransactionRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class CreditService {
 
     private final CreditRepository creditRepository;
     private final MemberRepository memberRepository;
-    private final TransactionRepository transactionRepository;
+    private final CreditHistoryMapper creditHistoryMapper;
 
     public CreditResponseDto.CreditTaskSuccessResponseDto upload(CreditRequestDto.UploadCreditRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -57,33 +59,43 @@ public class CreditService {
     }
 
 
-    public CreditResponseDto.CreditTaskSuccessResponseDto delete(Long creditIdx, String memberId) {
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        if (!creditRepository.existsByCreditIdxAndMemberIdx(creditIdx, member.getIdx())) {
+    public CreditResponseDto.CreditTaskSuccessResponseDto delete(Long idx, String memberId) {
+        Member member =  memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!creditRepository.existsByCreditIdxAndMemberIdx(idx, member.getIdx())) {
             throw new ErrorHandler(ErrorStatus.CREDIT_CARD_NOT_FOUND);
         }
-        creditRepository.deleteCredit(creditIdx);
+
+        creditRepository.delete(idx);
         return CreditResponseDto.CreditTaskSuccessResponseDto.builder()
                 .isSuccess(true)
-                .idx(creditIdx)
+                .idx(idx)
                 .build();
     }
 
-    // 카드 거래 내역 조회 기능 추가
-    public CreditResponseDto.CreditTransactionResponseDto getCreditTransactionList(Long creditIdx, String memberId) {
-        Long memberIdx = memberRepository.getIdxByMemberId(memberId)
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    // 카드 결제 내역 조회
+    public List<CreditHistory> getCreditHistoryList(Long idx, String loginMemberId) {
+        // 카드의 소유자 확인 (로그인한 사용자가 해당 카드의 소유자인지 확인)
+        if (!isCardOwner(idx, loginMemberId)) {
+            throw new ErrorHandler(ErrorStatus.UNAUTHORIZED_ACCESS);
+        }
 
-        // 회원과 연결된 카드인지 확인
-        Credit credit = (Credit) creditRepository.findByCreditIdxAndMemberIdx(creditIdx, memberIdx)
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_CARD_NOT_FOUND));
-
-        // 해당 카드와 연결된 거래 내역 조회
-        List<Transaction> transactions = transactionRepository.findAllByCreditIdx(creditIdx); // TransactionRepository에서 거래 내역 조회
-
-        return CreditDtoConverter.convertToCreditTransactionResponseDto(transactions, credit.getCreditName());
+        // 해당 카드의 결제 내역 조회
+        return creditHistoryMapper.findAllByCreditIdx(idx);
     }
 
+    // 카드 소유자 확인 (예시 메서드)
+    private boolean isCardOwner(Long idx, String loginMemberId) {
+        // 카드 소유자 확인 로직 추가
+        Long memberIdx = memberRepository.getIdxByMemberId(loginMemberId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        // 해당 카드가 로그인한 사용자의 카드인지 확인
+        return creditRepository.findByCreditIdxAndMemberIdx(idx, memberIdx) != null;
+    }
+
+    public Long findCreditMemberIdxByCreditIdx(Long creditIdx) {
+        return (Long) creditRepository.findMemberIdxByCreditIdx(creditIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_NOT_FOUND));
+    }
 
 }

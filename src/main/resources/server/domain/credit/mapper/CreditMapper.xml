@@ -72,6 +72,11 @@
         FROM Credit
         WHERE idx = #{idx} AND member_idx = #{memberIdx}
     </select>
+    <select id="findMemberIdxByCreditIdx" resultType="java.lang.Object">
+        SELECT member_idx
+        FROM Credit
+        WHERE idx = #{idx}
+    </select>
 
 
 </mapper>

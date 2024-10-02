@@ -2,6 +2,7 @@ package server.domain.credit.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import server.domain.credit.domain.Credit;
+import server.domain.credit.domain.CreditHistory;
 
 import java.util.List;
 import java.util.Map;
@@ -21,5 +22,7 @@ public interface CreditMapper {
 
     void updateCreditImage(Map<String, Object> map);
 
-    void deleteCredit(Long creditIdx);
+    void delete(Long idx);
+
+    Object findMemberIdxByCreditIdx(Long creditIdx);
 }

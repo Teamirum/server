@@ -33,6 +33,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4011", "이미 존재하는 회원입니다."),
     MEMBER_AUTHORIZATION_NOT_VALID(HttpStatus.UNAUTHORIZED, "MEMBER4012", "유효하지 않은 인증정보 입니다."),
 
+    //권한
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "권한이 없습니다."),
 
     // 가맹점 응답
     MARKET_NOT_FOUND(HttpStatus.BAD_REQUEST, "MARKET4001", "해당 가맹점이 존재하지 않습니다."),
@@ -47,8 +49,13 @@ public enum ErrorStatus implements BaseErrorCode {
     // 카드 응답
     CREDIT_CARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "CREDIT4001", "해당 카드가 존재하지 않습니다."),
     CREDIT_CARD_DUPLICATE(HttpStatus.BAD_REQUEST, "CARD4002", "이미 등록된 카드입니다."),
+    CREDIT_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "CREDIT400", "카드 결제 권한이 없습니다."),
+    UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "CREDIT400, UNAUTHORIZED", "카드 권한이 없습니다."),
+    CREDIT_NOT_FOUND(HttpStatus.BAD_REQUEST, "CREDIT4001", "해당 카드가 존재하지 않습니다."),
 
     CREDIT_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "CREDIT5001", "카드 저장에 실패하였습니다."),
+
+
 
     // 주문 응답
     ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4001", "해당 주문이 존재하지 않습니다."),
