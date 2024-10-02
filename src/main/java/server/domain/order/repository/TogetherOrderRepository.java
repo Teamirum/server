@@ -1,9 +1,9 @@
-package server.domain.togetherOrder.repository;
+package server.domain.order.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import server.domain.togetherOrder.domain.TogetherOrder;
-import server.domain.togetherOrder.mapper.TogetherOrderMapper;
+import server.domain.order.domain.TogetherOrder;
+import server.domain.order.mapper.TogetherOrderMapper;
 
 import java.util.List;
 import java.util.Optional;

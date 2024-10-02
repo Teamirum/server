@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.orderRoom.mapper.OrderRoomMapper">
+
+    <!-- Result Mapping with Enum TypeHandler -->
+    <resultMap id="OrderRoomResultMap" type="server.domain.orderRoom.domain.OrderRoom">
+        <id property="idx" column="idx" />
+        <result property="orderIdx" column="order_idx" />
+        <result property="ownerMemberIdx" column="owner_member_idx" />
+        <result property="memberCnt" column="member_cnt" />
+        <result property="maxMemberCnt" column="max_member_cnt" />
+        <result property="amount" column="amount" />
+        <result property="status" column="status" />
+        <result property="createdAt" column="created_at" />
+    </resultMap>
+
+    <!-- save TogetherOrder -->
+    <insert id="save" parameterType="server.domain.orderRoom.domain.OrderRoom">
+        INSERT INTO TogetherOrder (
+            order_idx, owner_member_idx, member_cnt, max_member_cnt, amount, status, created_at
+        ) VALUES (
+            #{orderIdx}, #{ownerMemberIdx}, #{memberCnt}, #{maxMemberCnt}, #{amount}, #{status}, #{createdAt}
+        )
+    </insert>
+
+    <!-- Select TogetherOrder by orderIdx -->
+    <select id="findByOrderIdx" parameterType="Long" resultMap="OrderRoomResultMap">
+        SELECT *
+        FROM TogetherOrder
+        WHERE order_idx = #{orderIdx}
+    </select>
+
+    <!-- Select TogetherOrder by orderIdx And ownerMemberIdx -->
+    <select id="findByOwnerMemberIdxAndOrderIdx" parameterType="map" resultMap="OrderRoomResultMap">
+        SELECT *
+        FROM TogetherOrder
+        WHERE order_idx = #{orderIdx} AND owner_member_idx = #{ownerMemberIdx}
+    </select>
+
+    <!-- Select TogetherOrder by ownerMemberIdx -->
+    <select id="findAllByOwnerMemberIdx" parameterType="Long" resultMap="OrderRoomResultMap">
+        SELECT *
+        FROM TogetherOrder
+        WHERE owner_member_idx = #{ownerMemberIdx}
+    </select>
+
+    <!-- get MemberCnt by idx -->
+    <select id="getMemberCntByOrderIdx" parameterType="Long" resultType="int">
+        SELECT member_cnt
+        FROM TogetherOrder
+        WHERE idx = #{idx}
+    </select>
+
+    <!-- get MaxMemberCnt by idx -->
+    <select id="getMaxMemberCntByOrderIdx" parameterType="Long" resultType="int">
+        SELECT max_member_cnt
+        FROM TogetherOrder
+        WHERE idx = #{idx}
+    </select>
+
+    <!-- delete TogetherOrder by orderIdx -->
+    <delete id="deleteByOrderIdx" parameterType="Long">
+        DELETE
+        FROM TogetherOrder
+        WHERE order_idx = #{orderIdx}
+    </delete>
+
+    <!-- delete TogetherOrder by ownerMemberIdx And orderIdx -->
+    <delete id="deleteByOwnerMemberIdxAndOrderIdx" parameterType="map">
+        DELETE
+        FROM TogetherOrder
+        WHERE order_idx = #{orderIdx} AND owner_member_idx = #{ownerMemberIdx}
+    </delete>
+
+    <!-- plus memberCnt -->
+    <update id="plusMemberCnt" parameterType="Long">
+        UPDATE TogetherOrder
+        SET member_cnt = member_cnt + 1
+        WHERE idx = #{idx}
+    </update>
+
+    <!-- minus memberCnt -->
+    <update id="minusMemberCnt" parameterType="Long">
+        UPDATE TogetherOrder
+        SET member_cnt = member_cnt - 1
+        WHERE idx = #{idx}
+    </update>
+
+</mapper>

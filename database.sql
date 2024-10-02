@@ -73,7 +73,7 @@ CREATE TABLE `Market` (
                           `name` VARCHAR(100) NOT NULL,
                           `address` VARCHAR(100) NOT NULL,
                           `kakao_cid` VARCHAR(100),
-                            `maxTable_cnt` INT NOT NULL,
+                          `maxTable_cnt` INT NOT NULL,
                           `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                           `modified_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
                           PRIMARY KEY (`idx`),
@@ -126,6 +126,19 @@ CREATE TABLE `OrderMenu` (
                             PRIMARY KEY (`idx`),
                             FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
                             FOREIGN KEY (`menu_idx`) REFERENCES `Menu`(`idx`) ON DELETE CASCADE
+);
+
+-- OrderRoom 테이블
+
+CREATE TABLE `OrderRoom` (
+                            `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                            `order_idx` BIGINT NOT NULL,
+                            `owner_member_idx` VARCHAR(100) NOT NULL,
+                            `member_cnt` INT NOT NULL,
+                            `amount` INT NOT NULL,
+                            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                            PRIMARY KEY (`idx`),
+                            FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE
 );
 
 -- BusinessCard 테이블

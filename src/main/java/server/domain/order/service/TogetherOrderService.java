@@ -1,4 +1,4 @@
-package server.domain.togetherOrder.service;
+package server.domain.order.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

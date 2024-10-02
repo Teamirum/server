@@ -1,4 +1,4 @@
-package server.domain.togetherOrder.domain;
+package server.domain.order.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

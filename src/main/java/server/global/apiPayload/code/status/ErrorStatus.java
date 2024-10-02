@@ -54,6 +54,12 @@ public enum ErrorStatus implements BaseErrorCode {
     // 주문 응답
     ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4001", "해당 주문이 존재하지 않습니다."),
     ORDER_MENU_CNT_ERROR(HttpStatus.BAD_REQUEST, "ORDER4002", "주문은 0개 이상 해야합니다."),
+    ORDER_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4003", "해당 함께결제가 존재하지 않습니다."),
+    ORDER_ROOM_MEMBER_CNT_CANNOT_BE_MINUS(HttpStatus.BAD_REQUEST, "ORDER4004", "함께결제 인원은 0명 이상이어야 합니다."),
+    ORDER_ROOM_MEMBER_CNT_CANNOT_EXCEED(HttpStatus.BAD_REQUEST, "ORDER4005", "함께결제 제한 인원수를 초과할 수 없습니다."),
+    ORDER_ROOM_MEMBER_CNT_NOT_MATCH(HttpStatus.BAD_REQUEST, "ORDER4006", "함께결제 인원수가 일치하지 않습니다."),
+    ORDER_ROOM_MEMBER_CNT_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "ORDER4007", "함께결제 인원수가 부족합니다."),
+    ORDER_ROOM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4008", "해당 함께결제 참여자가 존재하지 않습니다."),
 
 
     ORDER_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5001", "주문 저장에 실패하였습니다."),

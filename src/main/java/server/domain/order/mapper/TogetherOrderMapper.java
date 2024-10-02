@@ -1,7 +1,7 @@
-package server.domain.togetherOrder.mapper;
+package server.domain.order.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import server.domain.togetherOrder.domain.TogetherOrder;
+import server.domain.order.domain.TogetherOrder;
 
 import java.util.List;
 
