@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="server.domain.order.mapper.TogetherOrderMapper">
+<mapper namespace="server.domain.togetherOrder.mapper.TogetherOrderMapper">
 
     <!-- Result Mapping with Enum TypeHandler -->
-    <resultMap id="TogetherOrderResultMap" type="server.domain.order.domain.TogetherOrder">
+    <resultMap id="TogetherOrderResultMap" type="server.domain.togetherOrder.domain.TogetherOrder">
         <id property="idx" column="idx" />
         <result property="orderIdx" column="order_idx" />
         <result property="memberIdx" column="member_idx" />
@@ -12,7 +12,7 @@
     </resultMap>
 
     <!-- save TogetherOrder -->
-    <insert id="save" parameterType="server.domain.order.domain.TogetherOrder">
+    <insert id="save" parameterType="server.domain.togetherOrder.domain.TogetherOrder">
         INSERT INTO TogetherOrder (
             order_idx, member_idx, created_at
         ) VALUES (
@@ -28,7 +28,7 @@
     </select>
 
     <!-- Select TogetherOrder by orderIdx And memberIdx -->
-    <select id="findByMemberIdxAndOrderIdx" parameterType="server.domain.order.domain.TogetherOrder" resultMap="TogetherOrderResultMap">
+    <select id="findByMemberIdxAndOrderIdx" parameterType="server.domain.togetherOrder.domain.TogetherOrder" resultMap="TogetherOrderResultMap">
         SELECT *
         FROM TogetherOrder
         WHERE order_idx = #{orderIdx} AND member_idx = #{memberIdx}
@@ -49,7 +49,7 @@
     </delete>
 
     <!-- delete TogetherOrder by memberIdx And orderIdx -->
-    <delete id="deleteByMemberIdxAndOrderIdx" parameterType="server.domain.order.domain.TogetherOrder">
+    <delete id="deleteByMemberIdxAndOrderIdx" parameterType="server.domain.togetherOrder.domain.TogetherOrder">
         DELETE
         FROM TogetherOrder
         WHERE order_idx = #{orderIdx} AND member_idx = #{memberIdx}

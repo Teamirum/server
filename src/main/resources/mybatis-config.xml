@@ -16,6 +16,7 @@
         <package name="server.domain.account.domain" />
         <package name="server.domain.order.domain" />
         <package name="server.domain.menu.domain" />
+        <package name="server.domain.togetherOrder.domain" />
     </typeAliases>
 
 </configuration>
