@@ -65,6 +65,9 @@ public enum ErrorStatus implements BaseErrorCode {
     BUSINESS_CARD_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "BUSINESSCARD4003", "명함 권한이 없습니다."),
 
 
+    // 거래 응답
+    TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "TRANSACTION4001", "해당 거래가 존재하지 않습니다."),
+    TRANSACTION_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "TRANSACTION4002", "거래 권한이 없습니다."),
 
 
     //사진 응답

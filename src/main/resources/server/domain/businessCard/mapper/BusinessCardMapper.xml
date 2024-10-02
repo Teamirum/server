@@ -12,7 +12,6 @@
         <result property="phoneNum" column="phone_num" />
         <result property="email" column="email" />
         <result property="telNum" column="tel_num" />
-        <result property="faxNum" column="fax_num" />
         <result property="part" column="part" />
         <result property="position" column="position" />
         <result property="address" column="address" />
@@ -35,8 +34,8 @@
 
     <!-- insert BusinessCard -->
     <insert id="save" parameterType="server.domain.businessCard.domain.BusinessCard">
-        INSERT INTO BusinessCard (member_idx, name, company, phone_num, email, tel_num, fax_num, part, position, address)
-        VALUES (#{memberIdx}, #{name}, #{company}, #{phoneNum}, #{email}, #{telNum}, #{faxNum}, #{part}, #{position}, #{address})
+        INSERT INTO BusinessCard (member_idx, name, company, phone_num, email, tel_num, part, position, address)
+        VALUES (#{memberIdx}, #{name}, #{company}, #{phoneNum}, #{email}, #{telNum}, #{part}, #{position}, #{address})
     </insert>
 
 
@@ -46,7 +45,6 @@
         UPDATE BusinessCard
         SET name = #{name}, company = #{company}, phone_num = #{phoneNum}, email = #{email},
             tel_num = IFNULL(#{telNum}, tel_num),
-            fax_num = IFNULL(#{faxNum}, fax_num),
             part = IFNULL(#{part}, part),
             position = #{position}, address = #{address}
         WHERE idx = #{idx} AND member_idx = #{memberIdx}

@@ -34,4 +34,21 @@ public class CreditResponseDto {
         public String imgUrl;
         public String createdAt;
     }
+
+    @Data
+    @Builder
+    public static class CreditTransactionResponseDto {
+        private Boolean isSuccess;
+        private String cardName; // 카드 이름 추가
+        private List<TransactionDto> transactions; // 수정: transactions 필드 추가
+    }
+
+    @Data
+    @Builder
+    public static class TransactionDto {
+        private Long id;
+        private String transactionDate;
+        private int amount;
+        private String description;
+    }
 }

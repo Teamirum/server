@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import server.domain.credit.domain.Credit;
 import server.domain.credit.mapper.CreditMapper;
+import server.domain.transaction.domain.Transaction;
+import server.domain.transaction.repository.TransactionRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -51,6 +53,8 @@ public class CreditRepository {
         return credit != null;
     }
 
+
+
     public void deleteCredit(Long creditIdx) {
         creditMapper.deleteCredit(creditIdx);
     }
@@ -59,4 +63,13 @@ public class CreditRepository {
         return creditMapper.findAllByMemberIdx(memberIdx);
     }
 
+
+    public Optional<Object> findByCreditIdxAndMemberIdx(Long creditIdx, Long memberIdx) {
+        Map<String, Object> map = Map.of("creditIdx", creditIdx, "memberIdx", memberIdx);
+        Credit credit = creditMapper.findByIdxAndMemberIdx(map);
+        if (credit != null) {
+            return Optional.of(credit);
+        }
+        return Optional.empty();
+    }
 }

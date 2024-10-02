@@ -9,6 +9,8 @@ import server.domain.credit.dto.CreditResponseDto;
 import server.domain.credit.repository.CreditRepository;
 import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
+import server.domain.transaction.domain.Transaction;
+import server.domain.transaction.repository.TransactionRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
@@ -21,6 +23,7 @@ public class CreditService {
 
     private final CreditRepository creditRepository;
     private final MemberRepository memberRepository;
+    private final TransactionRepository transactionRepository;
 
     public CreditResponseDto.CreditTaskSuccessResponseDto upload(CreditRequestDto.UploadCreditRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -65,6 +68,22 @@ public class CreditService {
                 .idx(creditIdx)
                 .build();
     }
+
+    // 카드 거래 내역 조회 기능 추가
+    public CreditResponseDto.CreditTransactionResponseDto getCreditTransactionList(Long creditIdx, String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 회원과 연결된 카드인지 확인
+        Credit credit = (Credit) creditRepository.findByCreditIdxAndMemberIdx(creditIdx, memberIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_CARD_NOT_FOUND));
+
+        // 해당 카드와 연결된 거래 내역 조회
+        List<Transaction> transactions = transactionRepository.findAllByCreditIdx(creditIdx); // TransactionRepository에서 거래 내역 조회
+
+        return CreditDtoConverter.convertToCreditTransactionResponseDto(transactions, credit.getCreditName());
+    }
+
 
 
 }
