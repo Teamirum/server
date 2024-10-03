@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.domain.account.dto.AccountHistoryRequestDto;
 import server.domain.account.dto.AccountRequestDto;
 import server.domain.account.dto.AccountResponseDto;
 import server.domain.account.service.AccountService;
@@ -58,7 +59,12 @@ public class AccountController {
         return ResponseEntity.ok(responseDto);
     }
 
-
-
-
+    // Account History 업로드
+    @PostMapping("/history")
+    public ApiResponse<?> uploadAccountHistory(@RequestBody AccountHistoryRequestDto.UploadAccountHistoryRequestDto requestDto) {
+        String loginMemberId = getLoginMemberId();
+        log.info("계좌 히스토리 업로드 요청 : memberId = {}, accountIdx = {}", loginMemberId, requestDto.getAccountIdx());
+        accountService.uploadAccountHistory(requestDto, loginMemberId);
+        return ApiResponse.onSuccess("Account history uploaded successfully");
+    }
 }

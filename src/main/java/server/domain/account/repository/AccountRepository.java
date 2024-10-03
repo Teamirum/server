@@ -6,6 +6,7 @@ import server.domain.account.domain.Account;
 import server.domain.account.dto.AccountRequestDto;
 import server.domain.account.mapper.AccountMapper;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,15 +19,6 @@ public class AccountRepository {
 
     public List<Account> findAllAccountByMemberIdx(Long memberIdx) {
         return accountMapper.findAllByMemberIdx(memberIdx);
-    }
-
-
-    public Optional<Account> findByAccountIdx(Long accountIdx) {
-        Account account = accountMapper.findByAccountIdx(accountIdx);
-        if (account != null) {
-            return Optional.of(account);
-        }
-        return Optional.empty();
     }
 
     public Optional<Account> findByAccountNumber(String accountNumber) {
@@ -60,5 +52,15 @@ public class AccountRepository {
         Account account = accountMapper.findByIdxAndMemberIdx(map);
         return account != null;
     }
+
+    public Optional<Account> findByMemberIdxAndAccountNumber(Long memberIdx, Long accountIdx) {
+        Map<String, Object> map = Map.of("memberIdx", memberIdx, "idx", accountIdx);
+        Account account = accountMapper.findByIdxAndMemberIdx(map);
+        if (account != null) {
+            return Optional.of(account);
+        }
+        return Optional.empty();
+    }
+
 
 }

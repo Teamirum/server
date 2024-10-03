@@ -30,6 +30,19 @@ CREATE TABLE `Account` (
                            PRIMARY KEY (`idx`),
                            FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
 );
+-- AccountHistory 테이블
+CREATE TABLE `AccountHistory` (
+                                  `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                                  `account_idx` BIGINT NOT NULL,
+                                  `account_history_type` ENUM('SEND', 'GET') NOT NULL,
+                                  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                                  `amount` BIGINT NOT NULL,
+                                  `remain_amount` BIGINT NOT NULL,
+                                  `name` VARCHAR(100) NOT NULL,
+                                  PRIMARY KEY (`idx`),
+                                  FOREIGN KEY (`account_idx`) REFERENCES `Account`(`idx`) ON DELETE CASCADE
+);
+
 -- Credit 테이블
 CREATE TABLE `Credit` (
                           `idx` BIGINT AUTO_INCREMENT NOT NULL,

@@ -22,7 +22,6 @@ public class CreditHistoryService {
     private final CreditHistoryMapper creditHistoryMapper;
 
     public ApiResponse<?> insertCreditHistory(CreditHistoryRequestDto.UploadCreditHistoryRequestDto requestDto, String loginMemberId) {
-        // creditIdx를 이용해 Credit 테이블에서 데이터 조회
         Map<String, Object> params = new HashMap<>();
         params.put("idx", requestDto.getCreditIdx());
         params.put("memberIdx", loginMemberId);
@@ -30,7 +29,7 @@ public class CreditHistoryService {
         Credit credit = creditMapper.findByIdxAndMemberIdx(params);
 
         if (credit == null) {
-            throw new ErrorHandler(ErrorStatus.CREDIT_NOT_AUTHORIZED); // Credit이 없는 경우 예외 처리
+            throw new ErrorHandler(ErrorStatus.CREDIT_NOT_AUTHORIZED);
         }
 
         CreditHistory creditHistory = new CreditHistory();
