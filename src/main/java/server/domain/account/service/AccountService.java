@@ -94,8 +94,8 @@ public class AccountService {
     @Transactional
     public void uploadAccountHistory(Account fromAccount, Account toAccount, Integer amount, String name) {
 
-        Integer fromAccountAmount = fromAccount.getAmount();
-        Integer toAccountAmount = toAccount.getAmount();
+        Integer fromAccountAmount = fromAccount.getAmount() - amount;
+        Integer toAccountAmount = toAccount.getAmount() + amount;
 
         accountHistoryRepository.save(AccountHistory.builder()
                 .accountIdx(fromAccount.getIdx())

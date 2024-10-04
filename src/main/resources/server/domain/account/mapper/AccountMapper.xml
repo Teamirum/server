@@ -61,7 +61,7 @@
     <!-- Get Account by AccountNumber -->
     <select id="findByAccountNumber" resultType="server.domain.account.domain.Account">
         SELECT *
-        FROM account
+        FROM Account
         WHERE account_number = #{accountNumber}
     </select>
 
