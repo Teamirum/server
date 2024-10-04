@@ -91,7 +91,6 @@ public class AccountService {
                 .build();
     }
 
-        accountRepository.updateAccountAmount(requestDto.getAccountIdx(), Math.toIntExact(newRemainAmount));
     @Transactional
     public void uploadAccountHistory(Account fromAccount, Account toAccount, Integer amount, String name) {
 
