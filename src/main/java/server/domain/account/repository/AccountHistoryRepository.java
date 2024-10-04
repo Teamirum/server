@@ -22,4 +22,8 @@ public class AccountHistoryRepository {
         accountHistoryMapper.delete(idx);
     }
 
+    public List<AccountHistory> findAllAccountHistoryByAccountIdx(Long accountIdx) {
+        return accountHistoryMapper.findAllByAccountIdx(accountIdx);
+    }
+
 }

@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import server.domain.account.domain.Account;
 import server.domain.account.domain.AccountHistory;
-import server.domain.account.dto.AccountDtoConverter;
-import server.domain.account.dto.AccountHistoryRequestDto;
-import server.domain.account.dto.AccountRequestDto;
-import server.domain.account.dto.AccountResponseDto;
+import server.domain.account.dto.*;
 import server.domain.account.repository.AccountHistoryRepository;
 import server.domain.account.repository.AccountRepository;
 import server.domain.member.domain.Member;
@@ -129,5 +126,15 @@ public class AccountService {
                 .isSuccess(true)
                 .idx(accountHistory.getAccountIdx())
                 .build();
+    }
+
+
+    public AccountHistoryResponseDto.AccountHistoryListResponseDto getAccountHistoryList(Long accountIdx, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!accountRepository.existsByAccountIdxAndMemberIdx(accountIdx, member.getIdx())) {
+            throw new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND);
+        }
+        List<AccountHistory> accountHistoryList = accountHistoryRepository.findAllAccountHistoryByAccountIdx(accountIdx);
+        return AccountHistoryDtoConverter.convertToAccountHistoryListResponseDto(accountHistoryList);
     }
 }

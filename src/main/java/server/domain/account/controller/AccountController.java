@@ -69,10 +69,11 @@ public class AccountController {
     }
 
     // Account History 리스트 조회
-//    @GetMapping
-//    public ApiResponse<?> getAccountHistoryList(@RequestParam(value = "accountIdx") Long accountIdx) {
-//        String loginMemberId = getLoginMemberId();
-//        log.info("계좌 히스토리 리스트 조회 요청 : loginMemberId = {}, accountIdx = {}", loginMemberId, accountIdx);
-//        return ApiResponse.onSuccess(accountService.getAccountHistoryList(accountIdx, loginMemberId));
-//    }
+    @GetMapping("/{accountIdx}/history")
+    public ApiResponse<?> getAccountHistoryList(@PathVariable("accountIdx") Long accountIdx) {
+        String loginMemberId = getLoginMemberId();
+        log.info("계좌 히스토리 리스트 조회 요청 : loginMemberId = {}, accountIdx = {}", loginMemberId, accountIdx);
+        return ApiResponse.onSuccess(accountService.getAccountHistoryList(accountIdx, loginMemberId));
+    }
+
 }
