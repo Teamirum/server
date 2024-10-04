@@ -5,9 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.domain.account.domain.Account;
 import server.domain.account.dto.AccountHistoryRequestDto;
 import server.domain.account.dto.AccountRequestDto;
 import server.domain.account.dto.AccountResponseDto;
+import server.domain.account.repository.AccountRepository;
 import server.domain.account.service.AccountService;
 import server.global.apiPayload.ApiResponse;
 import server.global.apiPayload.code.status.ErrorStatus;
@@ -22,6 +24,7 @@ import server.global.util.SecurityUtil;
 public class AccountController {
 
     private final AccountService accountService;
+    private final AccountRepository accountRepository;
 
     private String getLoginMemberId() {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -59,13 +62,23 @@ public class AccountController {
         return ResponseEntity.ok(responseDto);
     }
 
-    // Account History 업로드
-    @PostMapping("/history")
-    public ApiResponse<?> uploadAccountHistory(@RequestBody AccountHistoryRequestDto.UploadAccountHistoryRequestDto requestDto) {
+    /**
+     * 계좌 송금 로직
+     * @param requestDto
+     * @return
+     */
+    @PostMapping("/sendAccount")
+    public ResponseEntity<AccountResponseDto.AccountTaskSuccessResponseDto> sendAccount(@RequestBody AccountRequestDto.sendAccount requestDto) {
         String loginMemberId = getLoginMemberId();
-        log.info("계좌 히스토리 업로드 요청 : memberId = {}, accountIdx = {}", loginMemberId, requestDto.getAccountIdx());
-        accountService.uploadAccountHistory(requestDto, loginMemberId);
-        return ApiResponse.onSuccess(accountService.uploadAccountHistory(requestDto, loginMemberId));
+
+        Account fromAccount = accountService.findByMemberIdxAndAccountNumber(loginMemberId, requestDto.fromAccountNumber);
+        Account toAccount = accountService.findByAccountNumber(requestDto.getToAccountNumber());
+        AccountResponseDto.AccountTaskSuccessResponseDto accountTaskSuccessResponseDto = accountService.updateAmount(fromAccount, toAccount, requestDto.getAmount());
+
+        // 히스토리 업로드
+       accountService.uploadAccountHistory(fromAccount, toAccount, requestDto.getAmount(),requestDto.getName());
+
+        return ResponseEntity.ok(accountTaskSuccessResponseDto);
     }
 
     // Account History 리스트 조회

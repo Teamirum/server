@@ -10,9 +10,9 @@ public class AccountHistoryDtoConverter {
         return AccountHistoryResponseDto.AccountHistoryInfoResponseDto.builder()
                 .idx(accountHistory.getIdx())
                 .accountIdx(accountHistory.getAccountIdx())
-                .accountHistoryType(AccountHistory.AccountHistoryType.valueOf(accountHistory.getAccountHistoryType().toString()))
-                .amount(accountHistory.getAmount())
-                .remainAmount(accountHistory.getRemainAmount())
+                .accountHistoryType(AccountHistory.AccountHistoryType.valueOf(accountHistory.getAccountHistoryType().toString())) // ENUM을 String으로 변환
+                .amount(Long.valueOf(accountHistory.getAmount()))
+                .remainAmount(Long.valueOf(accountHistory.getRemainAmount()))
                 .createdAt(accountHistory.getCreatedAt().toString())
                 .name(accountHistory.getName())
                 .build();
@@ -27,7 +27,9 @@ public class AccountHistoryDtoConverter {
         }
         return AccountHistoryResponseDto.AccountHistoryListResponseDto.builder()
                 .cnt(accountHistories.size())
-                .accountHistoryList(accountHistories.stream().map(AccountHistoryDtoConverter::convertToAccountHistoryInfoResponseDto).toList())
+                .accountHistoryList(accountHistories.stream()
+                        .map(AccountHistoryDtoConverter::convertToAccountHistoryInfoResponseDto)
+                        .toList())
                 .isSuccess(true)
                 .build();
     }

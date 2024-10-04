@@ -7,7 +7,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 public class AccountRequestDto {
-
     @Data
     public static class UploadAccountRequestDto {
        public String amount;
@@ -48,7 +47,26 @@ public class AccountRequestDto {
         }
     }
 
+    @Data
+    public static class sendAccount{
+        public String fromAccountNumber;
+        public String toAccountNumber;
+        public Integer amount;
+        public String name;
 
+        @JsonCreator
+        public sendAccount(
+                @JsonProperty("fromAccountNumber") String fromAccountNumber,
+                @JsonProperty("toAccountNumber") String toAccountNumber,
+                @JsonProperty("Amount") Integer amount,
+                @JsonProperty("name") String name
+        ) {
+            this.fromAccountNumber = fromAccountNumber;
+            this.toAccountNumber = toAccountNumber;
+            this.amount = amount;
+            this.name = name;
+        }
+    }
 }
 
 

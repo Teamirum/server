@@ -21,9 +21,9 @@ public class AccountHistory {
 
     private LocalDateTime createdAt;
 
-    private Long amount;
+    private Integer amount;
 
-    private Long remainAmount;
+    private Integer remainAmount;
 
     private String name;
 
@@ -31,3 +31,4 @@ public class AccountHistory {
         SEND, GET
     }
 }
+

@@ -52,6 +52,12 @@
         WHERE idx = #{idx} AND member_idx = #{memberIdx}
     </select>
 
+    <select id="findByMemberIdxAndAccountNumber" parameterType="map" resultMap="AccountResultMap">
+        SELECT *
+        FROM Account
+        WHERE member_idx = #{memberIdx} AND account_number = #{accountNumber}
+    </select>
+
     <!-- Get Account by AccountNumber -->
     <select id="findByAccountNumber" resultType="server.domain.account.domain.Account">
         SELECT *

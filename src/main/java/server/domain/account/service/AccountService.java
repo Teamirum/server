@@ -3,6 +3,7 @@ package server.domain.account.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import server.domain.account.domain.Account;
 import server.domain.account.domain.AccountHistory;
 import server.domain.account.dto.*;
@@ -16,11 +17,14 @@ import server.global.apiPayload.exception.handler.ErrorHandler;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.time.LocalDateTime.now;
+import static java.time.chrono.ChronoLocalDateTime.from;
+import static server.domain.account.domain.AccountHistory.AccountHistoryType.GET;
+import static server.domain.account.domain.AccountHistory.AccountHistoryType.SEND;
+
 @Service
-
-
-
 @RequiredArgsConstructor
+
 public class AccountService {
 
     private final AccountRepository accountRepository;
@@ -45,7 +49,7 @@ public class AccountService {
                 .amount(Integer.valueOf(requestDto.getAmount()))
                 .bankName(requestDto.getBankName())
                 .accountNumber(requestDto.getAccountNumber())
-                .createdAt(LocalDateTime.now())
+                .createdAt(now())
                 .accountSecret(requestDto.getAccountSecret())
                 .build();
         accountRepository.save(account);
@@ -87,45 +91,29 @@ public class AccountService {
                 .build();
     }
 
-    public AccountResponseDto.AccountTaskSuccessResponseDto uploadAccountHistory(AccountHistoryRequestDto.UploadAccountHistoryRequestDto requestDto, String memberId) {
-        Long memberIdx = memberRepository.getIdxByMemberId(memberId)
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        Account account = accountRepository.findByMemberIdxAndAccountNumber(memberIdx, requestDto.getAccountIdx())
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND));
-        AccountHistory accountHistory = new AccountHistory();
-        accountHistory.setAccountIdx(account.getIdx());
-        accountHistory.setAccountHistoryType(requestDto.getAccountHistoryType());
-        accountHistory.setAmount(requestDto.getAmount());
-        accountHistory.setCreatedAt(LocalDateTime.now());
-        accountHistory.setName(requestDto.getName());
-
-        // 계좌 잔액 업데이트 로직
-        Long newRemainAmount;
-        if (requestDto.getAccountHistoryType() == AccountHistory.AccountHistoryType.SEND) {
-
-            if (account.getAmount() < requestDto.getAmount()) {
-                throw new ErrorHandler(ErrorStatus.ACCOUNT_NOT_ENOUGH_AMOUNT);
-            }
-            newRemainAmount = account.getAmount() - requestDto.getAmount();
-        } else if (requestDto.getAccountHistoryType() == AccountHistory.AccountHistoryType.GET) {
-            newRemainAmount = account.getAmount() + requestDto.getAmount();
-        } else {
-            throw new ErrorHandler(ErrorStatus.ACCOUNT_HISTORY_TYPE_NOT_VALID);
-        }
-
-        accountHistory.setRemainAmount(newRemainAmount);
-
-        accountHistoryRepository.save(accountHistory);
-
-        // Account의 amount 업데이트 후 저장
-        account.setAmount(Math.toIntExact(newRemainAmount));
         accountRepository.updateAccountAmount(requestDto.getAccountIdx(), Math.toIntExact(newRemainAmount));
+    @Transactional
+    public void uploadAccountHistory(Account fromAccount, Account toAccount, Integer amount, String name) {
 
-        return AccountResponseDto.AccountTaskSuccessResponseDto.builder()
-                .isSuccess(true)
-                .idx(accountHistory.getAccountIdx())
-                .build();
+        Integer fromAccountAmount = fromAccount.getAmount();
+        Integer toAccountAmount = toAccount.getAmount();
+
+        accountHistoryRepository.save(AccountHistory.builder()
+                .accountIdx(fromAccount.getIdx())
+                .accountHistoryType(SEND)
+                .createdAt(now())
+                .amount(amount)
+                .remainAmount(fromAccountAmount)
+                .name(name)
+                .build());
+        accountHistoryRepository.save(AccountHistory.builder()
+                .accountIdx(toAccount.getIdx())
+                .accountHistoryType(GET)
+                .createdAt(now())
+                .amount(amount)
+                .remainAmount(toAccountAmount)
+                .name(name)
+                .build());
     }
 
 
@@ -136,5 +124,40 @@ public class AccountService {
         }
         List<AccountHistory> accountHistoryList = accountHistoryRepository.findAllAccountHistoryByAccountIdx(accountIdx);
         return AccountHistoryDtoConverter.convertToAccountHistoryListResponseDto(accountHistoryList);
+    }
+
+    public Account findByAccountIdx(Long idx) {
+        return accountRepository.getIdxByAccountIdx(idx).orElseThrow(() -> new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND));
+    }
+
+    public Account findByMemberIdxAndAccountNumber(String loginMemberId, String fromAccountNumber) {
+        Long memberIdx = memberRepository.getIdxByMemberId(loginMemberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return accountRepository.findByMemberIdxAndAccountNumber(memberIdx, fromAccountNumber).orElseThrow(() -> new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND));
+    }
+
+    public Account findByAccountNumber(String toAccountNumber) {
+        return accountRepository.findByAccountNumber(toAccountNumber).orElseThrow(() -> new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND));
+    }
+
+    @Transactional
+    public AccountResponseDto.AccountTaskSuccessResponseDto updateAmount(Account fromAccount ,Account toAccount, Integer amount) {
+        if(fromAccount.getAmount() < amount){
+            throw new ErrorHandler(ErrorStatus.ACCOUNT_NOT_ENOUGH_AMOUNT);
+        }
+
+        int fromAccountAmount = fromAccount.getAmount() - amount;
+        int toAccountAmount = toAccount.getAmount() + amount;
+
+        // 계좌 송금
+        accountRepository.updateAccountAmount(fromAccount.getIdx(), fromAccountAmount);
+        // 계좌 입금
+        accountRepository.updateAccountAmount(toAccount.getIdx(), toAccountAmount);
+
+        // success
+        return AccountResponseDto.AccountTaskSuccessResponseDto.builder()
+                .isSuccess(true)
+                .idx(fromAccount.getIdx())
+                .build();
     }
 }
