@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+
+
+
 @RequiredArgsConstructor
 public class AccountService {
 
@@ -68,7 +71,7 @@ public class AccountService {
     }
 
     public AccountResponseDto.AccountTaskSuccessResponseDto delete(Long idx, String memberId) {
-       Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         if (!accountRepository.existsByAccountIdxAndMemberIdx(idx, member.getIdx())) {
             throw new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND);
         }
@@ -87,13 +90,12 @@ public class AccountService {
                 .build();
     }
 
-    public void uploadAccountHistory(AccountHistoryRequestDto.UploadAccountHistoryRequestDto requestDto, String memberId) {
+    public AccountResponseDto.AccountTaskSuccessResponseDto uploadAccountHistory(AccountHistoryRequestDto.UploadAccountHistoryRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Account account = accountRepository.findByMemberIdxAndAccountNumber(memberIdx, requestDto.getAccountIdx())
-                .orElseThrow(() -> new IllegalArgumentException("Account not found"));
-
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND));
         AccountHistory accountHistory = new AccountHistory();
         accountHistory.setAccountIdx(account.getIdx());
         accountHistory.setAccountHistoryType(requestDto.getAccountHistoryType());
@@ -110,7 +112,6 @@ public class AccountService {
             }
             newRemainAmount = account.getAmount() - requestDto.getAmount();
         } else if (requestDto.getAccountHistoryType() == AccountHistory.AccountHistoryType.GET) {
-
             newRemainAmount = account.getAmount() + requestDto.getAmount();
         } else {
             throw new ErrorHandler(ErrorStatus.ACCOUNT_HISTORY_TYPE_NOT_VALID);
@@ -123,6 +124,10 @@ public class AccountService {
         // Account의 amount 업데이트 후 저장
         account.setAmount(Math.toIntExact(newRemainAmount));
         accountRepository.updateAccountAmount(requestDto.getAccountIdx(), Math.toIntExact(newRemainAmount));
-    }
 
+        return AccountResponseDto.AccountTaskSuccessResponseDto.builder()
+                .isSuccess(true)
+                .idx(accountHistory.getAccountIdx())
+                .build();
+    }
 }

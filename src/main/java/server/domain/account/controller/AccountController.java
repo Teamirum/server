@@ -65,6 +65,14 @@ public class AccountController {
         String loginMemberId = getLoginMemberId();
         log.info("계좌 히스토리 업로드 요청 : memberId = {}, accountIdx = {}", loginMemberId, requestDto.getAccountIdx());
         accountService.uploadAccountHistory(requestDto, loginMemberId);
-        return ApiResponse.onSuccess("Account history uploaded successfully");
+        return ApiResponse.onSuccess(accountService.uploadAccountHistory(requestDto, loginMemberId));
     }
+
+    // Account History 리스트 조회
+//    @GetMapping
+//    public ApiResponse<?> getAccountHistoryList(@RequestParam(value = "accountIdx") Long accountIdx) {
+//        String loginMemberId = getLoginMemberId();
+//        log.info("계좌 히스토리 리스트 조회 요청 : loginMemberId = {}, accountIdx = {}", loginMemberId, accountIdx);
+//        return ApiResponse.onSuccess(accountService.getAccountHistoryList(accountIdx, loginMemberId));
+//    }
 }
