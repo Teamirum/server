@@ -62,6 +62,9 @@ public enum ErrorStatus implements BaseErrorCode {
     ORDER_ROOM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4008", "해당 함께결제 참여자가 존재하지 않습니다."),
     ORDER_ROOM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "ORDER4009", "이미 함께결제가 진행중인 주문이 있습니다."),
     ORDER_MENU_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4010", "주문한 메뉴가 존재하지 않습니다."),
+    ORDER_MEMBER_PARTICIPANT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4011", "참여중인 주문방이 존재하지 않습니다."),
+    ORDER_MEMBER_ALREADY_IN_OTHER_ROOM(HttpStatus.BAD_REQUEST, "ORDER4012", "이미 다른 주문방에 참여중입니다."),
+    ORDER_MEMBER_ALREADY_IN_ROOM(HttpStatus.BAD_REQUEST, "ORDER4013", "이미 참여중인 주문방 입니다."),
 
     ORDER_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5001", "주문 저장에 실패하였습니다."),
     ORDER_MENU_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5002", "메뉴 저장에 실패하였습니다."),

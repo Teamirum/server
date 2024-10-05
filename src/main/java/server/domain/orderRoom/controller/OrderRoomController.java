@@ -23,10 +23,10 @@ public class OrderRoomController {
         orderRoomService.enterOrderRoom(requestDto, getLoginMemberId());
     }
 
-//    @MessageMapping("/order/room/start")
-//    public void startSelectOrderMenu(@Payload StartSelectOrderMenuRequestDto requestDto) {
-//        orderRoomService.startSelectOrderMenu(requestDto, getLoginMemberId());
-//    }
+    @MessageMapping("/order/room/start")
+    public void startSelectOrderMenu(@Payload StartSelectOrderMenuRequestDto requestDto) {
+        orderRoomService.startSelectOrderMenu(requestDto, getLoginMemberId());
+    }
 
 
     private String getLoginMemberId() {

@@ -32,6 +32,7 @@ public class OrderRoomResponseDto {
     @Builder
     public static class EnterOrderRoomResponseDto implements Serializable {
         private Long orderIdx;
+        private Long ownerMemberIdx;
         private Long memberIdx;
         private int maxMemberCnt;
         private int memberCnt;

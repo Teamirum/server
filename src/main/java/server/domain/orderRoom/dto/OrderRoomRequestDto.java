@@ -20,4 +20,11 @@ public class OrderRoomRequestDto {
         private Long orderIdx;
         private String type;
     }
+
+    @Builder
+    @Data
+    public static class StartSelectOrderMenuRequestDto implements Serializable {
+        private Long orderIdx;
+        private int memberCnt;
+    }
 }

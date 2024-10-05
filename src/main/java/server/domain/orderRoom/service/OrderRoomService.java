@@ -79,7 +79,7 @@ public class OrderRoomService {
         orderRoom.setMenuAmount(menuAmount);
         orderRoom.setCurrentMenuAmount(currentMenuAmount);
 
-        ChannelTopic channelTopic = redisRepository.saveOrderRoom(memberIdx, orderRoom);
+        ChannelTopic channelTopic = redisRepository.saveOrderRoom(orderRoom);
         redisMessageListener.addMessageListener(redisSubscriber, channelTopic);
         log.info("주문방 생성 : {} 번 방", requestDto.getOrderIdx());
 
@@ -96,7 +96,7 @@ public class OrderRoomService {
 
     public void enterOrderRoom(EnterOrderRoomRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        if (redisRepository.existByOrderRoomIdx(requestDto.getOrderIdx())) {
+        if (!redisRepository.existByOrderRoomIdx(requestDto.getOrderIdx())) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_NOT_FOUND);
         }
         ChannelTopic channelTopic = redisRepository.enterOrderRoom(memberIdx, requestDto.getOrderIdx());
@@ -107,6 +107,7 @@ public class OrderRoomService {
 
         EnterOrderRoomResponseDto enterOrderRoomResponseDto = EnterOrderRoomResponseDto.builder()
                 .orderIdx(requestDto.getOrderIdx())
+                .ownerMemberIdx(orderRoom.getOwnerMemberIdx())
                 .memberIdx(memberIdx)
                 .maxMemberCnt(orderRoom.getMaxMemberCnt())
                 .memberCnt(orderRoom.getMemberCnt())
@@ -117,6 +118,18 @@ public class OrderRoomService {
 
         redisPublisher.publish(channelTopic, enterOrderRoomResponseDto);
         log.info("{} 님 주문방에 입장하였습니다. 주문방 ID : {}", memberId, requestDto.getOrderIdx());
+
+
+    }
+
+    public void sendOrderRoomMenu(OrderRoom orderRoom, ChannelTopic channelTopic) {
+        OrderRoomMenuResponseDto orderRoomMenuResponseDto = OrderRoomMenuResponseDto.builder()
+                .orderIdx(orderRoom.getOrderIdx())
+                .menuAmount(orderRoom.getMenuAmount())
+                .currentMenuAmount(orderRoom.getCurrentMenuAmount())
+                .type("MENU")
+                .build();
+        redisPublisher.publish(channelTopic, orderRoomMenuResponseDto);
     }
 
 }
