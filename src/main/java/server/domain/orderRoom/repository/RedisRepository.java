@@ -170,7 +170,7 @@ public class RedisRepository {
 
     // 유저가 입장해 있는 주문방 ID 조회
     public Long getMemberEnteredOrderRoomIdx(Long memberIdx) {
-        Long orderIdx = opsHashEnterInfo.get(ORDER_ROOMS, memberIdx);
+        Long orderIdx = opsHashEnterInfo.get(ENTER_INFO, memberIdx);
         if (orderIdx == null) {
             throw new ErrorHandler(ErrorStatus.ORDER_MEMBER_PARTICIPANT_ROOM_NOT_FOUND);
         }
@@ -184,7 +184,7 @@ public class RedisRepository {
 
     // 사용자 퇴장
     public void exitMemberEnterOrderRoom(Long memberIdx) {
-        opsHashEnterInfo.delete(ORDER_ROOMS, memberIdx);
+        opsHashEnterInfo.delete(ENTER_INFO, memberIdx);
     }
 
     // 이미 참여중인지
