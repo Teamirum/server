@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
+import server.domain.order.domain.Order;
 import server.domain.order.repository.OrderRepository;
 import server.domain.orderRoom.domain.OrderRoom;
 import server.global.apiPayload.code.status.ErrorStatus;
@@ -44,37 +45,66 @@ public class RedisRepository {
     /**
      * 주문 입장 : redis에 topic을 만들고 pub/sub 통신을 하기 위해 리스너를 설정한다.
      */
-    public ChannelTopic enterOrderRoom(Long memberIdx, Long orderRoomIdx) {
-        OrderRoom orderRoom = orderRoomRepository.findByOrderIdx(orderRoomIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_ROOM_NOT_FOUND));
-        String orderRoomIdStr = orderRoomIdx + "";
-        ChannelTopic topic = getTopic(orderRoomIdStr);
+    public ChannelTopic enterOrderRoom(Long memberIdx, Long orderIdx) {
+        OrderRoom orderRoom = getOrderRoom(orderIdx);
+        String orderIdxStr = orderRoom.getOrderIdx() + "";
+        ChannelTopic topic = getTopic(orderIdxStr);
         if (topic == null) {
-            log.info("기존에 등록된 topic이 없습니다. 새로운 topic 생성 : roomId = {}", orderRoomIdStr);
-            topic = new ChannelTopic(orderRoomIdStr);
+            log.info("기존에 등록된 topic이 없습니다. 새로운 topic 생성 : orderIdx = {}", orderIdxStr);
+            topic = new ChannelTopic(orderIdxStr);
         }
-        topics.put(orderRoomIdStr, topic);
-        plusUserCnt(orderRoomIdx);
-        opsHashOrderRoom.put(ORDER_ROOMS, memberIdx, orderRoom);
 
+        topics.put(orderIdxStr, topic);
+        if (orderRoom.plusMemberCnt()) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_EXCEED);
+        }
+        opsHashOrderRoom.put(ORDER_ROOMS, memberIdx, orderRoom);
         return topic;
     }
 
-    public ChannelTopic getTopic(String roomId) {
-        log.info("topic 을 불러옵니다 : roomId = {}, topic = {}", roomId, topics.get(roomId));
-        return topics.get(roomId);
+    public ChannelTopic saveOrderRoom(Long memberIdx, OrderRoom orderRoom) {
+        String orderIdxStr = orderRoom.getOrderIdx() + "";
+        ChannelTopic topic = new ChannelTopic(orderIdxStr);
+        topics.put(orderIdxStr, topic);
+        opsHashOrderRoom.put(ORDER_ROOMS, memberIdx, orderRoom);
+        return topic;
     }
 
-    public void plusUserCnt(Long orderRoomIdx) {
-        orderRoomRepository.plusMemberCnt(orderRoomIdx);
+    public OrderRoom getOrderRoom(Long orderIdx) {
+        if (!existByOrderRoomIdx(orderIdx)) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_NOT_FOUND);
+        }
+        return opsHashOrderRoom.get(ORDER_ROOMS,orderIdx);
     }
 
-    public void minusUserCnt(Long orderRoomIdx) {
-        orderRoomRepository.minusMemberCnt(orderRoomIdx);
+    public boolean existByOrderRoomIdx(Long orderIdx) {
+        return opsHashOrderRoom.hasKey(ORDER_ROOMS, orderIdx);
     }
+
+    private ChannelTopic getTopic(String orderIdx) {
+        log.info("topic 을 불러옵니다 : orderIdx = {}, topic = {}", orderIdx, topics.get(orderIdx));
+        return topics.get(orderIdx);
+    }
+
+//    public void plusUserCnt(Long orderRoomIdx) {
+//        orderRoomRepository.plusMemberCnt(orderRoomIdx);
+//    }
+//
+//    public void minusUserCnt(Long orderRoomIdx) {
+//        orderRoomRepository.minusMemberCnt(orderRoomIdx);
+//    }
 
     // 유저가 입장한 주문ID와 유저 세션ID 맵핑 정보 저장
     public void setMemberEnterInfo(String sessionId, Long chatRoomId) {
         opsHashEnterInfo.put(ENTER_INFO, sessionId, chatRoomId);
+    }
+
+    public void minusMemberCnt(Long orderRoomIdx) {
+        OrderRoom orderRoom = getOrderRoom(orderRoomIdx);
+        if (orderRoom.minusMemberCnt()) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_BE_MINUS);
+        }
+        opsHashOrderRoom.put(ORDER_ROOMS, orderRoomIdx, orderRoom);
     }
 
     // 유저 세션으로 입장해 있는 주문방 ID 조회

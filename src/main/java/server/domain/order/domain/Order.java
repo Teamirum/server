@@ -22,18 +22,18 @@ public class Order {
 
     private int tableNumber;
 
-    private int amount;
+    private int totalPrice;
 
-    private int taxFreeAmount;
+    private int taxFreePrice;
 
-    private int vatAmount;
+    private int vatPrice;
 
     private LocalDateTime createdAt;
 
-    public void updateAmount(int amount) {
-        this.amount = amount;
-        this.taxFreeAmount =  Math.round(amount * 0.9f);
-        this.vatAmount = amount - taxFreeAmount;
+    public void updatePrice(int totalPrice) {
+        this.totalPrice = totalPrice;
+        this.taxFreePrice =  Math.round(totalPrice * 0.9f);
+        this.vatPrice = totalPrice - taxFreePrice;
     }
 
 }

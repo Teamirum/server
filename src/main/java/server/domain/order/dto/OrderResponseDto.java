@@ -21,9 +21,9 @@ public class OrderResponseDto {
         public Long idx;
         public Long marketIdx;
         public String name;
-        public int amount;
-        public int taxFreeAmount;
-        public int vatAmount;
+        public int totalPrice;
+        public int taxFreePrice;
+        public int vatPrice;
         public int tableNumber;
         public int menuCnt;
         public List<OrderMenuResponseDto> orderMenuList;

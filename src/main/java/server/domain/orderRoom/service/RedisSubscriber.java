@@ -1,5 +1,6 @@
 package server.domain.orderRoom.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,8 @@ import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
+
+import static server.domain.orderRoom.dto.OrderRoomResponseDto.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,12 +28,15 @@ public class RedisSubscriber implements MessageListener {
         try {
             // redis에서 발행된 데이터를 받아 역직렬화
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
-
-            // ChatMessage 객체로 맵핑
-            ChatMessageDto messageDto = objectMapper.readValue(publishMessage, ChatMessageDto.class);
+            JsonNode jsonNode = objectMapper.readTree(publishMessage);
+            String messageType = jsonNode.get("type").asText();
+            if (messageType.equals("ENTER")) {
+                EnterOrderRoomResponseDto enterOrderRoomResponseDto = objectMapper.treeToValue(jsonNode, EnterOrderRoomResponseDto.class);
+                messagingTemplate.convertAndSend("/sub/order/room/" + enterOrderRoomResponseDto.getOrderIdx(), enterOrderRoomResponseDto);
+            }
 
             // Websocket 구독자에게 채팅 메시지 전송
-            messagingTemplate.convertAndSend("/sub/chat/room/" + messageDto.getChatRoomId(), messageDto);
+
 
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage());

@@ -26,6 +26,5 @@ public class OrderRoomDataDto {
         int menuCount;
     }
 
-    @Data
-    public static class
+
 }

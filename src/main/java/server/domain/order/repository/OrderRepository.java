@@ -29,4 +29,8 @@ public class OrderRepository {
     public List<Order> findAllByMarketIdx(Long marketIdx) {
         return orderMapper.findAllByMarketIdx(marketIdx);
     }
+
+    public void updatePrice(Order order) {
+        orderMapper.updatePrice(order);
+    }
 }

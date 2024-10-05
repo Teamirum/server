@@ -13,4 +13,6 @@ public interface OrderMapper {
     Order findByOrderIdx(Long orderIdx);
 
     List<Order> findAllByMarketIdx(Long marketIdx);
+
+    void updatePrice(Order order);
 }

@@ -8,9 +8,9 @@
         <id property="idx" column="idx" />
         <result property="marketIdx" column="market_idx" />
         <result property="name" column="name" />
-        <result property="amount" column="amount" />
-        <result property="taxFreeAmount" column="tax_free_amount" />
-        <result property="vatAmount" column="vat_amount" />
+        <result property="totalPrice" column="total_price" />
+        <result property="taxFreePrice" column="tax_free_price" />
+        <result property="vatPrice" column="vat_price" />
         <result property="tableNumber" column="table_number" />
         <result property="createdAt" column="created_at" />
     </resultMap>
@@ -37,6 +37,14 @@
         FROM Order
         WHERE market_idx = #{marketIdx}
     </select>
+
+    <!-- update Order Price -->
+    <update id="updatePrice" parameterType="server.domain.order.domain.Order">
+        UPDATE Order
+        SET amount = #{amount}, tax_free_amount = #{taxFreeAmount}, vat_amount = #{vatAmount}
+        WHERE idx = #{idx}
+    </update>
+
 
 
 

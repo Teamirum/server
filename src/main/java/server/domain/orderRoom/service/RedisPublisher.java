@@ -13,7 +13,7 @@ public class RedisPublisher {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void publish(ChannelTopic topic, ChatMessage message) {
-        redisTemplate.convertAndSend(topic.getTopic(), message);
+    public void publish(ChannelTopic topic, Object object) {
+        redisTemplate.convertAndSend(topic.getTopic(), object);
     }
 }
