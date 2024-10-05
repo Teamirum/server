@@ -15,6 +15,7 @@ import server.global.apiPayload.exception.handler.ErrorHandler;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -89,9 +90,42 @@ public class RedisRepository {
         return opsHashOrderRoom.hasKey(ORDER_ROOMS, orderIdx);
     }
 
-    private ChannelTopic getTopic(String orderIdx) {
+    public ChannelTopic getTopic(String orderIdx) {
         log.info("topic 을 불러옵니다 : orderIdx = {}, topic = {}", orderIdx, topics.get(orderIdx));
         return topics.get(orderIdx);
+    }
+
+    public OrderRoom selectMenu(Long orderIdx, Long menuIdx, Long memberIdx, int price) {
+        OrderRoom orderRoom = getOrderRoom(orderIdx);
+        HashMap<Long, List<Long>> menuSelect = orderRoom.getMenuSelect();
+        HashMap<Long, Integer> menuAmount = orderRoom.getMenuAmount();
+        if (!menuSelect.containsKey(menuIdx)) {
+            throw new ErrorHandler(ErrorStatus.ORDER_MENU_NOT_FOUND);
+        }
+        if (menuSelect.get(menuIdx).size() >= menuAmount.get(menuIdx)) {
+            throw new ErrorHandler(ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR);
+        }
+        menuSelect.get(menuIdx).add(memberIdx);
+        orderRoom.updateCurrentPrice(price);
+
+        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);
+        return orderRoom;
+    }
+
+    public OrderRoom cancelMenu(Long orderIdx, Long menuIdx, Long memberIdx, int price) {
+        OrderRoom orderRoom = getOrderRoom(orderIdx);
+        HashMap<Long, List<Long>> menuSelect = orderRoom.getMenuSelect();
+        if (!menuSelect.containsKey(menuIdx)) {
+            throw new ErrorHandler(ErrorStatus.ORDER_MENU_NOT_FOUND);
+        }
+        if (menuSelect.get(menuIdx).size() <= 0) {
+            throw new ErrorHandler(ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR);
+        }
+        menuSelect.get(menuIdx).remove(memberIdx);
+        orderRoom.updateCurrentPrice(price);
+
+        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);
+        return orderRoom;
     }
 
 //    public void plusUserCnt(Long orderRoomIdx) {
@@ -133,7 +167,6 @@ public class RedisRepository {
     public boolean existMyInfo(Long memberIdx) {
         return opsHashEnterInfo.hasKey(ENTER_INFO, memberIdx);
     }
-
 
 
 }

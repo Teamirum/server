@@ -6,12 +6,14 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
+import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
 import server.domain.order.domain.Order;
 import server.domain.order.domain.OrderMenu;
 import server.domain.order.repository.OrderMenuRepository;
 import server.domain.order.repository.OrderRepository;
 import server.domain.orderRoom.domain.OrderRoom;
+import server.domain.orderRoom.dto.OrderRoomDataDto;
 import server.domain.orderRoom.dto.OrderRoomResponseDto.*;
 import server.domain.orderRoom.dto.OrderRoomRequestDto.*;
 import server.domain.orderRoom.model.OrderRoomStatus;
@@ -55,17 +57,21 @@ public class OrderRoomService {
                 .status(OrderRoomStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
                 .build();
+        orderRoom.updateOrderRoomType(requestDto.getType());
+
+
+
 
         List<OrderMenu> orderMenuList = orderMenuRepository.findAllByOrderIdx(requestDto.getOrderIdx());
 
         HashMap<Long, Integer> menuAmount = new HashMap<>();
-        HashMap<Long, Integer> currentMenuAmount = new HashMap<>();
+        HashMap<Long, List<Long>> currentMenuSelect = new HashMap<>();
         // 응답 dto 객체 생성
         List<OrderMenuResponseDto> orderMenuResponseDtoList = new ArrayList<>();
 
         for (OrderMenu orderMenu : orderMenuList) {
             menuAmount.put(orderMenu.getMenuIdx(), orderMenu.getAmount());
-            currentMenuAmount.put(orderMenu.getMenuIdx(), 0);
+            currentMenuSelect.put(orderMenu.getMenuIdx(), new ArrayList<>());
             OrderMenuResponseDto orderMenuResponseDto = OrderMenuResponseDto.builder()
                     .menuIdx(orderMenu.getMenuIdx())
                     .menuName(orderMenu.getMenuName())
@@ -77,7 +83,7 @@ public class OrderRoomService {
             throw new ErrorHandler(ErrorStatus.ORDER_MENU_NOT_FOUND);
         }
         orderRoom.setMenuAmount(menuAmount);
-        orderRoom.setCurrentMenuAmount(currentMenuAmount);
+        orderRoom.setMenuSelect(currentMenuSelect);
 
         ChannelTopic channelTopic = redisRepository.saveOrderRoom(orderRoom);
         redisMessageListener.addMessageListener(redisSubscriber, channelTopic);
@@ -94,19 +100,19 @@ public class OrderRoomService {
 
     }
 
-    public void enterOrderRoom(EnterOrderRoomRequestDto requestDto, String memberId) {
+    public void enterOrderRoom(Long orderIdx, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        if (!redisRepository.existByOrderRoomIdx(requestDto.getOrderIdx())) {
+        if (!redisRepository.existByOrderRoomIdx(orderIdx)) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_NOT_FOUND);
         }
-        ChannelTopic channelTopic = redisRepository.enterOrderRoom(memberIdx, requestDto.getOrderIdx());
+        ChannelTopic channelTopic = redisRepository.enterOrderRoom(memberIdx, orderIdx);
         redisMessageListener.addMessageListener(redisSubscriber, channelTopic);
 
-        OrderRoom orderRoom = redisRepository.getOrderRoom(requestDto.getOrderIdx());
+        OrderRoom orderRoom = redisRepository.getOrderRoom(orderIdx);
         boolean isFull = orderRoom.getMaxMemberCnt() == orderRoom.getMemberCnt();
 
         EnterOrderRoomResponseDto enterOrderRoomResponseDto = EnterOrderRoomResponseDto.builder()
-                .orderIdx(requestDto.getOrderIdx())
+                .orderIdx(orderIdx)
                 .ownerMemberIdx(orderRoom.getOwnerMemberIdx())
                 .memberIdx(memberIdx)
                 .maxMemberCnt(orderRoom.getMaxMemberCnt())
@@ -117,19 +123,86 @@ public class OrderRoomService {
 
 
         redisPublisher.publish(channelTopic, enterOrderRoomResponseDto);
-        log.info("{} 님 주문방에 입장하였습니다. 주문방 ID : {}", memberId, requestDto.getOrderIdx());
+        log.info("{} 님 주문방에 입장하였습니다. 주문방 ID : {}", memberId, orderIdx);
 
+        if (isFull && orderRoom.getType().equals(OrderRoom.OrderRoomType.BY_MENU)) {
+            sendOrderRoomMenu(orderRoom, channelTopic);
+        }
 
     }
 
-    public void sendOrderRoomMenu(OrderRoom orderRoom, ChannelTopic channelTopic) {
-        OrderRoomMenuResponseDto orderRoomMenuResponseDto = OrderRoomMenuResponseDto.builder()
+    private void sendOrderRoomMenu(OrderRoom orderRoom, ChannelTopic channelTopic) {
+        List<OrderMenu> orderMenuList = orderMenuRepository.findAllByOrderIdx(orderRoom.getOrderIdx());
+        List<OrderRoomMenuInfoListDto.OrderMenuInfoDto> orderMenuInfoDtoList = new ArrayList<>();
+        for (OrderMenu orderMenu : orderMenuList) {
+            OrderRoomMenuInfoListDto.OrderMenuInfoDto orderMenuInfoDto = OrderRoomMenuInfoListDto.OrderMenuInfoDto.builder()
+                    .menuIdx(orderMenu.getMenuIdx())
+                    .menuName(orderMenu.getMenuName())
+                    .price(orderMenu.getPrice())
+                    .amount(orderMenu.getAmount())
+                    .build();
+            orderMenuInfoDtoList.add(orderMenuInfoDto);
+        }
+        OrderRoomMenuInfoListDto orderRoomMenuInfoListDto = OrderRoomMenuInfoListDto.builder()
                 .orderIdx(orderRoom.getOrderIdx())
-                .menuAmount(orderRoom.getMenuAmount())
-                .currentMenuAmount(orderRoom.getCurrentMenuAmount())
-                .type("MENU")
+                .ownerMemberIdx(orderRoom.getOwnerMemberIdx())
+                .maxMemberCnt(orderRoom.getMaxMemberCnt())
+                .memberCnt(orderRoom.getMemberCnt())
+                .totalPrice(orderRoom.getTotalPrice())
+                .type("MENU_INFO")
+                .menuInfoList(orderMenuInfoDtoList)
                 .build();
-        redisPublisher.publish(channelTopic, orderRoomMenuResponseDto);
+        redisPublisher.publish(channelTopic, orderRoomMenuInfoListDto);
+
+    }
+
+    public void selectOrderMenu(SelectMenuRequestDto requestDto, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!redisRepository.existByOrderRoomIdx(requestDto.getOrderIdx())) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_NOT_FOUND);
+        }
+        OrderRoom orderRoom = redisRepository.selectMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice());
+
+
+        log.info("{} 님이 주문방에 메뉴를 선택하였습니다. 주문방 ID : {}, 메뉴 이름 : {}", memberId, requestDto.getOrderIdx(), requestDto.getMenuName());
+        OrderRoomMenuSelectionResponseDto menuSelect = OrderRoomMenuSelectionResponseDto.builder()
+                .orderIdx(requestDto.getOrderIdx())
+                .memberIdx(member.getIdx())
+                .menuIdx(requestDto.getMenuIdx())
+                .menuName(requestDto.getMenuName())
+                .currentPrice(orderRoom.getCurrentPrice())
+                .amount(requestDto.getAmount())
+                .type("MENU_SELECT")
+                .build();
+        ChannelTopic channelTopic = redisRepository.getTopic(requestDto.getOrderIdx().toString());
+        if (channelTopic == null) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND);
+        }
+        redisPublisher.publish(channelTopic, menuSelect);
+    }
+
+    public void cancelOrderMenu(SelectMenuRequestDto requestDto, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!redisRepository.existByOrderRoomIdx(requestDto.getOrderIdx())) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_NOT_FOUND);
+        }
+        OrderRoom orderRoom = redisRepository.cancelMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice() * -1);
+
+        log.info("{} 님이 주문방에 메뉴를 취소하였습니다. 주문방 ID : {}, 메뉴 이름 : {}", memberId, requestDto.getOrderIdx(), requestDto.getMenuName());
+        OrderRoomMenuSelectionResponseDto menuCancel = OrderRoomMenuSelectionResponseDto.builder()
+                .orderIdx(requestDto.getOrderIdx())
+                .memberIdx(member.getIdx())
+                .menuIdx(requestDto.getMenuIdx())
+                .menuName(requestDto.getMenuName())
+                .currentPrice(orderRoom.getCurrentPrice())
+                .amount(requestDto.getAmount())
+                .type("MENU_CANCEL")
+                .build();
+        ChannelTopic channelTopic = redisRepository.getTopic(requestDto.getOrderIdx().toString());
+        if (channelTopic == null) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND);
+        }
+        redisPublisher.publish(channelTopic, menuCancel);
     }
 
 }

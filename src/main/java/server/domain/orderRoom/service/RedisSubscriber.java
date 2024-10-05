@@ -33,6 +33,12 @@ public class RedisSubscriber implements MessageListener {
             if (messageType.equals("ENTER")) {
                 EnterOrderRoomResponseDto enterOrderRoomResponseDto = objectMapper.treeToValue(jsonNode, EnterOrderRoomResponseDto.class);
                 messagingTemplate.convertAndSend("/sub/order/room/" + enterOrderRoomResponseDto.getOrderIdx(), enterOrderRoomResponseDto);
+            } else if (messageType.equals("MENU_INFO")) {
+                OrderRoomMenuInfoListDto orderRoomMenuInfoListDto = objectMapper.treeToValue(jsonNode, OrderRoomMenuInfoListDto.class);
+                messagingTemplate.convertAndSend("/sub/order/room/" + orderRoomMenuInfoListDto.getOrderIdx(), orderRoomMenuInfoListDto);
+            } else if (messageType.equals("MENU_SELECT") || messageType.equals("MENU_CANCEL")) {
+                OrderRoomMenuSelectionResponseDto orderRoomMenuInfoListDto = objectMapper.treeToValue(jsonNode, OrderRoomMenuSelectionResponseDto.class);
+                messagingTemplate.convertAndSend("/sub/order/room/" + orderRoomMenuInfoListDto.getOrderIdx(), orderRoomMenuInfoListDto);
             }
 
             // Websocket 구독자에게 채팅 메시지 전송

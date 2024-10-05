@@ -37,6 +37,57 @@ public class OrderRoomResponseDto {
         private int maxMemberCnt;
         private int memberCnt;
         private Boolean isFull;
+        // ENTER 로 고정
         private String type;
+    }
+
+    @Data
+    @Builder
+    public static class OrderRoomMenuInfoListDto implements Serializable {
+        private Long orderIdx;
+
+        private Long ownerMemberIdx;
+
+        private int maxMemberCnt;
+
+        private int memberCnt;
+
+        private int totalPrice;
+
+        // MENU_INFO 로 고정
+        private String type;
+
+        private List<OrderMenuInfoDto> menuInfoList;
+
+        @Data
+        @Builder
+        public static class OrderMenuInfoDto {
+            private Long menuIdx;
+            private String menuName;
+            private int price;
+            private int amount;
+        }
+    }
+
+    @Data
+    @Builder
+    public static class OrderRoomMenuSelectionResponseDto implements Serializable {
+
+        private Long orderIdx;
+
+        private int currentPrice;
+
+        private Long menuIdx;
+
+        private Long memberIdx;
+
+        private String menuName;
+
+        private int amount;
+
+        // MENU_SELECT 로 고정
+        private String type;
+
+
     }
 }

@@ -21,7 +21,7 @@ public class OrderRoom implements Serializable {
     @Serial
     private static final long serialVersionUID = 6494678977089006639L;
 
-    private Long idx;
+//    private Long idx;
 
     private Long orderIdx;
 
@@ -31,17 +31,23 @@ public class OrderRoom implements Serializable {
 
     private int memberCnt;
 
-    private int totalAmount;
+    private int totalPrice;
 
-    private int currentAmount;
+    private int currentPrice;
+
+    private OrderRoomType type;
+
+    private HashMap<Long, List<Long>> menuSelect;
 
     private HashMap<Long, Integer> menuAmount;
-
-    private HashMap<Long, Integer> currentMenuAmount;
 
     private OrderRoomStatus status;
 
     private LocalDateTime createdAt;
+
+    public void updateCurrentPrice(int price) {
+        currentPrice += price;
+    }
 
     public boolean plusMemberCnt() {
         if (memberCnt >= maxMemberCnt) {
@@ -58,4 +64,17 @@ public class OrderRoom implements Serializable {
         memberCnt--;
         return true;
     }
+
+    public enum OrderRoomType {
+        BY_PRICE, BY_MENU
+    }
+
+    public void updateOrderRoomType(String type) {
+        if (type.equals("BY_PRICE")) {
+            this.type = OrderRoomType.BY_PRICE;
+        } else if (type.equals("BY_MENU")) {
+            this.type = OrderRoomType.BY_MENU;
+        }
+    }
+
 }
