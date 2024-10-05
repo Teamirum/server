@@ -63,7 +63,7 @@ public class RedisRepository {
         }
 
         topics.put(orderIdxStr, topic);
-        if (orderRoom.plusMemberCnt()) {
+        if (orderRoom.enterMember(memberIdx)) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_EXCEED);
         }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);
@@ -84,6 +84,27 @@ public class RedisRepository {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_NOT_FOUND);
         }
         return opsHashOrderRoom.get(ORDER_ROOMS,orderIdx);
+    }
+
+    public OrderRoom readyToPay(Long orderIdx) {
+        OrderRoom orderRoom = getOrderRoom(orderIdx);
+        if (orderRoom.readyToPay()) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_NOT_MATCH);
+        }
+        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);
+        return orderRoom;
+    }
+
+    public OrderRoom cancelReadyToPay(Long orderIdx) {
+        OrderRoom orderRoom = getOrderRoom(orderIdx);
+        if (orderRoom.getReadyCnt() == orderRoom.getMaxMemberCnt()) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_PAY_ALREADY_STARTED);
+        }
+        if (orderRoom.cancelReadyToPay()) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_NOT_MATCH);
+        }
+        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);
+        return orderRoom;
     }
 
     public boolean existByOrderRoomIdx(Long orderIdx) {
@@ -136,9 +157,9 @@ public class RedisRepository {
 //        orderRoomRepository.minusMemberCnt(orderRoomIdx);
 //    }
 
-    public void minusMemberCnt(Long orderIdx) {
+    public void minusMemberCnt(Long orderIdx, Long memberIdx) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
-        if (orderRoom.minusMemberCnt()) {
+        if (orderRoom.exitMember(memberIdx)) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_BE_MINUS);
         }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);

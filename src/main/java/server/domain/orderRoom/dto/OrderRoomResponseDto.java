@@ -85,9 +85,21 @@ public class OrderRoomResponseDto {
 
         private int amount;
 
-        // MENU_SELECT 로 고정
+        // MENU_SELECT, MENU_CANCEL 로 고정
         private String type;
+    }
 
-
+    @Data
+    @Builder
+    public static class OrderRoomReadyToPayResponseDto implements Serializable {
+        private Long orderIdx;
+        private Long memberIdx;
+        private int totalPrice;
+        private int currentPrice;
+        private int readyMemberCnt;
+        private int maxMemberCnt;
+        private Boolean isReadyToPay;
+        // READY_TO_PAY, CANCEL_READY_TO_PAY 로 고정
+        private String type;
     }
 }

@@ -31,6 +31,8 @@ public class OrderRoom implements Serializable {
 
     private int memberCnt;
 
+    private List<Long> memberIdxList;
+
     private int totalPrice;
 
     private int currentPrice;
@@ -41,6 +43,8 @@ public class OrderRoom implements Serializable {
 
     private HashMap<Long, Integer> menuAmount;
 
+    private int readyCnt;
+
     private OrderRoomStatus status;
 
     private LocalDateTime createdAt;
@@ -49,19 +53,24 @@ public class OrderRoom implements Serializable {
         currentPrice += price;
     }
 
-    public boolean plusMemberCnt() {
+    public boolean enterMember(Long memberIdx) {
         if (memberCnt >= maxMemberCnt) {
             return false;
         }
         memberCnt++;
+        memberIdxList.add(memberIdx);
         return true;
     }
 
-    public boolean minusMemberCnt() {
+    public boolean exitMember(Long memberIdx) {
         if (memberCnt <= 0) {
             return false;
         }
+        if (!memberIdxList.contains(memberIdx)) {
+            return false;
+        }
         memberCnt--;
+        memberIdxList.remove(memberIdx);
         return true;
     }
 
@@ -76,5 +85,23 @@ public class OrderRoom implements Serializable {
             this.type = OrderRoomType.BY_MENU;
         }
     }
+
+    public boolean readyToPay() {
+        if (readyCnt >= maxMemberCnt) {
+            return false;
+        }
+        readyCnt++;
+        return true;
+    }
+
+    public boolean cancelReadyToPay() {
+        if (readyCnt <= 0) {
+            return false;
+        }
+        readyCnt--;
+        return true;
+    }
+
+
 
 }

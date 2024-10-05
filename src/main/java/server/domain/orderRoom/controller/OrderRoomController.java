@@ -25,17 +25,31 @@ public class OrderRoomController {
     }
 
 
-    @MessageMapping("/order/room//select")
+    @MessageMapping("/order/room/select")
     public void selectOrderMenu(@Payload SelectMenuRequestDto requestDto) {
         String memberId = getLoginMemberId();
         orderRoomService.selectOrderMenu(requestDto, memberId);
     }
 
-    @MessageMapping("/order/room//unselect")
+    @MessageMapping("/order/room/cancel")
     public void cancelOrderMenu(@Payload SelectMenuRequestDto requestDto) {
         String memberId = getLoginMemberId();
         orderRoomService.cancelOrderMenu(requestDto, memberId);
     }
+
+    @MessageMapping("/order/room/ready/{orderIdx}")
+    public void readyOrderRoom(@DestinationVariable Long orderIdx) {
+        String memberId = getLoginMemberId();
+        orderRoomService.readyToPay(orderIdx, memberId);
+    }
+
+    @MessageMapping("/order/room/ready/cancel/{orderIdx}")
+    public void cancelReadyOrderRoom(@DestinationVariable Long orderIdx) {
+        String memberId = getLoginMemberId();
+        orderRoomService.cancelReadyToPay(orderIdx, memberId);
+    }
+
+
 
 
 

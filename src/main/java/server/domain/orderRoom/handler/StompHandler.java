@@ -71,7 +71,7 @@ public class StompHandler implements ChannelInterceptor {
                     redisRepository.exitMemberEnterOrderRoom(member.getIdx());
                 }
 
-                redisRepository.minusMemberCnt(orderIdx);
+                redisRepository.minusMemberCnt(orderIdx, member.getIdx());
             }
         }
         return message;
