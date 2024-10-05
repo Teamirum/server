@@ -60,7 +60,6 @@ public class RedisLockAspect {
         }
 
         // lockNameTemplate을 파싱하여 실제 락 이름 생성
-        String parsedLockName = parser.parseExpression('"' + lockNameTemplate + '"').getValue(context, String.class);
-        return parsedLockName;
+        return parser.parseExpression('"' + lockNameTemplate + '"').getValue(context, String.class);
     }
 }

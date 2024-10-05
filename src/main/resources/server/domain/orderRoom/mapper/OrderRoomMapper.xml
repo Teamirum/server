@@ -10,81 +10,43 @@
         <result property="ownerMemberIdx" column="owner_member_idx" />
         <result property="memberCnt" column="member_cnt" />
         <result property="maxMemberCnt" column="max_member_cnt" />
-        <result property="amount" column="amount" />
+        <result property="totalPrice" column="total_price" />
+        <result property="currentPrice" column="current_price" />
+        <result property="type" column="type" />
+        <result property="readyCnt" column="ready_cnt" />
         <result property="status" column="status" />
         <result property="createdAt" column="created_at" />
     </resultMap>
 
-    <!-- save TogetherOrder -->
+    <!-- save OrderRoom -->
     <insert id="save" parameterType="server.domain.orderRoom.domain.OrderRoom">
-        INSERT INTO TogetherOrder (
-            order_idx, owner_member_idx, member_cnt, max_member_cnt, amount, status, created_at
+        INSERT INTO OrderRoom (
+            order_idx, owner_member_idx, member_cnt, max_member_cnt, total_price, current_price, type, ready_cnt, status, created_at
         ) VALUES (
-            #{orderIdx}, #{ownerMemberIdx}, #{memberCnt}, #{maxMemberCnt}, #{amount}, #{status}, #{createdAt}
+            #{orderIdx}, #{ownerMemberIdx}, #{memberCnt}, #{maxMemberCnt}, #{totalPrice}, #{currentPrice}, #{type}, #{readyCnt}, #{status}, #{createdAt}
         )
     </insert>
 
-    <!-- Select TogetherOrder by orderIdx -->
+    <!-- Select OrderRoom by orderIdx -->
     <select id="findByOrderIdx" parameterType="Long" resultMap="OrderRoomResultMap">
         SELECT *
-        FROM TogetherOrder
+        FROM OrderRoom
         WHERE order_idx = #{orderIdx}
     </select>
 
-    <!-- Select TogetherOrder by orderIdx And ownerMemberIdx -->
-    <select id="findByOwnerMemberIdxAndOrderIdx" parameterType="map" resultMap="OrderRoomResultMap">
+    <!-- Select OrderRoom by orderIdx And ownerMemberIdx -->
+    <select id="findByOrderIdxAndOwnerMemberIdx" parameterType="map" resultMap="OrderRoomResultMap">
         SELECT *
-        FROM TogetherOrder
+        FROM OrderRoom
         WHERE order_idx = #{orderIdx} AND owner_member_idx = #{ownerMemberIdx}
     </select>
 
-    <!-- Select TogetherOrder by ownerMemberIdx -->
+    <!-- Select OrderRoom by ownerMemberIdx -->
     <select id="findAllByOwnerMemberIdx" parameterType="Long" resultMap="OrderRoomResultMap">
         SELECT *
-        FROM TogetherOrder
+        FROM OrderRoom
         WHERE owner_member_idx = #{ownerMemberIdx}
     </select>
 
-    <!-- get MemberCnt by idx -->
-    <select id="getMemberCntByOrderIdx" parameterType="Long" resultType="int">
-        SELECT member_cnt
-        FROM TogetherOrder
-        WHERE idx = #{idx}
-    </select>
-
-    <!-- get MaxMemberCnt by idx -->
-    <select id="getMaxMemberCntByOrderIdx" parameterType="Long" resultType="int">
-        SELECT max_member_cnt
-        FROM TogetherOrder
-        WHERE idx = #{idx}
-    </select>
-
-    <!-- delete TogetherOrder by orderIdx -->
-    <delete id="deleteByOrderIdx" parameterType="Long">
-        DELETE
-        FROM TogetherOrder
-        WHERE order_idx = #{orderIdx}
-    </delete>
-
-    <!-- delete TogetherOrder by ownerMemberIdx And orderIdx -->
-    <delete id="deleteByOwnerMemberIdxAndOrderIdx" parameterType="map">
-        DELETE
-        FROM TogetherOrder
-        WHERE order_idx = #{orderIdx} AND owner_member_idx = #{ownerMemberIdx}
-    </delete>
-
-    <!-- plus memberCnt -->
-    <update id="plusMemberCnt" parameterType="Long">
-        UPDATE TogetherOrder
-        SET member_cnt = member_cnt + 1
-        WHERE idx = #{idx}
-    </update>
-
-    <!-- minus memberCnt -->
-    <update id="minusMemberCnt" parameterType="Long">
-        UPDATE TogetherOrder
-        SET member_cnt = member_cnt - 1
-        WHERE idx = #{idx}
-    </update>
 
 </mapper>

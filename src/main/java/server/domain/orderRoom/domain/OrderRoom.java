@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import server.domain.orderRoom.model.OrderRoomStatus;
+import server.domain.orderRoom.model.OrderRoomType;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -72,18 +73,6 @@ public class OrderRoom implements Serializable {
         memberCnt--;
         memberIdxList.remove(memberIdx);
         return true;
-    }
-
-    public enum OrderRoomType {
-        BY_PRICE, BY_MENU
-    }
-
-    public void updateOrderRoomType(String type) {
-        if (type.equals("BY_PRICE")) {
-            this.type = OrderRoomType.BY_PRICE;
-        } else if (type.equals("BY_MENU")) {
-            this.type = OrderRoomType.BY_MENU;
-        }
     }
 
     public boolean readyToPay() {

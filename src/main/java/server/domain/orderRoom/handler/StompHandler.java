@@ -68,7 +68,7 @@ public class StompHandler implements ChannelInterceptor {
 
                 // 채팅방 퇴장 정보 저장
                 if(redisRepository.existMemberInOrderRoom(orderIdx, member.getIdx())) {
-                    redisRepository.exitMemberEnterOrderRoom(orderIdx, member.getIdx());
+                    redisRepository.exitMemberEnterOrderRoom(member.getIdx());
                 }
 
                 redisRepository.minusMemberCnt(orderIdx, member.getIdx());

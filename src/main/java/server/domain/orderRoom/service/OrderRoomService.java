@@ -17,6 +17,7 @@ import server.domain.orderRoom.dto.OrderRoomDataDto;
 import server.domain.orderRoom.dto.OrderRoomResponseDto.*;
 import server.domain.orderRoom.dto.OrderRoomRequestDto.*;
 import server.domain.orderRoom.model.OrderRoomStatus;
+import server.domain.orderRoom.model.OrderRoomType;
 import server.domain.orderRoom.repository.RedisRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
@@ -55,11 +56,10 @@ public class OrderRoomService {
                 .maxMemberCnt(requestDto.getMaxMemberCnt())
                 .memberCnt(0)
                 .readyCnt(0)
+                .type(OrderRoomType.fromName(requestDto.getType()))
                 .status(OrderRoomStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
                 .build();
-        orderRoom.updateOrderRoomType(requestDto.getType());
-
 
 
 
@@ -126,7 +126,7 @@ public class OrderRoomService {
         redisPublisher.publish(channelTopic, enterOrderRoomResponseDto);
         log.info("{} 님 주문방에 입장하였습니다. 주문방 ID : {}", memberId, orderIdx);
 
-        if (isFull && orderRoom.getType().equals(OrderRoom.OrderRoomType.BY_MENU)) {
+        if (isFull && orderRoom.getType().equals(OrderRoomType.BY_MENU)) {
             sendOrderRoomMenu(orderRoom, channelTopic);
         }
 
@@ -228,6 +228,10 @@ public class OrderRoomService {
                 .type("READY_TO_PAY")
                 .build();
         redisPublisher.publish(channelTopic, readyToPay);
+
+        if (orderRoom.getReadyCnt() == orderRoom.getMaxMemberCnt()) {
+
+        }
 
     }
 
