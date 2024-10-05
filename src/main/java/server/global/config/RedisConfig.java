@@ -1,5 +1,8 @@
 package server.global.config;
 
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +16,13 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import server.domain.orderRoom.service.RedisSubscriber;
 
 @Configuration
+@EnableTransactionManagement
 public class RedisConfig {
 
     @Value("${redis.host}")
@@ -44,13 +51,16 @@ public class RedisConfig {
 
     @Bean
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        return new StringRedisTemplate(redisConnectionFactory);
+        StringRedisTemplate stringRedisTemplate = new StringRedisTemplate(redisConnectionFactory);
+        stringRedisTemplate.setEnableTransactionSupport(true);
+        return stringRedisTemplate;
     }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setEnableTransactionSupport(true);
 
         // Set serializers
         redisTemplate.setKeySerializer(new StringRedisSerializer());
@@ -59,6 +69,19 @@ public class RedisConfig {
         redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
 
         return redisTemplate;
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager() {
+        return new DataSourceTransactionManager();
+    }
+
+    @Bean(destroyMethod = "shutdown")
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        config.useSingleServer()
+                .setAddress("redis://" + redisHost + ":" + redisPort);
+        return Redisson.create(config);
     }
 
     /*

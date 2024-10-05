@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import server.domain.order.domain.Order;
 import server.domain.order.repository.OrderRepository;
 import server.domain.orderRoom.domain.OrderRoom;
+import server.global.aop.annotation.RedisLock;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
@@ -23,10 +24,6 @@ import java.util.Map;
 @Service
 public class RedisRepository {
 
-    private final OrderRepository orderRepository;
-    private final OrderRoomRepository orderRoomRepository;
-    // 채팅방(topic)에 발행되는 메시지를 처리할 Listner
-    private final RedisMessageListenerContainer redisMessageListener;
     // Redis
     private static final String ORDER_ROOMS = "ORDER_ROOM";
     public static final String ENTER_INFO = "ENTER_INFO"; // 채팅룸에 입장한 클라이언트의 sessionId와 채팅룸 id를 맵핑한 정보 저장
@@ -47,6 +44,7 @@ public class RedisRepository {
     /**
      * 주문 입장 : redis에 topic을 만들고 pub/sub 통신을 하기 위해 리스너를 설정한다.
      */
+    @RedisLock(lockName = "lock:orderRoom:#{#orderIdx}")
     public ChannelTopic enterOrderRoom(Long memberIdx, Long orderIdx) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         String orderIdxStr = orderRoom.getOrderIdx() + "";
@@ -86,6 +84,7 @@ public class RedisRepository {
         return opsHashOrderRoom.get(ORDER_ROOMS,orderIdx);
     }
 
+    @RedisLock(lockName = "lock:orderRoom:#{#orderIdx}")
     public OrderRoom readyToPay(Long orderIdx) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         if (orderRoom.readyToPay()) {
@@ -95,6 +94,7 @@ public class RedisRepository {
         return orderRoom;
     }
 
+    @RedisLock(lockName = "lock:orderRoom:#{#orderIdx}")
     public OrderRoom cancelReadyToPay(Long orderIdx) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         if (orderRoom.getReadyCnt() == orderRoom.getMaxMemberCnt()) {
@@ -116,6 +116,7 @@ public class RedisRepository {
         return topics.get(orderIdx);
     }
 
+    @RedisLock(lockName = "lock:orderRoom:#{#orderIdx}")
     public OrderRoom selectMenu(Long orderIdx, Long menuIdx, Long memberIdx, int price) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         HashMap<Long, List<Long>> menuSelect = orderRoom.getMenuSelect();
@@ -133,6 +134,7 @@ public class RedisRepository {
         return orderRoom;
     }
 
+    @RedisLock(lockName = "lock:orderRoom:#{#orderIdx}")
     public OrderRoom cancelMenu(Long orderIdx, Long menuIdx, Long memberIdx, int price) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         HashMap<Long, List<Long>> menuSelect = orderRoom.getMenuSelect();
@@ -157,6 +159,7 @@ public class RedisRepository {
 //        orderRoomRepository.minusMemberCnt(orderRoomIdx);
 //    }
 
+    @RedisLock(lockName = "lock:orderRoom:#{#orderIdx}")
     public void minusMemberCnt(Long orderIdx, Long memberIdx) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         if (orderRoom.exitMember(memberIdx)) {

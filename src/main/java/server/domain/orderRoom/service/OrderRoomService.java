@@ -255,6 +255,7 @@ public class OrderRoomService {
         redisPublisher.publish(channelTopic, cancelReadyToPay);
     }
 
+
     public Member getMemberById(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }

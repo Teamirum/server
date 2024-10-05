@@ -19,6 +19,9 @@ public enum ErrorStatus implements BaseErrorCode {
     _SERVICE_UNAVAILABLE_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "COMMON503", "서버가 일시적으로 사용중지 되었습니다."),
     _JSON_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON500", "JSON 처리 중 오류가 발생하였습니다."),
 
+    // 동시성 제어
+    FAILED_TO_ACQUIRE_LOCK(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON5001", "Lock 획득에 실패하였습니다."),
+
     //유저 응답
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "유저가 존재하지 않습니다."),
     MEMBER_EMAIL_PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, "MEMBER4002", "이메일 또는 비밀번호가 일치하지 않습니다."),
@@ -71,6 +74,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     ORDER_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5001", "주문 저장에 실패하였습니다."),
     ORDER_MENU_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5002", "메뉴 저장에 실패하였습니다."),
+
 
     // 메뉴 응답
     MENU_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MENU4001", "이미 등록된 메뉴입니다."),
