@@ -19,9 +19,9 @@ public class CreditHistory {
 
     private LocalDateTime createdAt;
 
-    private Long amount;
+    private Integer amount;
 
-    private Long amountSum;
+    private Integer amountSum;
 
     private String name;
 

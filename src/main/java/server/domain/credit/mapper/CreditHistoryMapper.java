@@ -9,17 +9,13 @@ import java.util.Map;
 @Mapper
 public interface CreditHistoryMapper {
 
+  List<CreditHistory> findAllByCreditIdx(Long creditIdx);
+
+  CreditHistory findByIdx(Long idx);
+
     void save(CreditHistory creditHistory);
-
-    CreditHistory findByIdx(Long idx);
-
-    List<CreditHistory> findAllByCreditIdx(Long creditIdx);
-
-    List<CreditHistory> findAllByCreditIdxAndDateRange(Map<String, Object> map);
-
-    void update(CreditHistory creditHistory);
 
     void delete(Long idx);
 
-    void insertCreditHistory(CreditHistory creditHistory);
+    void updateCreditHistory(CreditHistory creditHistory);
 }

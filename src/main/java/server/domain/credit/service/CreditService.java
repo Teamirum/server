@@ -6,12 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import server.domain.credit.domain.Credit;
 import server.domain.credit.domain.CreditHistory;
-import server.domain.credit.dto.CreditDtoConverter;
-import server.domain.credit.dto.CreditHistoryRequestDto;
-import server.domain.credit.dto.CreditRequestDto;
-import server.domain.credit.dto.CreditResponseDto;
+import server.domain.credit.dto.*;
 import server.domain.credit.mapper.CreditHistoryMapper;
 import server.domain.credit.mapper.CreditMapper;
+import server.domain.credit.repository.CreditHistoryRespository;
 import server.domain.credit.repository.CreditRepository;
 import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
@@ -33,6 +31,7 @@ public class CreditService {
     private final MemberRepository memberRepository;
     private final CreditMapper creditMapper;
     private final CreditHistoryMapper creditHistoryMapper;
+    private final CreditHistoryRespository creditHistoryRespository;
 
     public CreditResponseDto.CreditTaskSuccessResponseDto upload(CreditRequestDto.UploadCreditRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -95,6 +94,29 @@ public class CreditService {
                 .isSuccess(true)
                 .idx(credit.getIdx())
                 .build();
+    }
+
+    @Transactional
+    public void uploadCreditHistory(Credit credit, Integer amountSum, String name) {
+
+        Integer creditAmountSum = credit.getAmountSum() + amountSum;
+
+        creditHistoryRespository.save(CreditHistory.builder()
+                .creditIdx(credit.getIdx())
+                .amount(amountSum)
+                .amountSum(creditAmountSum)
+                .name(name)
+                .createdAt(LocalDateTime.now())
+                .build());
+    }
+
+    public CreditHistoryResponseDto.CreditHistoryListResponseDto getCreditHistoryList(Long creditIdx, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if(!creditRepository.existsByCreditIdxAndMemberIdx(creditIdx, member.getIdx())) {
+            throw new ErrorHandler(ErrorStatus.CREDIT_CARD_NOT_FOUND);
+        }
+        List<CreditHistory> creditHistoryList = creditHistoryRespository.findAllCreditHistoryByCreditIdx(creditIdx);
+        return CreditHistoryDtoConverter.convertToCreditHistoryListResponseDto(creditHistoryList);
     }
 
 

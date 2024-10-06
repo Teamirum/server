@@ -38,14 +38,17 @@ public class CreditRequestDto {
     public static class PayCreditRequestDto {
         private String creditNumber;
         private Integer amountSum;
+        private String name;
 
         @JsonCreator
         public PayCreditRequestDto(
                 @JsonProperty("creditNumber") String creditNumber,
-                @JsonProperty("amountSum") Integer amountSum
+                @JsonProperty("amountSum") Integer amountSum,
+                @JsonProperty("name") String name
         ) {
             this.creditNumber = creditNumber;
             this.amountSum = amountSum;
+            this.name = name;
         }
     }
 

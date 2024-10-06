@@ -26,6 +26,10 @@ public class CreditController {
 
     private final CreditService creditService;
 
+    private String getLoginMemberId() {
+        return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
     @PostMapping
     public ApiResponse<?> uploadCredit(@RequestBody CreditRequestDto.UploadCreditRequestDto requestDto) {
         String loginMemberId = getLoginMemberId();
@@ -53,11 +57,22 @@ public class CreditController {
 
         Credit credit = creditService.findMemberIdxAndCreditNumber(getLoginMemberId(), requestDto.getCreditNumber());
 
+        creditService.uploadCreditHistory(credit, requestDto.getAmountSum(), requestDto.getName());
+
         return ResponseEntity.ok(creditService.updateAmountSum(credit, requestDto.getAmountSum()));
     }
 
-
-    private String getLoginMemberId() {
-        return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    //카드 결제 내역 조회
+    @GetMapping("{creditIdx}/history")
+    public ApiResponse<?> getCreditHistoryList(@PathVariable("creditIdx") Long creditIdx) {
+        String loginMemberId = getLoginMemberId();
+        log.info("신용카드 내역 조회 요청 : loginMemberId = {}", loginMemberId);
+        return ApiResponse.onSuccess(creditService.getCreditHistoryList(creditIdx, loginMemberId));
     }
+
+
+
+
+
+
 }
