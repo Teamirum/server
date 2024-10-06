@@ -13,6 +13,8 @@ import server.domain.credit.repository.CreditHistoryRespository;
 import server.domain.credit.repository.CreditRepository;
 import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
+import server.domain.transaction.domain.Transaction;
+import server.domain.transaction.repository.TransactionRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
@@ -22,6 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.time.LocalDateTime.now;
+import static server.domain.transaction.domain.Transaction.Category.ENTERTAINMENT;
+import static server.domain.transaction.domain.Transaction.PayMethod.ACCOUNT;
+import static server.domain.transaction.domain.Transaction.PayMethod.CARD;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,9 +36,8 @@ public class CreditService {
 
     private final CreditRepository creditRepository;
     private final MemberRepository memberRepository;
-    private final CreditMapper creditMapper;
-    private final CreditHistoryMapper creditHistoryMapper;
     private final CreditHistoryRespository creditHistoryRespository;
+    private final TransactionRepository transactionRepository;
 
     public CreditResponseDto.CreditTaskSuccessResponseDto upload(CreditRequestDto.UploadCreditRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -86,8 +92,7 @@ public class CreditService {
 
 
     @Transactional
-    public CreditResponseDto.CreditTaskSuccessResponseDto
-    updateAmountSum(Credit credit, Integer amountSum) {
+    public CreditResponseDto.CreditTaskSuccessResponseDto updateAmountSum(Credit credit, Integer amountSum) {
         creditRepository.updateAmountSum(credit.getIdx(), credit.getAmountSum() + amountSum);
 
         return CreditResponseDto.CreditTaskSuccessResponseDto.builder()
@@ -97,16 +102,26 @@ public class CreditService {
     }
 
     @Transactional
-    public void uploadCreditHistory(Credit credit, Integer amountSum, String name) {
+    public void uploadCreditHistory(Credit credit, Integer amount, String name) {
 
-        Integer creditAmountSum = credit.getAmountSum() + amountSum;
-
+        Integer creditAmountSum = credit.getAmountSum() + amount;
+        // 카드 결제내역
         creditHistoryRespository.save(CreditHistory.builder()
                 .creditIdx(credit.getIdx())
-                .amount(amountSum)
+                .amount(amount)
                 .amountSum(creditAmountSum)
                 .name(name)
                 .createdAt(LocalDateTime.now())
+                .build());
+
+        transactionRepository.save(Transaction.builder()
+                .memberIdx(credit.getMemberIdx())
+                .creditIdx(credit.getIdx())
+                .time(now())
+                .payMethod(CARD)
+                .amount(amount)
+                .memo(name)
+                .category(ENTERTAINMENT)
                 .build());
     }
 
@@ -118,9 +133,4 @@ public class CreditService {
         List<CreditHistory> creditHistoryList = creditHistoryRespository.findAllCreditHistoryByCreditIdx(creditIdx);
         return CreditHistoryDtoConverter.convertToCreditHistoryListResponseDto(creditHistoryList);
     }
-
-
-
-
-
 }

@@ -11,16 +11,16 @@ import server.domain.account.repository.AccountHistoryRepository;
 import server.domain.account.repository.AccountRepository;
 import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
+import server.domain.transaction.domain.Transaction;
+import server.domain.transaction.repository.TransactionRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
-
-import java.time.LocalDateTime;
 import java.util.List;
-
 import static java.time.LocalDateTime.now;
-import static java.time.chrono.ChronoLocalDateTime.from;
 import static server.domain.account.domain.AccountHistory.AccountHistoryType.GET;
 import static server.domain.account.domain.AccountHistory.AccountHistoryType.SEND;
+import static server.domain.transaction.domain.Transaction.Category.ENTERTAINMENT;
+import static server.domain.transaction.domain.Transaction.PayMethod.ACCOUNT;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final MemberRepository memberRepository;
     private final AccountHistoryRepository accountHistoryRepository;
-
+    private final TransactionRepository transactionRepository;
 
     public AccountResponseDto.AccountTaskSuccessResponseDto upload(AccountRequestDto.UploadAccountRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -96,6 +96,7 @@ public class AccountService {
                 .remainAmount(fromAccountAmount)
                 .name(name)
                 .build());
+
         accountHistoryRepository.save(AccountHistory.builder()
                 .accountIdx(toAccount.getIdx())
                 .accountHistoryType(GET)
@@ -104,6 +105,48 @@ public class AccountService {
                 .remainAmount(toAccountAmount)
                 .name(name)
                 .build());
+
+        transactionRepository.save(Transaction.builder()
+                .memberIdx(fromAccount.getMemberIdx())
+                .accountIdx(fromAccount.getIdx())
+                .time(now())
+                .payMethod(ACCOUNT)
+                .amount(amount)
+                .memo(name)
+                .category(ENTERTAINMENT)
+                .build());
+
+        /**
+         *     private Long idx;
+         *
+         *     private Long memberIdx;
+         *
+         *     private Long creditIdx;
+         *
+         *     private Long accountIdx;
+         *
+         *     private LocalDateTime time;
+         *
+         *     private PayMethod payMethod;  // 결제 방식 (ENUM)
+         *
+         *     private int amount;
+         *
+         *     private String memo;
+         *
+         *     private Category category;  // 거래 카테고리 (ENUM)
+         *
+         *     private String tranId;
+         *
+         *     // 결제 방식 ENUM
+         *     public enum PayMethod {
+         *         CARD, ACCOUNT
+         *     }
+         *
+         *     // 카테고리 ENUM
+         *     public enum Category {
+         *         FOOD, TRANSPORT, ENTERTAINMENT
+         *     }
+         */
     }
 
 

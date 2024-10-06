@@ -35,11 +35,11 @@ public class Transaction {
 
     // 결제 방식 ENUM
     public enum PayMethod {
-        CARD, ACCOUNT, NPAY, KPAY, TogetherPay
+        CARD, ACCOUNT
     }
 
     // 카테고리 ENUM
     public enum Category {
-        FOOD, TRANSPORT, SHOPPING, ETC
+        FOOD, TRANSPORT, ENTERTAINMENT
     }
 }
