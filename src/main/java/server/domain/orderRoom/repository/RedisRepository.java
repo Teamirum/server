@@ -25,9 +25,9 @@ public class RedisRepository {
     private static final String ORDER_ROOMS = "ORDER_ROOM";
     public static final String ENTER_INFO = "ENTER_INFO"; // 채팅룸에 입장한 클라이언트의 sessionId와 채팅룸 id를 맵핑한 정보 저장
     private final RedisTemplate<String, Object> redisTemplate;
-    private HashOperations<String, Long, OrderRoom> opsHashOrderRoom;
+    private HashOperations<String, String, OrderRoom> opsHashOrderRoom;
     // 채팅방 입장 정보 <ENTER_INFO, memberIdx, orderIdx>
-    private HashOperations<String, Long, Long> opsHashEnterInfo;
+    private HashOperations<String, String, Long> opsHashEnterInfo;
     // 채팅방의 대화 메시지를 발행하기 위한 redis topic 정보. 서버별로 채팅방에 매치되는 topic 정보를 Map에 넣어 roomId로 찾을수 있도록 한다.
     private Map<String, ChannelTopic> topics;
 
@@ -61,8 +61,8 @@ public class RedisRepository {
         if (orderRoom.enterMember(memberIdx)) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_EXCEED);
         }
-        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);
-        opsHashEnterInfo.put(ENTER_INFO, memberIdx, orderIdx);
+        opsHashOrderRoom.put(ORDER_ROOMS, orderIdxStr, orderRoom);
+        opsHashEnterInfo.put(ENTER_INFO, orderIdxStr, orderIdx);
         return topic;
     }
 
@@ -70,7 +70,7 @@ public class RedisRepository {
         String orderIdxStr = orderRoom.getOrderIdx() + "";
         ChannelTopic topic = new ChannelTopic(orderIdxStr);
         topics.put(orderIdxStr, topic);
-        opsHashOrderRoom.put(ORDER_ROOMS, orderRoom.getOrderIdx(), orderRoom);
+        opsHashOrderRoom.put(ORDER_ROOMS, orderIdxStr, orderRoom);
         return topic;
     }
 
@@ -78,16 +78,17 @@ public class RedisRepository {
         if (!existByOrderRoomIdx(orderIdx)) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_NOT_FOUND);
         }
-        return opsHashOrderRoom.get(ORDER_ROOMS,orderIdx);
+        return opsHashOrderRoom.get(ORDER_ROOMS, orderIdx + "");
     }
 
     @RedisLock(lockName = "lock:orderRoom:#{#orderIdx}")
     public OrderRoom readyToPay(Long orderIdx) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
+        String orderIdxStr = orderRoom.getOrderIdx() + "";
         if (orderRoom.readyToPay()) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_NOT_MATCH);
         }
-        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);
+        opsHashOrderRoom.put(ORDER_ROOMS, orderIdxStr, orderRoom);
         return orderRoom;
     }
 
@@ -100,7 +101,7 @@ public class RedisRepository {
         if (orderRoom.cancelReadyToPay()) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_NOT_MATCH);
         }
-        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);
+        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx + "", orderRoom);
         return orderRoom;
     }
 
@@ -127,7 +128,7 @@ public class RedisRepository {
         menuSelect.get(menuIdx).add(memberIdx);
         orderRoom.updateCurrentPrice(price);
 
-        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);
+        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx + "", orderRoom);
         return orderRoom;
     }
 
@@ -144,7 +145,7 @@ public class RedisRepository {
         menuSelect.get(menuIdx).remove(memberIdx);
         orderRoom.updateCurrentPrice(price);
 
-        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);
+        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx + "", orderRoom);
         return orderRoom;
     }
 
@@ -162,12 +163,12 @@ public class RedisRepository {
         if (orderRoom.exitMember(memberIdx)) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_BE_MINUS);
         }
-        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx, orderRoom);
+        opsHashOrderRoom.put(ORDER_ROOMS, orderIdx + "", orderRoom);
     }
 
     // 유저가 입장해 있는 주문방 ID 조회
     public Long getMemberEnteredOrderRoomIdx(Long memberIdx) {
-        Long orderIdx = opsHashEnterInfo.get(ENTER_INFO, memberIdx);
+        Long orderIdx = opsHashEnterInfo.get(ENTER_INFO, memberIdx + "");
         if (orderIdx == null) {
             throw new ErrorHandler(ErrorStatus.ORDER_MEMBER_PARTICIPANT_ROOM_NOT_FOUND);
         }
@@ -181,12 +182,12 @@ public class RedisRepository {
 
     // 사용자 퇴장
     public void exitMemberEnterOrderRoom(Long memberIdx) {
-        opsHashEnterInfo.delete(ENTER_INFO, memberIdx);
+        opsHashEnterInfo.delete(ENTER_INFO, memberIdx + "");
     }
 
     // 이미 참여중인지
     public boolean existMyInfo(Long memberIdx) {
-        return opsHashEnterInfo.hasKey(ENTER_INFO, memberIdx);
+        return opsHashEnterInfo.hasKey(ENTER_INFO, memberIdx + "");
     }
 
 

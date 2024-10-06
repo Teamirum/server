@@ -19,6 +19,12 @@ public class OrderRoomController {
 
     private final OrderRoomService orderRoomService;
 
+    @MessageMapping("/order/room/create")
+    public void createOrderRoom(@Payload CreateOrderRoomRequestDto requestDto) {
+        String memberId = getLoginMemberId();
+        orderRoomService.createOrderRoom(requestDto, memberId);
+    }
+
     @MessageMapping("/order/room/enter/{orderIdx}")
     public void enterOrderRoom(@DestinationVariable Long orderIdx) {
         orderRoomService.enterOrderRoom(orderIdx, getLoginMemberId());
