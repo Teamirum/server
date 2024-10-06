@@ -15,9 +15,11 @@ public class TogetherOrder {
 
     private Long idx;
 
-    private Long OrderIdx;
+    private Long orderIdx;
 
     private Long memberIdx;
+
+    private int totalPrice;
 
     private LocalDateTime createdAt;
 }

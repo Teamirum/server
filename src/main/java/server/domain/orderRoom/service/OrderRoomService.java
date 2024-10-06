@@ -6,18 +6,24 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
+import server.domain.menu.domain.Menu;
+import server.domain.menu.repository.MenuRepository;
 import server.domain.order.domain.Order;
 import server.domain.order.domain.OrderMenu;
+import server.domain.order.domain.TogetherOrder;
 import server.domain.order.repository.OrderMenuRepository;
 import server.domain.order.repository.OrderRepository;
+import server.domain.order.repository.TogetherOrderRepository;
 import server.domain.orderRoom.domain.OrderRoom;
 import server.domain.orderRoom.dto.OrderRoomDataDto;
 import server.domain.orderRoom.dto.OrderRoomResponseDto.*;
 import server.domain.orderRoom.dto.OrderRoomRequestDto.*;
 import server.domain.orderRoom.model.OrderRoomStatus;
 import server.domain.orderRoom.model.OrderRoomType;
+import server.domain.orderRoom.repository.OrderRoomRepository;
 import server.domain.orderRoom.repository.RedisRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
@@ -34,12 +40,15 @@ public class OrderRoomService {
 
     private final RedisRepository redisRepository;
     private final OrderRepository orderRepository;
+    private final TogetherOrderRepository togetherOrderRepository;
     private final OrderMenuRepository orderMenuRepository;
     private final MemberRepository memberRepository;
+    private final MenuRepository menuRepository;
     // 채팅방(topic)에 발행되는 메시지를 처리할 Listner
     private final RedisMessageListenerContainer redisMessageListener;
     private final RedisSubscriber redisSubscriber;
     private final RedisPublisher redisPublisher;
+    private final OrderRoomRepository orderRoomRepository;
 
 
     public CreateOrderRoomResponseDto createOrderRoom(CreateOrderRoomRequestDto requestDto, String memberId) {
@@ -206,6 +215,7 @@ public class OrderRoomService {
         redisPublisher.publish(channelTopic, menuCancel);
     }
 
+    @Transactional
     public void readyToPay(Long orderIdx, String memberId) {
         Member member = getMemberById(memberId);
         if (!redisRepository.existByOrderRoomIdx(orderIdx)) {
@@ -229,9 +239,57 @@ public class OrderRoomService {
                 .build();
         redisPublisher.publish(channelTopic, readyToPay);
 
-        if (orderRoom.getReadyCnt() == orderRoom.getMaxMemberCnt()) {
-
+        if (orderRoom.getReadyCnt() == orderRoom.getMaxMemberCnt() && orderRoom.getType().equals(OrderRoomType.BY_MENU)) {
+            if (orderRoom.getTotalPrice() == orderRoom.getCurrentPrice()) {
+                saveOrderRoomAndTogetherOrder(orderIdx);
+            } else {
+                throw new ErrorHandler(ErrorStatus.ORDER_ROOM_PRICE_NOT_MATCH);
+            }
         }
+
+    }
+
+    public void saveOrderRoomAndTogetherOrder(Long orderIdx) {
+        Order order = orderRepository.findByOrderIdx(orderIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_NOT_FOUND));
+        OrderRoom orderRoom = redisRepository.getOrderRoom(order.getIdx());
+        List<OrderMenu> orderMenuList = orderMenuRepository.findAllByOrderIdx(orderRoom.getOrderIdx());
+        if (orderMenuList.isEmpty()) {
+            throw new ErrorHandler(ErrorStatus.ORDER_MENU_NOT_FOUND);
+        }
+        HashMap<Long, List<Long>> menuSelect = orderRoom.getMenuSelect();
+        for (Long memberIdx : orderRoom.getMemberIdxList()) {
+            Member member = memberRepository.findByIdx(memberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            int totalPrice = 0;
+            for (Long menuIdx : menuSelect.keySet()) {
+                List<Long> memberMenuSelect = menuSelect.get(menuIdx);
+                if (memberMenuSelect.contains(memberIdx)) {
+                    Menu menu = menuRepository.findByIdx(menuIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MENU_NOT_FOUND));
+                    totalPrice += menu.getPrice();
+                }
+            }
+            TogetherOrder togetherOrder = TogetherOrder.builder()
+                    .orderIdx(order.getIdx())
+                    .memberIdx(member.getIdx())
+                    .totalPrice(totalPrice)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            togetherOrderRepository.save(togetherOrder);
+        }
+        orderRoomRepository.save(orderRoom);
+
+        StartPayResponseDto startPayResponseDto = StartPayResponseDto.builder()
+                .orderIdx(orderIdx)
+                .totalPrice(orderRoom.getTotalPrice())
+                .currentPrice(orderRoom.getCurrentPrice())
+                .maxMemberCnt(orderRoom.getMaxMemberCnt())
+                .type("START_PAY")
+                .build();
+        ChannelTopic channelTopic = redisRepository.getTopic(orderIdx.toString());
+        if (channelTopic == null) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND);
+        }
+        redisPublisher.publish(channelTopic, startPayResponseDto);
+
 
     }
 

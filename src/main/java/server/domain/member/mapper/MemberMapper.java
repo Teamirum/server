@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface MemberMapper {
     Member findByMemberId(String memberId);
 
+    Member findByIdx(Long memberIdx);
+
     Member findByPhoneNum(String phoneNum);
 
     void save(Member member);

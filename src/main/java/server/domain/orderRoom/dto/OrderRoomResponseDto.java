@@ -102,4 +102,16 @@ public class OrderRoomResponseDto {
         // READY_TO_PAY, CANCEL_READY_TO_PAY 로 고정
         private String type;
     }
+
+    @Data
+    @Builder
+    public static class StartPayResponseDto {
+        private Long orderIdx;
+        private int totalPrice;
+        private int currentPrice;
+        private int maxMemberCnt;
+        private Boolean canStartToPay;
+        // START_PAY 로 고정
+        private String type;
+    }
 }
