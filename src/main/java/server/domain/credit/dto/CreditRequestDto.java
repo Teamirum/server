@@ -34,4 +34,19 @@ public class CreditRequestDto {
         }
     }
 
+    @Data
+    public static class PayCreditRequestDto {
+        private String creditNumber;
+        private Integer amountSum;
+
+        @JsonCreator
+        public PayCreditRequestDto(
+                @JsonProperty("creditNumber") String creditNumber,
+                @JsonProperty("amountSum") Integer amountSum
+        ) {
+            this.creditNumber = creditNumber;
+            this.amountSum = amountSum;
+        }
+    }
+
 }

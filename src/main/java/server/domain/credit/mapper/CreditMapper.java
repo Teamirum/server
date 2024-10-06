@@ -1,6 +1,7 @@
 package server.domain.credit.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import server.domain.credit.domain.Credit;
 import server.domain.credit.domain.CreditHistory;
 
@@ -24,5 +25,7 @@ public interface CreditMapper {
 
     void delete(Long idx);
 
-    Object findMemberIdxByCreditIdx(Long creditIdx);
+    void updateAmountSum(Map<String, Object> map);
+
+   Credit findMemberIdxAndCreditNumber(Map<String, Object> map);
 }

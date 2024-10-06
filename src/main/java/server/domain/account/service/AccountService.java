@@ -82,15 +82,6 @@ public class AccountService {
                 .build();
     }
 
-
-    public AccountResponseDto.AccountTaskSuccessResponseDto updateAmount(AccountRequestDto.UpdateAccountAmountRequestDto requestDto) {
-        accountRepository.updateAccountAmount(requestDto.getIdx(), Integer.parseInt(requestDto.getAmount()));
-        return AccountResponseDto.AccountTaskSuccessResponseDto.builder()
-                .isSuccess(true)
-                .idx(requestDto.getIdx())
-                .build();
-    }
-
     @Transactional
     public void uploadAccountHistory(Account fromAccount, Account toAccount, Integer amount, String name) {
 
@@ -123,10 +114,6 @@ public class AccountService {
         }
         List<AccountHistory> accountHistoryList = accountHistoryRepository.findAllAccountHistoryByAccountIdx(accountIdx);
         return AccountHistoryDtoConverter.convertToAccountHistoryListResponseDto(accountHistoryList);
-    }
-
-    public Account findByAccountIdx(Long idx) {
-        return accountRepository.getIdxByAccountIdx(idx).orElseThrow(() -> new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND));
     }
 
     public Account findByMemberIdxAndAccountNumber(String loginMemberId, String fromAccountNumber) {

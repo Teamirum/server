@@ -1,7 +1,9 @@
 package server.domain.credit.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import server.domain.credit.domain.Credit;
 import server.domain.credit.domain.CreditHistory;
 import server.domain.credit.dto.CreditDtoConverter;
@@ -9,22 +11,27 @@ import server.domain.credit.dto.CreditHistoryRequestDto;
 import server.domain.credit.dto.CreditRequestDto;
 import server.domain.credit.dto.CreditResponseDto;
 import server.domain.credit.mapper.CreditHistoryMapper;
+import server.domain.credit.mapper.CreditMapper;
 import server.domain.credit.repository.CreditRepository;
 import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CreditService {
 
     private final CreditRepository creditRepository;
     private final MemberRepository memberRepository;
+    private final CreditMapper creditMapper;
     private final CreditHistoryMapper creditHistoryMapper;
 
     public CreditResponseDto.CreditTaskSuccessResponseDto upload(CreditRequestDto.UploadCreditRequestDto requestDto, String memberId) {
@@ -72,30 +79,26 @@ public class CreditService {
                 .build();
     }
 
-    // 카드 결제 내역 조회
-    public List<CreditHistory> getCreditHistoryList(Long idx, String loginMemberId) {
-        // 카드의 소유자 확인 (로그인한 사용자가 해당 카드의 소유자인지 확인)
-        if (!isCardOwner(idx, loginMemberId)) {
-            throw new ErrorHandler(ErrorStatus.UNAUTHORIZED_ACCESS);
-        }
+   public Credit findMemberIdxAndCreditNumber(String memberId, String creditNumber) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        // 해당 카드의 결제 내역 조회
-        return creditHistoryMapper.findAllByCreditIdx(idx);
+        return creditRepository.findMemberIdxAndCreditNumber(memberIdx, creditNumber).orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_NOT_FOUND));
     }
 
-    // 카드 소유자 확인 (예시 메서드)
-    private boolean isCardOwner(Long idx, String loginMemberId) {
-        // 카드 소유자 확인 로직 추가
-        Long memberIdx = memberRepository.getIdxByMemberId(loginMemberId)
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        // 해당 카드가 로그인한 사용자의 카드인지 확인
-        return creditRepository.findByCreditIdxAndMemberIdx(idx, memberIdx) != null;
+    @Transactional
+    public CreditResponseDto.CreditTaskSuccessResponseDto
+    updateAmountSum(Credit credit, Integer amountSum) {
+        creditRepository.updateAmountSum(credit.getIdx(), credit.getAmountSum() + amountSum);
+
+        return CreditResponseDto.CreditTaskSuccessResponseDto.builder()
+                .isSuccess(true)
+                .idx(credit.getIdx())
+                .build();
     }
 
-    public Long findCreditMemberIdxByCreditIdx(Long creditIdx) {
-        return (Long) creditRepository.findMemberIdxByCreditIdx(creditIdx)
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_NOT_FOUND));
-    }
+
+
+
 
 }

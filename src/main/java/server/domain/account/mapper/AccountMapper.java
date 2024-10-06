@@ -17,8 +17,6 @@ public interface AccountMapper {
 
     Account findByMemberIdxAndAccountNumber(Map<String, Object> map);
 
-
-
     Account findByAccountNumber(String accountNumber);
 
     Account findByIdxAndMemberIdx(Map<String, Object> map);

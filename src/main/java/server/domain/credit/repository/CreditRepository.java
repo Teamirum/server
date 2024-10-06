@@ -2,6 +2,7 @@ package server.domain.credit.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import server.domain.account.domain.Account;
 import server.domain.credit.domain.Credit;
 import server.domain.credit.mapper.CreditMapper;
 import server.domain.transaction.domain.Transaction;
@@ -64,14 +65,18 @@ public class CreditRepository {
     }
 
 
-    public Optional<Credit> findByCreditIdxAndMemberIdx(Long creditIdx, Long memberIdx) {
-        Map<String, Object> map = Map.of("creditIdx", creditIdx, "memberIdx", memberIdx);
-        Credit credit = creditMapper.findByIdxAndMemberIdx(map);
-        return Optional.ofNullable(credit);
+    public Optional<Credit> findMemberIdxAndCreditNumber(Long memberIdx, String creditNumber) {
+        Map<String, Object> map = Map.of("memberIdx", memberIdx, "creditNumber", creditNumber);
+        Credit credit = creditMapper.findMemberIdxAndCreditNumber(map);;
+        if (credit != null) {
+            return Optional.of(credit);
+        }
+        return Optional.empty();
     }
 
-
-    public Optional<Object> findMemberIdxByCreditIdx(Long creditIdx) {
-        return Optional.ofNullable(creditMapper.findMemberIdxByCreditIdx(creditIdx));
+    public void updateAmountSum(Long idx,Integer amountSum) {
+        Map<String, Object> map = Map.of("idx", idx, "amountSum", amountSum);
+        System.out.println("map = " + map);
+        creditMapper.updateAmountSum(map);
     }
 }

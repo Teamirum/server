@@ -2,12 +2,14 @@ package server.domain.credit.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.domain.credit.domain.Credit;
 import server.domain.credit.domain.CreditHistory;
 import server.domain.credit.dto.CreditHistoryDtoConverter;
 import server.domain.credit.dto.CreditHistoryResponseDto;
 import server.domain.credit.dto.CreditRequestDto;
+import server.domain.credit.dto.CreditResponseDto;
 import server.domain.credit.service.CreditService;
 import server.global.apiPayload.ApiResponse;
 import server.global.apiPayload.code.status.ErrorStatus;
@@ -45,17 +47,15 @@ public class CreditController {
         return ApiResponse.onSuccess(creditService.delete(idx, loginMemberId));
     }
 
-    //카드 거래내역 조회
-    @GetMapping
-    public ApiResponse<CreditHistoryResponseDto.CreditHistoryListResponseDto> getCreditTransactionList(@RequestParam(value = "idx") Long idx) {
-        String loginMemberId = getLoginMemberId();
-        log.info("신용카드 거래내역 조회 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
+    //카드 결제
+    @PostMapping("/payCredit")
+    public ResponseEntity<CreditResponseDto.CreditTaskSuccessResponseDto> payCredit(@RequestBody CreditRequestDto.PayCreditRequestDto requestDto) {
 
-        List<CreditHistory> creditHistories = creditService.getCreditHistoryList(idx, loginMemberId);
-        CreditHistoryResponseDto.CreditHistoryListResponseDto responseDto = CreditHistoryDtoConverter.convertToCreditHistoryListResponseDto(creditHistories);
+        Credit credit = creditService.findMemberIdxAndCreditNumber(getLoginMemberId(), requestDto.getCreditNumber());
 
-        return ApiResponse.onSuccess(responseDto);
+        return ResponseEntity.ok(creditService.updateAmountSum(credit, requestDto.getAmountSum()));
     }
+
 
     private String getLoginMemberId() {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));

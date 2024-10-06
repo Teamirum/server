@@ -52,15 +52,6 @@ public class AccountController {
     }
 
 
-    //계좌 amount
-    @PatchMapping("/{idx}/update")
-    public ResponseEntity<AccountResponseDto.AccountTaskSuccessResponseDto> updateAccountAmount(
-            @PathVariable Long idx,
-            @RequestBody AccountRequestDto.UpdateAccountAmountRequestDto requestDto) {
-        requestDto.setIdx(idx);
-        AccountResponseDto.AccountTaskSuccessResponseDto responseDto = accountService.updateAmount(requestDto);
-        return ResponseEntity.ok(responseDto);
-    }
 
     /**
      * 계좌 송금 로직
