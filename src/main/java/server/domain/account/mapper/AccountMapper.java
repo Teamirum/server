@@ -26,4 +26,5 @@ public interface AccountMapper {
     void updateAccountAmount(@Param("idx") Long idx, @Param("amount") Integer amount);
 
 
+    void payPrice(Map<String, Object> map);
 }

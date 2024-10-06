@@ -19,7 +19,7 @@ public class TogetherOrder {
 
     private Long memberIdx;
 
-    private int totalPrice;
+    private int price;
 
     private LocalDateTime createdAt;
 }

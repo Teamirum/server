@@ -61,4 +61,8 @@ public class AccountRepository {
         return account != null;
     }
 
+    public void payPrice(Long idx, int price) {
+        Map<String, Object> map = Map.of("idx", idx, "price", price);
+        accountMapper.payPrice(map);
+    }
 }

@@ -13,6 +13,8 @@ import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Service
@@ -68,6 +70,31 @@ public class CreditService {
                 .isSuccess(true)
                 .idx(creditIdx)
                 .build();
+    }
+
+    public void payWithCredit(Credit credit, int price) {
+        creditRepository.payPrice(credit.getIdx(), price + credit.getAmountSum());
+    }
+
+    public boolean isAbleToUseCredit(Credit credit) {
+        // 만료일을 LocalDateTime으로 변환
+        LocalDateTime expirationDate;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // 문자열 형식에 맞게 조정
+            expirationDate = LocalDateTime.parse(credit.getExpirationDate(), formatter);
+        } catch (DateTimeParseException e) {
+            throw new ErrorHandler(ErrorStatus.CREDIT_EXPIRATION_DATE_FORMAT_ERROR);
+        }
+
+        // 만료일이 현재 시간보다 이전인지 확인
+        if (expirationDate.isBefore(LocalDateTime.now())) {
+            throw new ErrorHandler(ErrorStatus.CREDIT_CARD_EXPIRED);
+        }
+        return true;
+    }
+
+    public Credit getCreditByIdx(Long creditIdx) {
+        return creditRepository.findByCreditIdx(creditIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_CARD_NOT_FOUND));
     }
 
 

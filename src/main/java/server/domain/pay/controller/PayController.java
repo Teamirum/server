@@ -25,11 +25,15 @@ public class PayController {
         return ApiResponse.onSuccess(payService.getAllPayMethod(memberId));
     }
 
-    @PostMapping
+    @PostMapping("/together")
     public ApiResponse<?> startPay(@RequestBody PayRequestDto.StartPayRequestDto requestDto) {
         String memberId = getLoginMemberId();
         log.info("결제 요청 : memberId = {}, orderIdx = {}", memberId, requestDto.getOrderIdx());
-        return ApiResponse.onSuccess(payService.startPay(requestDto, memberId));
+        if (requestDto.getPayType().equals("TOGETHER")) {
+            return ApiResponse.onSuccess(payService.startTogetherPay(requestDto, memberId));
+        }
+        // 개인 결제는 아래
+        return ApiResponse.onSuccess(payService.startTogetherPay(requestDto, memberId));
     }
 
     private String getLoginMemberId() {

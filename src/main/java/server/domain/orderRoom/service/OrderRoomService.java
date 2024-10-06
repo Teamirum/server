@@ -270,7 +270,7 @@ public class OrderRoomService {
             TogetherOrder togetherOrder = TogetherOrder.builder()
                     .orderIdx(order.getIdx())
                     .memberIdx(member.getIdx())
-                    .totalPrice(totalPrice)
+                    .price(totalPrice)
                     .createdAt(LocalDateTime.now())
                     .build();
             togetherOrderRepository.save(togetherOrder);

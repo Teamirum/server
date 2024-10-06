@@ -51,8 +51,10 @@ public enum ErrorStatus implements BaseErrorCode {
     // 카드 응답
     CREDIT_CARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "CREDIT4001", "해당 카드가 존재하지 않습니다."),
     CREDIT_CARD_DUPLICATE(HttpStatus.BAD_REQUEST, "CARD4002", "이미 등록된 카드입니다."),
+    CREDIT_CARD_EXPIRED(HttpStatus.BAD_REQUEST, "CARD4003", "카드가 만료되었습니다."),
 
     CREDIT_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "CREDIT5001", "카드 저장에 실패하였습니다."),
+    CREDIT_EXPIRATION_DATE_FORMAT_ERROR(HttpStatus.BAD_REQUEST, "CREDIT5002", "유효기간이 잘못되었습니다."),
 
     // 주문 응답
     ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4001", "해당 주문이 존재하지 않습니다."),
@@ -76,6 +78,10 @@ public enum ErrorStatus implements BaseErrorCode {
     ORDER_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5001", "주문 저장에 실패하였습니다."),
     ORDER_MENU_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5002", "메뉴 저장에 실패하였습니다."),
 
+    //결제 응답
+    PAY_METHOD_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAY4001", "올바르지 않은 결제 방식입니다."),
+
+    PAY_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "PAY5001", "결제 저장에 실패하였습니다."),
 
     // 메뉴 응답
     MENU_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MENU4001", "이미 등록된 메뉴입니다."),

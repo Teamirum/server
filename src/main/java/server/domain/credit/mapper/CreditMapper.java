@@ -22,4 +22,6 @@ public interface CreditMapper {
     void updateCreditImage(Map<String, Object> map);
 
     void deleteCredit(Long creditIdx);
+
+    void payPrice(Map<String, Object> map);
 }

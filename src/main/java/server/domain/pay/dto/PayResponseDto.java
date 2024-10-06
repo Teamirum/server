@@ -15,4 +15,21 @@ public class PayResponseDto {
         CreditResponseDto.CreditListResponseDto credit;
         AccountResponseDto.AccountListResponseDto account;
     }
+
+    @Data
+    @Builder
+    public static class PaySuccessResponseDto {
+        Long idx;
+        Long memberIdx;
+        Long orderIdx;
+        int price;
+        String bankName;
+        String accountNumber;
+        String creditName;
+        String creditNumber;
+        String payType;
+        String payStatus;
+        String createdAt;
+        Boolean isSuccess;
+    }
 }
