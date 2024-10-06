@@ -60,7 +60,7 @@ public class StompHandler implements ChannelInterceptor {
             // 함께 주문에서 나가는 것이 맞는지 확인
             if(redisRepository.existMyInfo(member.getIdx())) {
                 Long orderIdx = redisRepository.getMemberEnteredOrderRoomIdx(member.getIdx());
-                log.info("Exit chatroom. memberIdx : {}, orderRoomIdx : {}", member.getIdx(), orderIdx);
+                log.info("Exit orderRoom. memberIdx : {}, orderRoomIdx : {}", member.getIdx(), orderIdx);
                 if (orderIdx == null) {
                     log.error("Stomp Handler : 주문방을 찾는데 실패하였습니다. memberIdx : {}", member.getIdx());
                     throw new MessageDeliveryException(ErrorStatus.ORDER_ROOM_NOT_FOUND.getMessage());

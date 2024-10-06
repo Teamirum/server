@@ -39,10 +39,15 @@ public class RedisSubscriber implements MessageListener {
             } else if (messageType.equals("MENU_SELECT") || messageType.equals("MENU_CANCEL")) {
                 OrderRoomMenuSelectionResponseDto orderRoomMenuInfoListDto = objectMapper.treeToValue(jsonNode, OrderRoomMenuSelectionResponseDto.class);
                 messagingTemplate.convertAndSend("/sub/order/room/" + orderRoomMenuInfoListDto.getOrderIdx(), orderRoomMenuInfoListDto);
+            } else if (messageType.equals("READY_TO_PAY") || messageType.equals("CANCEL_READY_TO_PAY")) {
+                OrderRoomReadyToPayResponseDto orderRoomReadyToPayResponseDto = objectMapper.treeToValue(jsonNode, OrderRoomReadyToPayResponseDto.class);
+                messagingTemplate.convertAndSend("/sub/order/room/" + orderRoomReadyToPayResponseDto.getOrderIdx(), orderRoomReadyToPayResponseDto);
+            } else if (messageType.equals("START_PAY")) {
+                StartPayResponseDto startPayResponseDto = objectMapper.treeToValue(jsonNode, StartPayResponseDto.class);
+                messagingTemplate.convertAndSend("/sub/order/room/" + startPayResponseDto.getOrderIdx(), startPayResponseDto);
+            } else {
+                log.error("RedisSubscriber : 알 수 없는 메시지 타입입니다. type = {}", messageType );
             }
-
-            // Websocket 구독자에게 채팅 메시지 전송
-
 
         } catch (Exception e) {
             log.error("Exception : {}", e.getMessage());
