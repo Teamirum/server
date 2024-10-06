@@ -3,6 +3,7 @@ package server.domain.order.mapper;
 import server.domain.order.domain.OrderMenu;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrderMenuMapper {
 
@@ -10,7 +11,7 @@ public interface OrderMenuMapper {
 
     List<OrderMenu> findAllByOrderIdx(Long orderIdx);
 
-    OrderMenu findByOrderIdxAndMenuIdx(Long orderIdx, Long menuIdx);
+    OrderMenu findByOrderIdxAndMenuIdx(Map<String, Object> params);
 
 
 }

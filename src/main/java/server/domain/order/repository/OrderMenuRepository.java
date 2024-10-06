@@ -6,6 +6,7 @@ import server.domain.order.domain.OrderMenu;
 import server.domain.order.mapper.OrderMenuMapper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -19,7 +20,8 @@ public class OrderMenuRepository {
     }
 
     public Optional<OrderMenu> findByOrderIdxAndMenuIdx(Long orderIdx, Long menuIdx) {
-        OrderMenu orderMenu = orderMenuMapper.findByOrderIdxAndMenuIdx(orderIdx, menuIdx);
+        Map<String, Object> params = Map.of("orderIdx", orderIdx, "menuIdx", menuIdx);
+        OrderMenu orderMenu = orderMenuMapper.findByOrderIdxAndMenuIdx(params);
         if (orderMenu != null) {
             return Optional.of(orderMenu);
         }

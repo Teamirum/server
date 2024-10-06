@@ -53,23 +53,25 @@ public class OrderService {
                 .build();
         orderRepository.save(order);
 
-        Order savedOrder = orderRepository.findByOrderIdx(order.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_SAVE_FAIL));
+        Order savedOrder = orderRepository.findByNameAndMarketIdx(order.getName(), order.getMarketIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_SAVE_FAIL));
 
+        // 같은 번호로 들어온 중복되는 주문이 있는 경우 예외처리 또는 추가 하는 로직 구현 예정
         for (OrderRequestDto.OrderMenuDto menuDto : menuList) {
             if (menuDto.getAmount() <= 0) {
                 throw new ErrorHandler(ErrorStatus.ORDER_MENU_CNT_ERROR);
             }
-            Menu menu = menuRepository.findByIdx(requestDto.getMarketIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.MENU_NOT_FOUND));
+            Menu menu = menuRepository.findByIdx(menuDto.getMenuIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.MENU_NOT_FOUND));
             totalPrice += menu.getPrice() * menuDto.getAmount();
             OrderMenu orderMenu = OrderMenu.builder()
                     .orderIdx(savedOrder.getIdx())
                     .menuIdx(menu.getIdx())
+                    .menuName(menu.getName())
                     .price(menu.getPrice())
                     .amount(menuDto.getAmount())
                     .build();
             orderMenuRepository.save(orderMenu);
 
-            OrderMenu savedOrderMenu = orderMenuRepository.findByOrderIdxAndMenuIdx(orderMenu.getIdx(), orderMenu.getMenuIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_MENU_SAVE_FAIL));
+            OrderMenu savedOrderMenu = orderMenuRepository.findByOrderIdxAndMenuIdx(savedOrder.getIdx(), menu.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_MENU_SAVE_FAIL));
 
         }
         savedOrder.updatePrice(totalPrice);

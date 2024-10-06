@@ -17,31 +17,35 @@
 
     <!-- save Order -->
     <insert id="save" parameterType="server.domain.order.domain.Order">
-        INSERT INTO Order (
-            market_idx, name, amount, tax_free_amount, vat_amount, tableNumber, created_at
-        ) VALUES (
-            #{marketIdx}, #{name}, #{amount}, #{taxFreeAmount}, #{vatAmount},#{table_number}, #{createdAt}
-        )
+        INSERT INTO `Order` (market_idx, name, total_price, tax_free_price, vat_price, table_number)
+        VALUES (#{marketIdx}, #{name}, #{totalPrice}, #{taxFreePrice}, #{vatPrice}, #{tableNumber})
     </insert>
 
     <!-- Select Order by ID -->
     <select id="findByOrderIdx" parameterType="Long" resultMap="OrderResultMap">
         SELECT *
-        FROM Order
+        FROM `Order`
         WHERE idx = #{idx}
     </select>
 
     <!-- Select Order by MarketIdx -->
     <select id="findAllByMarketIdx" parameterType="Long" resultMap="OrderResultMap">
         SELECT *
-        FROM Order
+        FROM `Order`
         WHERE market_idx = #{marketIdx}
+    </select>
+
+    <!-- Select By Name and MarketIdx-->
+    <select id="findByNameAndMarketIdx" parameterType="map" resultMap="OrderResultMap">
+        SELECT *
+        FROM `Order`
+        WHERE name = #{name} AND market_idx = #{marketIdx}
     </select>
 
     <!-- update Order Price -->
     <update id="updatePrice" parameterType="server.domain.order.domain.Order">
-        UPDATE Order
-        SET amount = #{amount}, tax_free_amount = #{taxFreeAmount}, vat_amount = #{vatAmount}
+        UPDATE `Order`
+        SET total_price = #{totalPrice}, tax_free_price = #{taxFreePrice}, vat_price = #{vatPrice}
         WHERE idx = #{idx}
     </update>
 

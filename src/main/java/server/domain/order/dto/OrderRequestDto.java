@@ -18,9 +18,11 @@ public class OrderRequestDto {
         @JsonCreator
         public CreateOrderRequestDto(
                 @JsonProperty("marketIdx") Long marketIdx,
+                @JsonProperty("tableNumber") int tableNumber,
                 @JsonProperty("menuList") List<OrderMenuDto> menuList
         ) {
             this.marketIdx = marketIdx;
+            this.tableNumber = tableNumber;
             this.menuList = menuList;
         }
 

@@ -20,13 +20,13 @@ public class Order {
 
     private String name;
 
-    private int tableNumber;
-
     private int totalPrice;
 
     private int taxFreePrice;
 
     private int vatPrice;
+
+    private int tableNumber;
 
     private LocalDateTime createdAt;
 

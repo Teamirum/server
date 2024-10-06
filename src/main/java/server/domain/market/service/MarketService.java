@@ -29,7 +29,7 @@ public class MarketService {
                 .memberIdx(requestDto.getMemberIdx())
                 .name(requestDto.getName())
                 .address(requestDto.getAddress())
-                .kakaoCid(requestDto.getKakaoCid())
+                .maxTableCnt(requestDto.getMaxTableCnt())
                 .build();
         marketRepository.save(market);
 
