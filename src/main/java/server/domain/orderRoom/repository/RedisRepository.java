@@ -56,13 +56,14 @@ public class RedisRepository {
             log.info("기존에 등록된 topic이 없습니다. 새로운 topic 생성 : orderIdx = {}", orderIdxStr);
             topic = new ChannelTopic(orderIdxStr);
         }
+        log.info("topic 생성 : orderIdx = {}, topic = {}", orderIdxStr, topic);
 
         topics.put(orderIdxStr, topic);
         if (!orderRoom.enterMember(memberIdx)) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_EXCEED);
         }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdxStr, orderRoom);
-        opsHashEnterInfo.put(ENTER_INFO, orderIdxStr, orderIdx);
+        opsHashEnterInfo.put(ENTER_INFO, orderIdxStr, memberIdx);
         return topic;
     }
 

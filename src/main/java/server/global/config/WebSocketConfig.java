@@ -24,9 +24,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // 웹소켓이 handshake를 하기 위해 연결하는 endpoint
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*");
-//                .withSockJS();
+        registry.addEndpoint("/socket.io")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
         registry.setErrorHandler(stompErrorHandler);
-
     }
 
     //메세지 브로커에 관한 설정
