@@ -66,7 +66,6 @@ public class TransactionService {
         return TransactionDtoConverter.convertToTransactionListResponseDto(transactionRepository.findAllTransactionByMemberIdx(memberIdx));
     }
 
-    // 거래 삭제
     public TransactionResponseDto.TransactionTaskSuccessResponseDto delete(Long idx, String memberId) {
         Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -79,6 +78,34 @@ public class TransactionService {
         return TransactionResponseDto.TransactionTaskSuccessResponseDto.builder()
                 .isSuccess(true)
                 .idx(idx)
+                .build();
+    }
+
+    public TransactionResponseDto.TransactionTaskSuccessResponseDto update(TransactionRequestDto.UpdateTransactionRequestDto requestDto, String loginMemberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(loginMemberId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Transaction transaction = transactionRepository.findByTransactionIdx(requestDto.getIdx())
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.TRANSACTION_NOT_FOUND));
+
+        if (!transaction.getMemberIdx().equals(memberIdx)) {
+            throw new ErrorHandler(ErrorStatus.TRANSACTION_NOT_FOUND);
+        }
+
+//        transaction.setCreditIdx(requestDto.getCreditIdx());
+//        transaction.setAccountIdx(requestDto.getAccountIdx());
+        transaction.setPayMethod(Transaction.PayMethod.valueOf(requestDto.getPayMethod()));
+        transaction.setAmount(requestDto.getAmount());
+        transaction.setMemo(requestDto.getMemo());
+        transaction.setCategory(Transaction.Category.valueOf(requestDto.getCategory()));
+        transaction.setTranId(requestDto.getTranId());
+
+        transactionRepository.updateTransaction(transaction);
+
+
+        return TransactionResponseDto.TransactionTaskSuccessResponseDto.builder()
+                .isSuccess(true)
+                .idx(transaction.getIdx())
                 .build();
     }
 }

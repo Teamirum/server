@@ -22,7 +22,7 @@
         INSERT INTO Transaction (
             member_idx, credit_idx, account_idx, time, pay_method, amount, memo, category, tran_id
         ) VALUES (
-                     #{memberIdx}, #{creditIdx}, #{accountIdx}, #{time}, #{payMethod}, #{amount}, #{memo}, #{category}, #{tranId}
+                     #{memberIdx}, credit_idx = IFNULL(#{creditIdx}, credit_idx), account_idx = IFNULL(#{accountIdx}, account_idx), #{time}, #{payMethod}, #{amount}, #{memo}, #{category}, #{tranId}
                  )
     </insert>
 
@@ -48,11 +48,22 @@
     </select>
 
     <!-- Update Transaction -->
-    <update id="updateTransaction" parameterType="map">
+    <update id="updateTransaction" parameterType="server.domain.transaction.domain.Transaction">
         UPDATE Transaction
-        SET amount = #{amount}, memo = #{memo}, category = #{category}, pay_method = #{payMethod}, time = #{time}
-        WHERE idx = #{idx}
+        SET
+            credit_idx = IFNULL(#{creditIdx}, credit_idx),
+            account_idx = IFNULL(#{accountIdx}, account_idx),
+            pay_method = #{payMethod},
+            amount = IFNULL(#{amount}, amount),
+            memo = IFNULL(#{memo}, memo),
+            category = IFNULL(#{category}, category),
+            tran_id = #{tranId},
+            time = #{time}
+        WHERE
+            idx = #{idx} AND
+            member_idx = #{memberIdx}
     </update>
+
 
     <!-- Delete Transaction -->
     <delete id="delete" parameterType="Long">

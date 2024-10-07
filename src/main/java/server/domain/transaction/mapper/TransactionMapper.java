@@ -26,5 +26,5 @@ public interface TransactionMapper {
     void delete(Long idx);
 
     // 거래 내역 업데이트
-    void updateTransaction(Map<String, Object> map);
+    void updateTransaction(Transaction transaction);
 }

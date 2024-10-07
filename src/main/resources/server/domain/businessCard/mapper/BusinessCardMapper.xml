@@ -51,7 +51,6 @@
     </update>
 
 
-
     <!-- delete BusinessCard -->
     <delete id="delete" parameterType="Long">
         DELETE FROM BusinessCard

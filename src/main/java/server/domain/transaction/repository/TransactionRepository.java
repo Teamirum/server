@@ -40,8 +40,9 @@ public class TransactionRepository {
     }
 
     // 거래내역 업데이트
-    public void updateTransaction(Transaction transaction) {
-        transactionMapper.updateTransaction((Map<String, Object>) transaction);
+    public Transaction updateTransaction(Transaction transaction) {
+        transactionMapper.updateTransaction(transaction);
+        return transaction;
     }
 
 
