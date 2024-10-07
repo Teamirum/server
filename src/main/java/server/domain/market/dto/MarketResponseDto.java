@@ -19,7 +19,7 @@ public class MarketResponseDto {
         public Long memberIdx;
         public String name;
         public String address;
-        public String kakaoCid;
+        public int maxTableCnt;
         public String createdAt;
         public String modifiedAt;
     }

@@ -73,7 +73,7 @@ CREATE TABLE `Market` (
                           `name` VARCHAR(100) NOT NULL,
                           `address` VARCHAR(100) NOT NULL,
                           `kakao_cid` VARCHAR(100),
-                            `maxTable_cnt` INT NOT NULL,
+                          `maxTable_cnt` INT NOT NULL,
                           `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                           `modified_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
                           PRIMARY KEY (`idx`),
@@ -84,9 +84,9 @@ CREATE TABLE `Order` (
                          `idx` BIGINT AUTO_INCREMENT NOT NULL,
                          `market_idx` BIGINT NOT NULL,
                          `name` VARCHAR(100) NOT NULL,
-                         `amount` INT NOT NULL,
-                         `tax_free_amount` INT NOT NULL,
-                         `vat_amount` INT NOT NULL,
+                         `total_price` INT NOT NULL,
+                         `tax_free_price` INT NOT NULL,
+                         `vat_price` INT NOT NULL,
                          `table_number` INT NOT NULL,
                          `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                          PRIMARY KEY (`idx`),
@@ -128,6 +128,19 @@ CREATE TABLE `OrderMenu` (
                             FOREIGN KEY (`menu_idx`) REFERENCES `Menu`(`idx`) ON DELETE CASCADE
 );
 
+-- OrderRoom 테이블
+
+CREATE TABLE `OrderRoom` (
+                            `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                            `order_idx` BIGINT NOT NULL,
+                            `owner_member_idx` VARCHAR(100) NOT NULL,
+                            `member_cnt` INT NOT NULL,
+                            `amount` INT NOT NULL,
+                            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                            PRIMARY KEY (`idx`),
+                            FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE
+);
+
 -- BusinessCard 테이블
 CREATE TABLE `BusinessCard` (
                                 `idx` BIGINT AUTO_INCREMENT NOT NULL,
@@ -163,12 +176,11 @@ CREATE TABLE `Pay` (
                        `order_idx` BIGINT NOT NULL,
                        `credit_idx` BIGINT,
                        `account_idx` BIGINT,
-                       `pay_method` ENUM('card', 'account', 'npay', 'kpay') NOT NULL,
-                       `aid` VARCHAR(100) NOT NULL,
+                       `pay_method` ENUM('CARD', 'ACCOUNT') NOT NULL,
                        `tid` VARCHAR(100) NOT NULL,
                        `amount` INT NOT NULL,
-                       `state` ENUM('accept', 'wait', 'cancel', 'fail') NOT NULL,
-                       `payType` ENUM('together', 'alone') NOT NULL,
+                       `state` ENUM('ACCEPT', 'WAIT', 'CANCEL', 'FAIL') NOT NULL,
+                       `payType` ENUM('TOGETHER', 'ALONE') NOT NULL,
                        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                        `modified_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
                        PRIMARY KEY (`idx`),
@@ -184,7 +196,7 @@ CREATE TABLE `Transaction` (
                                `credit_idx` BIGINT NOT NULL,
                                `account_idx` BIGINT NOT NULL,
                                `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                               `pay_method` ENUM('CARD', 'ACCOUNT', 'NPAY', 'KPAY', 'TogetherPay') NOT NULL,
+                               `pay_method` ENUM('CARD', 'ACCOUNT') NOT NULL,
                                `amount` INT NOT NULL,
                                `memo` VARCHAR(100),
                                `category` ENUM('food', 'transport', 'entertainment') NOT NULL,

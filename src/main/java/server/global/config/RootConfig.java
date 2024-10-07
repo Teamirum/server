@@ -29,8 +29,8 @@ import javax.sql.DataSource;
     "server.domain.account.mapper",
     "server.domain.order.mapper",
     "server.domain.menu.mapper",
-    "server.domain.togetherOrder.mapper"
-
+    "server.domain.orderRoom.mapper",
+    "server.domain.pay.mapper",
 })
 @ComponentScan(basePackages = {
     "server.domain",

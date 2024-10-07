@@ -20,20 +20,20 @@ public class Order {
 
     private String name;
 
+    private int totalPrice;
+
+    private int taxFreePrice;
+
+    private int vatPrice;
+
     private int tableNumber;
-
-    private int amount;
-
-    private int taxFreeAmount;
-
-    private int vatAmount;
 
     private LocalDateTime createdAt;
 
-    public void updateAmount(int amount) {
-        this.amount = amount;
-        this.taxFreeAmount =  Math.round(amount * 0.9f);
-        this.vatAmount = amount - taxFreeAmount;
+    public void updatePrice(int totalPrice) {
+        this.totalPrice = totalPrice;
+        this.taxFreePrice =  Math.round(totalPrice * 0.9f);
+        this.vatPrice = totalPrice - taxFreePrice;
     }
 
 }

@@ -73,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/member/signUp", "/api/member/login/oauth2", "/api/message/**").permitAll()
+                .antMatchers("/api/member/signUp", "/api/member/login/oauth2", "/api/message/**", "/ws/**", "/socket.io/**").permitAll()
                 .antMatchers("/api/market/register").hasRole("ADMIN")
                 .antMatchers("/swagger-resources/**", "/swagger-ui.html", "/v2/api-docs", "/webjars/**").permitAll()
                 .anyRequest().authenticated();

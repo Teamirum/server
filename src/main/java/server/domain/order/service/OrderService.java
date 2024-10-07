@@ -38,49 +38,44 @@ public class OrderService {
             throw new ErrorHandler(ErrorStatus.MARKET_NOT_FOUND);
         }
         List<OrderRequestDto.OrderMenuDto> menuList = requestDto.getMenuList();
-        int amount = 0;
+        int totalPrice = 0;
 
         LocalDateTime now = LocalDateTime.now();
         // 주문 이름 = 시각+테이블번호
         Order order = Order.builder()
                 .marketIdx(requestDto.getMarketIdx())
                 .name(now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + requestDto.getTableNumber())
-                .amount(amount)
-                .taxFreeAmount(amount)
-                .vatAmount(amount)
+                .totalPrice(totalPrice)
+                .taxFreePrice(totalPrice)
+                .vatPrice(totalPrice)
                 .tableNumber(requestDto.getTableNumber())
                 .createdAt(now)
                 .build();
         orderRepository.save(order);
 
-        Order savedOrder = orderRepository.findByOrderIdx(order.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_SAVE_FAIL));
+        Order savedOrder = orderRepository.findByNameAndMarketIdx(order.getName(), order.getMarketIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_SAVE_FAIL));
 
+        // 같은 번호로 들어온 중복되는 주문이 있는 경우 예외처리 또는 추가 하는 로직 구현 예정
         for (OrderRequestDto.OrderMenuDto menuDto : menuList) {
             if (menuDto.getAmount() <= 0) {
                 throw new ErrorHandler(ErrorStatus.ORDER_MENU_CNT_ERROR);
             }
-            Menu menu = menuRepository.findByIdx(requestDto.getMarketIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.MENU_NOT_FOUND));
-            amount += menu.getPrice() * menuDto.getAmount();
+            Menu menu = menuRepository.findByIdx(menuDto.getMenuIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.MENU_NOT_FOUND));
+            totalPrice += menu.getPrice() * menuDto.getAmount();
             OrderMenu orderMenu = OrderMenu.builder()
                     .orderIdx(savedOrder.getIdx())
                     .menuIdx(menu.getIdx())
+                    .menuName(menu.getName())
+                    .price(menu.getPrice())
                     .amount(menuDto.getAmount())
                     .build();
             orderMenuRepository.save(orderMenu);
 
-            OrderMenu savedOrderMenu = orderMenuRepository.findByOrderIdxAndMenuIdx(orderMenu.getIdx(), orderMenu.getMenuIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_MENU_SAVE_FAIL));
+            OrderMenu savedOrderMenu = orderMenuRepository.findByOrderIdxAndMenuIdx(savedOrder.getIdx(), menu.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_MENU_SAVE_FAIL));
 
-            return OrderResponseDto.OrderTaskSuccessResponseDto.builder()
-                    .isSuccess(true)
-                    .idx(savedOrder.getIdx())
-                    .build();
         }
-
-        // 90% 계산 (반올림 적용)
-        int taxFreeAmount = Math.round(amount * 0.9f);
-
-        // 10% 계산 (남은 부분)
-        int vatAmount = amount - taxFreeAmount;
+        savedOrder.updatePrice(totalPrice);
+        orderRepository.updatePrice(savedOrder);
         return OrderResponseDto.OrderTaskSuccessResponseDto.builder()
                 .isSuccess(true)
                 .idx(savedOrder.getIdx())
@@ -90,14 +85,14 @@ public class OrderService {
     public OrderResponseDto.OrderTaskSuccessResponseDto updateOrderMenu(OrderRequestDto.UpdateOrderRequestDto requestDto) {
         Order order = orderRepository.findByOrderIdx(requestDto.getOrderIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_NOT_FOUND));
         List<OrderRequestDto.OrderMenuDto> menuList = requestDto.getMenuList();
-        int amount = order.getAmount();
+        int totalPrice = order.getTotalPrice();
 
         for (OrderRequestDto.OrderMenuDto menuDto : menuList) {
             if (menuDto.getAmount() <= 0) {
                 throw new ErrorHandler(ErrorStatus.ORDER_MENU_CNT_ERROR);
             }
             Menu menu = menuRepository.findByIdx(menuDto.getMenuIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.MENU_NOT_FOUND));
-            amount += menu.getPrice() * menuDto.getAmount();
+            totalPrice += menu.getPrice() * menuDto.getAmount();
             OrderMenu orderMenu = OrderMenu.builder()
                     .orderIdx(order.getIdx())
                     .menuIdx(menu.getIdx())
@@ -106,7 +101,8 @@ public class OrderService {
                     .build();
             orderMenuRepository.save(orderMenu);
         }
-        order.updateAmount(amount);
+        order.updatePrice(totalPrice);
+        orderRepository.updatePrice(order);
 
         return OrderResponseDto.OrderTaskSuccessResponseDto.builder()
                 .isSuccess(true)
@@ -122,20 +118,9 @@ public class OrderService {
             throw new ErrorHandler(ErrorStatus.ORDER_NOT_FOUND);
         }
         List<OrderMenu> orderMenuList = orderMenuRepository.findAllByOrderIdx(order.getIdx());
-        return OrderResponseDto.OrderInfoResponseDto.builder()
-                .idx(order.getIdx())
-                .marketIdx(order.getMarketIdx())
-                .name(order.getName())
-                .amount(order.getAmount())
-                .taxFreeAmount(order.getTaxFreeAmount())
-                .vatAmount(order.getVatAmount())
-                .tableNumber(order.getTableNumber())
-                .menuCnt(orderMenuList.size())
-                .orderMenuList(orderMenuList.stream()
-                        .map(OrderDtoConverter::convertToOrderMenuResponseDto)
-                        .toList())
-                .createdAt(order.getCreatedAt().toString())
-                .build();
+        return OrderDtoConverter.convertToOrderInfoResponseDto(order, orderMenuList.stream()
+                .map(OrderDtoConverter::convertToOrderMenuResponseDto)
+                .toList());
     }
 
 

@@ -16,9 +16,9 @@
     <!-- save OrderMenu -->
     <insert id="save" parameterType="server.domain.order.domain.OrderMenu">
         INSERT INTO OrderMenu (
-            order_idx, menu_idx, price, amount
+            order_idx, menu_idx,menu_name, price, amount
         ) VALUES (
-            #{orderIdx}, #{menuIdx}, #{price}, #{amount}
+            #{orderIdx}, #{menuIdx},#{menuName}, #{price}, #{amount}
         )
     </insert>
 
@@ -30,7 +30,7 @@
     </select>
 
     <!-- Select OrderMenu by orderIdx And menuIdx -->
-    <select id="findByOrderIdxAndMenuIdx" parameterType="server.domain.order.domain.OrderMenu" resultMap="OrderMenuResultMap">
+    <select id="findByOrderIdxAndMenuIdx" parameterType="map" resultMap="OrderMenuResultMap">
         SELECT *
         FROM OrderMenu
         WHERE order_idx = #{orderIdx} AND menu_idx = #{menuIdx}

@@ -19,6 +19,9 @@ public enum ErrorStatus implements BaseErrorCode {
     _SERVICE_UNAVAILABLE_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "COMMON503", "서버가 일시적으로 사용중지 되었습니다."),
     _JSON_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON500", "JSON 처리 중 오류가 발생하였습니다."),
 
+    // 동시성 제어
+    FAILED_TO_ACQUIRE_LOCK(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON5001", "Lock 획득에 실패하였습니다."),
+
     //유저 응답
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "유저가 존재하지 않습니다."),
     MEMBER_EMAIL_PASSWORD_NOT_MATCH(HttpStatus.UNAUTHORIZED, "MEMBER4002", "이메일 또는 비밀번호가 일치하지 않습니다."),
@@ -48,16 +51,37 @@ public enum ErrorStatus implements BaseErrorCode {
     // 카드 응답
     CREDIT_CARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "CREDIT4001", "해당 카드가 존재하지 않습니다."),
     CREDIT_CARD_DUPLICATE(HttpStatus.BAD_REQUEST, "CARD4002", "이미 등록된 카드입니다."),
+    CREDIT_CARD_EXPIRED(HttpStatus.BAD_REQUEST, "CARD4003", "카드가 만료되었습니다."),
 
     CREDIT_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "CREDIT5001", "카드 저장에 실패하였습니다."),
+    CREDIT_EXPIRATION_DATE_FORMAT_ERROR(HttpStatus.BAD_REQUEST, "CREDIT5002", "유효기간이 잘못되었습니다."),
 
     // 주문 응답
     ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4001", "해당 주문이 존재하지 않습니다."),
     ORDER_MENU_CNT_ERROR(HttpStatus.BAD_REQUEST, "ORDER4002", "주문은 0개 이상 해야합니다."),
-
+    ORDER_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4003", "해당 함께결제가 존재하지 않습니다."),
+    ORDER_ROOM_MEMBER_CNT_CANNOT_BE_MINUS(HttpStatus.BAD_REQUEST, "ORDER4004", "함께결제 인원은 0명 이상이어야 합니다."),
+    ORDER_ROOM_MEMBER_CNT_CANNOT_EXCEED(HttpStatus.BAD_REQUEST, "ORDER4005", "함께결제 제한 인원수를 초과할 수 없습니다."),
+    ORDER_ROOM_MEMBER_CNT_NOT_MATCH(HttpStatus.BAD_REQUEST, "ORDER4006", "함께결제 인원수가 일치하지 않습니다."),
+    ORDER_ROOM_MEMBER_CNT_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "ORDER4007", "함께결제 인원수가 부족합니다."),
+    ORDER_ROOM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4008", "해당 함께결제 참여자가 존재하지 않습니다."),
+    ORDER_ROOM_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "ORDER4009", "이미 함께결제가 진행중인 주문이 있습니다."),
+    ORDER_MENU_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4010", "주문한 메뉴가 존재하지 않습니다."),
+    ORDER_MEMBER_PARTICIPANT_ROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4011", "참여중인 주문방이 존재하지 않습니다."),
+    ORDER_MEMBER_ALREADY_IN_OTHER_ROOM(HttpStatus.BAD_REQUEST, "ORDER4012", "이미 다른 주문방에 참여중입니다."),
+    ORDER_MEMBER_ALREADY_IN_ROOM(HttpStatus.BAD_REQUEST, "ORDER4013", "이미 참여중인 주문방 입니다."),
+    ORDER_MENU_MEMBER_CNT_ERROR(HttpStatus.BAD_REQUEST, "ORDER4014", "메뉴 주문 인원수가 잘못되었습니다."),
+    ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4015", "주문방 채널이 존재하지 않습니다."),
+    ORDER_ROOM_PAY_ALREADY_STARTED(HttpStatus.BAD_REQUEST, "ORDER4016", "이미 결제가 진행중인 주문방입니다."),
+    ORDER_ROOM_PRICE_NOT_MATCH(HttpStatus.BAD_REQUEST, "ORDER4017", "함께 결제 금액이 일치하지 않습니다."),
 
     ORDER_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5001", "주문 저장에 실패하였습니다."),
     ORDER_MENU_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5002", "메뉴 저장에 실패하였습니다."),
+
+    //결제 응답
+    PAY_METHOD_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAY4001", "올바르지 않은 결제 방식입니다."),
+
+    PAY_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "PAY5001", "결제 저장에 실패하였습니다."),
 
     // 메뉴 응답
     MENU_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MENU4001", "이미 등록된 메뉴입니다."),

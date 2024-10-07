@@ -6,6 +6,7 @@ import server.domain.order.domain.Order;
 import server.domain.order.mapper.OrderMapper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -26,7 +27,20 @@ public class OrderRepository {
         return Optional.empty();
     }
 
+    public Optional<Order> findByNameAndMarketIdx(String name, Long marketIdx) {
+        Map<String, Object> params = Map.of("name", name, "marketIdx", marketIdx);
+        Order order = orderMapper.findByNameAndMarketIdx(params);
+        if (order != null) {
+            return Optional.of(order);
+        }
+        return Optional.empty();
+    }
+
     public List<Order> findAllByMarketIdx(Long marketIdx) {
         return orderMapper.findAllByMarketIdx(marketIdx);
+    }
+
+    public void updatePrice(Order order) {
+        orderMapper.updatePrice(order);
     }
 }

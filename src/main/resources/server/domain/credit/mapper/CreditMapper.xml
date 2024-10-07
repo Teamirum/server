@@ -53,6 +53,13 @@
         WHERE member_idx = #{memberIdx}
     </update>
 
+    <!-- update Credit Price -->
+    <update id="updateAmountSum" parameterType="map">
+        UPDATE Credit
+        SET  amount_sum = #{amountSum}
+        WHERE idx = #{idx}
+    </update>
+
     <!-- update CreditImage -->
     <update id="updateCreditImage" parameterType="map">
         UPDATE Credit

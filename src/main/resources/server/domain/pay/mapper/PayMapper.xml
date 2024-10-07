@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.pay.mapper.PayMapper">
+
+    <!-- Result Mapping with Enum TypeHandler -->
+    <resultMap id="PayResultMap" type="server.domain.pay.domain.Pay">
+        <id property="idx" column="idx" />
+        <result property="orderIdx" column="order_idx" />
+        <result property="memberIdx" column="member_idx" />
+        <result property="creditIdx" column="credit_idx" />
+        <result property="accountIdx" column="account_idx" />
+        <result property="payMethod" column="pay_method" />
+        <result property="tid" column="tid" />
+        <result property="price" column="price" />
+        <result property="payStatus" column="pay_status" />
+        <result property="payType" column="pay_type" />
+        <result property="createdAt" column="created_at" />
+        <result property="modifiedAt" column="modified_at" />
+    </resultMap>
+
+    <!-- save Pay -->
+    <insert id="save" parameterType="server.domain.pay.domain.Pay">
+        INSERT INTO Pay (
+            order_idx, member_idx, credit_idx, account_idx, pay_method, tid, price, pay_status, pay_type, created_at, modified_at
+        ) VALUES (
+            #{orderIdx}, #{memberIdx}, #{creditIdx}, #{accountIdx}, #{payMethod}, #{tid}, #{price}, #{payStatus}, #{payType}, #{createdAt}, #{modifiedAt}
+        )
+    </insert>
+
+    <!-- Select Pay by orderIdx -->
+    <select id="findAllByOrderIdx" parameterType="Long" resultMap="PayResultMap">
+        SELECT *
+        FROM Pay
+        WHERE order_idx = #{orderIdx}
+    </select>
+
+    <!-- Select Pay by memberIdx -->
+    <select id="findAllByMemberIdx" parameterType="Long" resultMap="PayResultMap">
+        SELECT *
+        FROM Pay
+        WHERE member_idx = #{memberIdx}
+    </select>
+
+    <!-- Select Pay by orderIdx And memberIdx -->
+    <select id="findByOrderIdxAndMemberIdx" parameterType="map" resultMap="PayResultMap">
+        SELECT *
+        FROM Pay
+        WHERE order_idx = #{orderIdx} AND member_idx = #{memberIdx}
+    </select>
+
+</mapper>

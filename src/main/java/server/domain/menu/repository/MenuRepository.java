@@ -7,6 +7,7 @@ import server.domain.menu.domain.Menu;
 import server.domain.menu.mapper.MenuMapper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -16,7 +17,8 @@ public class MenuRepository {
     private final MenuMapper menuMapper;
 
     public Optional<Menu> findByMarketIdxAndName(Long marketIdx, String name) {
-        Menu menu = menuMapper.findByMarketIdxAndName(marketIdx, name);
+        Map<String, Object> map = Map.of("marketIdx", marketIdx, "name", name);
+        Menu menu = menuMapper.findByMarketIdxAndName(map);
         if (menu != null) {
             return Optional.of(menu);
         }
@@ -36,7 +38,8 @@ public class MenuRepository {
     }
 
     public boolean existsByMarketIdxAndName(Long marketIdx, String name) {
-        return menuMapper.findByMarketIdxAndName(marketIdx, name) != null;
+        Map<String, Object> map = Map.of("marketIdx", marketIdx, "name", name);
+        return menuMapper.findByMarketIdxAndName(map) != null;
     }
 
     public void save(Menu menu) {
