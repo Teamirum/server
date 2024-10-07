@@ -29,6 +29,14 @@ public class AccountRepository {
         return Optional.empty();
     }
 
+    public Optional<Account> findByAccountIdx(Long idx) {
+        Account account = accountMapper.findByAccountIdx(idx);
+        if (account != null) {
+            return Optional.of(account);
+        }
+        return Optional.empty();
+    }
+
     public void save(Account account) {
         accountMapper.save(account);
     }
@@ -77,6 +85,7 @@ public class AccountRepository {
             return Optional.of(account);
         }
         return Optional.empty();
+    }
       
     public void payPrice(Long idx, int price) {
         Map<String, Object> map = Map.of("idx", idx, "price", price);

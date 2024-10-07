@@ -71,9 +71,6 @@ public enum ErrorStatus implements BaseErrorCode {
     // 주문 응답
     ORDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "ORDER4001", "해당 주문이 존재하지 않습니다."),
 
-
-    ORDER_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5001", "주문 저장에 실패하였습���다."),
-
     // 명함 응답
     BUSINESS_CARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "BUSINESSCARD4001", "해당 명함이 존재하지 않습니다."),
     BUSINESS_CARD_DUPLICATE(HttpStatus.BAD_REQUEST, "BUSINESSCARD4002", "이미 등록된 명함입니다."),

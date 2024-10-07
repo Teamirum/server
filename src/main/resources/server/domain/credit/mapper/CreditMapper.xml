@@ -87,13 +87,6 @@
     </select>
 
 
-    <update id="updateAmountSum" parameterType="map">
-        UPDATE Credit
-        SET amount_sum = #{amountSum}
-        WHERE idx = #{idx}
-    </update>
-
-
 
 
 </mapper>

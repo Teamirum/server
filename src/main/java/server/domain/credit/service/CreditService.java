@@ -111,6 +111,28 @@ public class CreditService {
     @Transactional
     public void uploadCreditHistory(Credit credit, Integer amount, String name) {
 
+
+        Integer creditAmountSum = credit.getAmountSum() + amount;
+        // 카드 결제내역
+        creditHistoryRespository.save(CreditHistory.builder()
+                .creditIdx(credit.getIdx())
+                .amount(amount)
+                .amountSum(creditAmountSum)
+                .name(name)
+                .createdAt(LocalDateTime.now())
+                .build());
+
+        transactionRepository.save(Transaction.builder()
+                .memberIdx(credit.getMemberIdx())
+                .creditIdx(credit.getIdx())
+                .time(now())
+                .payMethod(CARD)
+                .amount(amount)
+                .memo(name)
+                .category(ENTERTAINMENT)
+                .build());
+    }
+
     public void payWithCredit(Credit credit, int price) {
         creditRepository.payPrice(credit.getIdx(), price + credit.getAmountSum());
     }
@@ -136,28 +158,6 @@ public class CreditService {
         return creditRepository.findByCreditIdx(creditIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_CARD_NOT_FOUND));
     }
 
-
-
-        Integer creditAmountSum = credit.getAmountSum() + amount;
-        // 카드 결제내역
-        creditHistoryRespository.save(CreditHistory.builder()
-                .creditIdx(credit.getIdx())
-                .amount(amount)
-                .amountSum(creditAmountSum)
-                .name(name)
-                .createdAt(LocalDateTime.now())
-                .build());
-
-        transactionRepository.save(Transaction.builder()
-                .memberIdx(credit.getMemberIdx())
-                .creditIdx(credit.getIdx())
-                .time(now())
-                .payMethod(CARD)
-                .amount(amount)
-                .memo(name)
-                .category(ENTERTAINMENT)
-                .build());
-    }
 
     public CreditHistoryResponseDto.CreditHistoryListResponseDto getCreditHistoryList(Long creditIdx, String memberId) {
         Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
