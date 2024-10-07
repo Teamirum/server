@@ -19,7 +19,7 @@
     <select id="findAllByMemberIdx" parameterType="Long" resultMap="AccountResultMap">
         SELECT *
         FROM Account
-        WHERE member_idx = #{memberIdx}
+        WHERE member_idx = #{memberIdx} ORDER BY idx DESC
     </select>
 
     <!-- Select Account by AccountIdx -->
@@ -38,15 +38,6 @@
                  )
     </insert>
 
-<!--    &lt;!&ndash; Update Account &ndash;&gt;-->
-<!--    <update id="update" parameterType="server.domain.account.domain.Account">-->
-<!--        UPDATE Account-->
-<!--        SET account_holder_name = #{accountHolderName}, amount = #{amount}, bank_name = #{bankName},-->
-<!--            account_number = #{accountNumber}, account_secret = #{accountSecret}-->
-<!--        WHERE idx = #{idx}-->
-<!--          AND member_idx = #{memberIdx}-->
-<!--    </update>-->
-
     <!-- Delete Account -->
     <delete id="delete" parameterType="Long">
         DELETE FROM Account
@@ -61,10 +52,16 @@
         WHERE idx = #{idx} AND member_idx = #{memberIdx}
     </select>
 
+    <select id="findByMemberIdxAndAccountNumber" parameterType="map" resultMap="AccountResultMap">
+        SELECT *
+        FROM Account
+        WHERE member_idx = #{memberIdx} AND account_number = #{accountNumber}
+    </select>
+
     <!-- Get Account by AccountNumber -->
     <select id="findByAccountNumber" resultType="server.domain.account.domain.Account">
         SELECT *
-        FROM account
+        FROM Account
         WHERE account_number = #{accountNumber}
     </select>
 

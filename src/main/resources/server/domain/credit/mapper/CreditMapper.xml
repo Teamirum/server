@@ -80,5 +80,20 @@
         WHERE idx = #{idx} AND member_idx = #{memberIdx}
     </select>
 
+    <select id="findMemberIdxAndCreditNumber" parameterType="map" resultMap="CreditResultMap">
+        SELECT *
+        FROM Credit
+        WHERE member_idx = #{memberIdx} AND credit_number = #{creditNumber}
+    </select>
+
+
+    <update id="updateAmountSum" parameterType="map">
+        UPDATE Credit
+        SET amount_sum = #{amountSum}
+        WHERE idx = #{idx}
+    </update>
+
+
+
 
 </mapper>

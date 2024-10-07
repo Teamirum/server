@@ -25,7 +25,7 @@ public class Credit {
 
     private String creditSecret;
 
-    private int amountSum;
+    private Integer amountSum;
 
     private String imgUrl;
 

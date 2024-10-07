@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.businessCard.mapper.MemberBusinessCardMapper">
+
+    <!-- Result Mapping for MemberBusinessCard -->
+    <resultMap id="MemberBusinessCardResultMap" type="server.domain.businessCard.domain.MemberBusinessCard">
+        <id property="idx" column="idx" />
+        <result property="memberIdx" column="member_idx" />
+        <result property="businessCardIdx" column="businessCard_idx" />
+        <result property="status" column="status" />
+        <result property="memo" column="memo" />
+    </resultMap>
+
+    <!-- 회원 ID로 해당 회원의 명함 목록 조회 -->
+    <select id="findByMemberIdx" resultMap="MemberBusinessCardResultMap">
+        SELECT *
+        FROM MemberBusinessCard
+        WHERE member_idx = #{memberIdx}
+    </select>
+
+    <!-- 특정 명함 ID로 조회 -->
+    <select id="findByBusinessCardIdx" resultMap="MemberBusinessCardResultMap">
+        SELECT *
+        FROM MemberBusinessCard
+        WHERE businessCard_idx = #{businessCardIdx}
+    </select>
+
+    <!-- 특정 회원 ID와 명함 ID로 조회 -->
+    <select id="findByMemberIdxAndBusinessCardIdx" resultMap="MemberBusinessCardResultMap">
+        SELECT *
+        FROM MemberBusinessCard
+        WHERE member_idx = #{memberIdx}
+          AND businessCard_idx = #{businessCardIdx}
+    </select>
+
+    <!-- 명함 등록 -->
+    <insert id="save" useGeneratedKeys="true" keyProperty="idx">
+        INSERT INTO MemberBusinessCard (member_idx, businessCard_idx, status, memo)
+        VALUES (#{memberIdx}, #{businessCardIdx}, #{status}, #{memo})
+    </insert>
+
+    <!-- 명함 삭제 -->
+    <delete id="delete">
+        DELETE FROM MemberBusinessCard
+        WHERE idx = #{idx}
+    </delete>
+
+    <!-- 명함 상태 업데이트 -->
+    <update id="updateStatus">
+        UPDATE MemberBusinessCard
+        SET status = #{status}, memo = #{memo}
+        WHERE idx = #{idx}
+    </update>
+
+    <!-- 특정 회원이 특정 명함을 소유하고 있는지 확인 -->
+    <select id="existsByMemberIdxAndBusinessCardIdx" resultMap="MemberBusinessCardResultMap">
+        SELECT *
+        FROM MemberBusinessCard
+        WHERE member_idx = #{memberIdx}
+          AND businessCard_idx = #{businessCardIdx}
+    </select>
+
+</mapper>

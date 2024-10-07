@@ -26,10 +26,23 @@ CREATE TABLE `Account` (
                            `bank_name` VARCHAR(20) NOT NULL,
                            `account_number` VARCHAR(20) NOT NULL,
                            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                            `account_secret` VARCHAR(20) NOT NULL,
+                           `account_secret` VARCHAR(20) NOT NULL,
                            PRIMARY KEY (`idx`),
                            FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
 );
+-- AccountHistory 테이블
+CREATE TABLE `AccountHistory` (
+                                  `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                                  `account_idx` BIGINT NOT NULL,
+                                  `account_history_type` ENUM('SEND', 'GET') NOT NULL,
+                                  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                                  `amount` BIGINT NOT NULL,
+                                  `remain_amount` BIGINT NOT NULL,
+                                  `name` VARCHAR(100) NOT NULL,
+                                  PRIMARY KEY (`idx`),
+                                  FOREIGN KEY (`account_idx`) REFERENCES `Account`(`idx`) ON DELETE CASCADE
+);
+
 -- Credit 테이블
 CREATE TABLE `Credit` (
                           `idx` BIGINT AUTO_INCREMENT NOT NULL,
@@ -40,7 +53,6 @@ CREATE TABLE `Credit` (
                           `credit_secret` VARCHAR(20) NOT NULL,
                           `amount_sum` BIGINT NOT NULL,
                           `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                          `img_url` VARCHAR(255),
                           `expiration_date` VARCHAR(20) NOT NULL,
                           PRIMARY KEY (`idx`),
                           FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
@@ -56,16 +68,7 @@ CREATE TABLE `CreditHistory` (
                                  PRIMARY KEY (`idx`),
                                  FOREIGN KEY (`credit_idx`) REFERENCES `Credit`(`idx`) ON DELETE CASCADE
 );
--- Friend 테이블
-CREATE TABLE `Friend` (
-                          `idx` BIGINT AUTO_INCREMENT NOT NULL,
-                          `member_idx` BIGINT NOT NULL,
-                          `friend_member_id` VARCHAR(100) NOT NULL COMMENT '친구관계를 맺을 회원의 ID',
-                          `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                          `is_favorite` BOOLEAN DEFAULT FALSE,
-                          PRIMARY KEY (`idx`),
-                          FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
-);
+
 -- Market 테이블
 CREATE TABLE `Market` (
                           `idx` BIGINT AUTO_INCREMENT NOT NULL,
@@ -79,6 +82,7 @@ CREATE TABLE `Market` (
                           PRIMARY KEY (`idx`),
                           FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
 );
+
 -- Order 테이블
 CREATE TABLE `Order` (
                          `idx` BIGINT AUTO_INCREMENT NOT NULL,
@@ -95,13 +99,13 @@ CREATE TABLE `Order` (
 
 -- TogetherOrder 테이블
 CREATE TABLE `TogetherOrder` (
-                                `idx` BIGINT AUTO_INCREMENT NOT NULL,
-                                `order_idx` BIGINT NOT NULL,
-                                `member_idx` BIGINT NOT NULL,
-                                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                                PRIMARY KEY (`idx`),
-                                FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
-                                FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
+                                 `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                                 `order_idx` BIGINT NOT NULL,
+                                 `member_idx` BIGINT NOT NULL,
+                                 `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                                 PRIMARY KEY (`idx`),
+                                 FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
+                                 FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
 );
 
 -- Menu 테이블
@@ -150,14 +154,13 @@ CREATE TABLE `BusinessCard` (
                                 `phone_num` VARCHAR(15),
                                 `email` VARCHAR(100),
                                 `tel_num` VARCHAR(100),
-                                `fax_num` VARCHAR(255),
                                 `part` VARCHAR(50),
                                 `position` VARCHAR(100),
                                 `address` VARCHAR(255),
-                                `img_url` VARCHAR(255),
                                 PRIMARY KEY (`idx`),
                                 FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
 );
+
 -- MemberBusinessCard 테이블
 CREATE TABLE `MemberBusinessCard` (
                                       `idx` BIGINT AUTO_INCREMENT NOT NULL,
@@ -169,6 +172,7 @@ CREATE TABLE `MemberBusinessCard` (
                                       FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE,
                                       FOREIGN KEY (`businessCard_idx`) REFERENCES `BusinessCard`(`idx`) ON DELETE CASCADE
 );
+
 -- Pay 테이블
 CREATE TABLE `Pay` (
                        `idx` BIGINT AUTO_INCREMENT NOT NULL,
@@ -189,12 +193,13 @@ CREATE TABLE `Pay` (
                        FOREIGN KEY (`account_idx`) REFERENCES `Account`(`idx`) ON DELETE CASCADE,
                        FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE
 );
+
 -- Transaction 테이블
 CREATE TABLE `Transaction` (
                                `idx` BIGINT AUTO_INCREMENT NOT NULL,
                                `member_idx` BIGINT NOT NULL,
-                               `credit_idx` BIGINT NOT NULL,
-                               `account_idx` BIGINT NOT NULL,
+                               `credit_idx` BIGINT,
+                               `account_idx` BIGINT,
                                `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                `pay_method` ENUM('CARD', 'ACCOUNT') NOT NULL,
                                `amount` INT NOT NULL,

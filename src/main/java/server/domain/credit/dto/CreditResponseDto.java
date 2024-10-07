@@ -34,4 +34,24 @@ public class CreditResponseDto {
         public String imgUrl;
         public String createdAt;
     }
+
+    @Data
+    @Builder
+    public static class CreditHistoryTransactionResponseDto {
+        private Boolean isSuccess;
+        private String cardName;
+        private int cnt;
+        private List<CreditHistoryInfoResponseDto> creditHistoryList;
+
+        @Data
+        @Builder
+        public static class CreditHistoryInfoResponseDto {
+            private Long idx;
+            private Long creditIdx;
+            private String name;
+            private int amount;
+            private int amountSum;
+            private String createdAt;
+        }
+    }
 }

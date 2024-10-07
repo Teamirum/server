@@ -1,6 +1,7 @@
 package server.domain.account.dto;
 
 import server.domain.account.domain.Account;
+import server.domain.account.domain.AccountHistory;
 import server.domain.member.domain.Member;
 
 import java.util.List;
@@ -31,8 +32,5 @@ public class AccountDtoConverter {
                 .isSuccess(true)
                 .build();
     }
-
-
-
 
 }

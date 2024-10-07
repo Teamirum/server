@@ -1,8 +1,10 @@
 package server.domain.credit.dto;
 
 import server.domain.credit.domain.Credit;
+import server.domain.transaction.domain.Transaction;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CreditDtoConverter {
 
@@ -32,4 +34,5 @@ public class CreditDtoConverter {
                 .createdAt(credit.getCreatedAt().toString())
                 .build();
     }
+
 }

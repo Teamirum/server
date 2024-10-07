@@ -73,4 +73,8 @@ public class MemberService {
     private Member getMemberByMemberId(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
+
+    public Long findByMemberId(String loginMemberId) {
+        return memberRepository.getIdxByMemberId(loginMemberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
 }

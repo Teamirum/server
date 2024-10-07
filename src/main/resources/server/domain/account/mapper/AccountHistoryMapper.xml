@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.account.mapper.AccountHistoryMapper">
+
+    <!-- Result Mapping for AccountHistory -->
+    <resultMap id="AccountHistoryResultMap" type="server.domain.account.domain.AccountHistory">
+        <id property="idx" column="idx" />
+        <result property="accountIdx" column="account_idx" />
+        <result property="accountHistoryType" column="account_history_type" />
+        <result property="createdAt" column="created_at" />
+        <result property="amount" column="amount" />
+        <result property="remainAmount" column="remain_amount" />
+        <result property="name" column="name" />
+    </resultMap>
+
+    <!-- Select All Account Histories by AccountIdx -->
+    <select id="findAllByAccountIdx" parameterType="Long" resultMap="AccountHistoryResultMap">
+        SELECT *
+        FROM AccountHistory
+        WHERE account_idx = #{accountIdx} ORDER BY created_at DESC
+    </select>
+
+    <!-- Select Account History by Idx -->
+    <select id="findByIdx" parameterType="Long" resultMap="AccountHistoryResultMap">
+        SELECT *
+        FROM AccountHistory
+        WHERE idx = #{idx}
+    </select>
+
+    <!-- Insert Account History -->
+    <insert id="save" parameterType="server.domain.account.domain.AccountHistory">
+        INSERT INTO AccountHistory (
+            account_idx, account_history_type, created_at, amount, remain_amount, name
+        ) VALUES (
+                     #{accountIdx}, #{accountHistoryType}, #{createdAt}, #{amount}, #{remainAmount}, #{name}
+                 )
+    </insert>
+
+    <!-- Delete Account History -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM AccountHistory
+        WHERE idx = #{idx}
+    </delete>
+
+    <!-- Update Account History -->
+    <update id="updateAccountHistory" parameterType="server.domain.account.domain.AccountHistory">
+        UPDATE AccountHistory
+        SET account_history_type = #{accountHistoryType},
+            amount = #{amount},
+            remain_amount = #{remainAmount},
+            name = #{name},
+            created_at = #{createdAt}
+        WHERE idx = #{idx}
+    </update>
+
+</mapper>
