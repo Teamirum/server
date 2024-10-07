@@ -78,7 +78,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 거래 응답
     TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "TRANSACTION4001", "해당 거래가 존재하지 않습니다."),
     TRANSACTION_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "TRANSACTION4002", "거래 권한이 없습니다."),
-
+    TRANSACTION_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "TRANSACTION5001", "거래 저장에 실패하였습니다."),
 
     //사진 응답
     IMAGE_UPLOAD_FAIL(HttpStatus.BAD_REQUEST, "IMG4001", "사진 업로드에 실패하였습니다."),

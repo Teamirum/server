@@ -13,7 +13,7 @@ public class TransactionResponseDto {
     @Builder
     public static class TransactionTaskSuccessResponseDto {
         private Boolean isSuccess;
-        private Long transactionId;
+        private Long idx;
     }
 
     @Data
@@ -27,7 +27,7 @@ public class TransactionResponseDto {
     @Data
     @Builder
     public static class TransactionInfoResponseDto {
-        private Long id;
+        private Long idx;
         private Long creditIdx;  // 연관된 신용 카드의 ID
         private Long accountIdx; // 계좌 ID
         private LocalDateTime time; // 거래 시간

@@ -29,21 +29,18 @@ public class TransactionService {
 
         Transaction transaction = Transaction.builder()
                 .memberIdx(memberIdx)
-                .creditIdx(requestDto.getCreditIdx())
-                .accountIdx(requestDto.getAccountIdx())
                 .time(LocalDateTime.now())
                 .payMethod(Transaction.PayMethod.valueOf(requestDto.getPayMethod()))
                 .amount(requestDto.getAmount())
                 .memo(requestDto.getMemo())
                 .category(Transaction.Category.valueOf(requestDto.getCategory()))
-                .tranId(requestDto.getTranId())
                 .build();
 
         transactionRepository.save(transaction);
 
         return TransactionResponseDto.TransactionTaskSuccessResponseDto.builder()
                 .isSuccess(true)
-                .transactionId(transaction.getIdx())
+                .idx(transaction.getIdx())
                 .build();
     }
 
@@ -64,22 +61,18 @@ public class TransactionService {
     }
 
     // 거래 삭제
-    public TransactionResponseDto.TransactionTaskSuccessResponseDto delete(Long transactionIdx, String memberId) {
-        Long memberIdx = memberRepository.getIdxByMemberId(memberId)
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public TransactionResponseDto.TransactionTaskSuccessResponseDto delete(Long idx, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        Transaction transaction = transactionRepository.findByTransactionIdx(transactionIdx)
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.TRANSACTION_NOT_FOUND));
-
-        if (!transaction.getMemberIdx().equals(memberIdx)) {
-            throw new ErrorHandler(ErrorStatus.TRANSACTION_ACCESS_DENIED);
+        if(!transactionRepository.existsByTransactionIdxAndMemberIdx(idx, member.getIdx())) {
+            throw new ErrorHandler(ErrorStatus.TRANSACTION_NOT_FOUND);
         }
 
-        transactionRepository.delete(transaction);
+        transactionRepository.delete(idx);
 
         return TransactionResponseDto.TransactionTaskSuccessResponseDto.builder()
                 .isSuccess(true)
-                .transactionId(transactionIdx)
+                .idx(idx)
                 .build();
     }
 }

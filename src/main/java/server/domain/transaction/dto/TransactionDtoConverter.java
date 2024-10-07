@@ -28,7 +28,7 @@ public class TransactionDtoConverter {
     // 단일 거래를 DTO로 변환하는 메서드
     public static TransactionResponseDto.TransactionInfoResponseDto convertToTransactionInfoResponseDto(Transaction transaction) {
         return TransactionResponseDto.TransactionInfoResponseDto.builder()
-                .id(transaction.getIdx())
+                .idx(transaction.getIdx())
                 .creditIdx(transaction.getCreditIdx()) // 연관된 신용 카드 ID
                 .time(transaction.getTime()) // 거래 시간
                 .amount(transaction.getAmount())

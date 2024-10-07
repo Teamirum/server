@@ -41,11 +41,17 @@ public class TransactionRepository {
     }
 
 
-
     // 거래내역 삭제
-    public void delete(Transaction transactionIdx) {
-        transactionMapper.deleteTransaction(transactionIdx);
+    public void delete(Long idx) {
+        transactionMapper.delete(idx);
     }
+
+    public boolean existsByTransactionIdxAndMemberIdx(Long idx, Long memberIdx) {
+        Map<String, Object> map = Map.of("idx", idx, "memberIdx", memberIdx);
+        Transaction transaction = transactionMapper.findByIdxAndMemberIdx(map);
+        return transaction != null;
+    }
+
 
     public List<Transaction> findAllByCreditIdx(Long creditIdx) {
         return transactionMapper.findTransactionsByCreditIdx(creditIdx);

@@ -55,9 +55,15 @@
     </update>
 
     <!-- Delete Transaction -->
-    <delete id="deleteTransaction" parameterType="Long">
+    <delete id="delete" parameterType="Long">
         DELETE FROM Transaction
-        WHERE idx = #{transactionIdx}
+        WHERE idx = #{idx}
     </delete>
+
+    <select id="findByIdxAndMemberIdx" parameterType="map" resultMap="TransactionResultMap">
+        SELECT *
+        FROM Transaction
+        WHERE idx = #{idx} AND member_idx = #{memberIdx}
+    </select>
 
 </mapper>

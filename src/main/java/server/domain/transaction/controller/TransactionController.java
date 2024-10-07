@@ -1,6 +1,7 @@
 package server.domain.transaction.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import server.global.util.SecurityUtil;
 
 @RestController
 @RequestMapping("/api/transaction")
+@Slf4j
 @RequiredArgsConstructor
 public class TransactionController {
 
@@ -23,7 +25,6 @@ public class TransactionController {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
-    // 거래 추가
     @PostMapping
     public ApiResponse<?> uploadTransaction(@RequestBody TransactionRequestDto.UploadTransactionRequestDto requestDto) {
         String loginMemberId = getLoginMemberId();
@@ -38,7 +39,7 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getTransaction(transactionIdx));
     }
 
-    // 특정 회원의 모든 거래 내역 조회
+
     @GetMapping("/all")
     public ResponseEntity<TransactionResponseDto.TransactionListResponseDto> getAllTransactionsByMemberId() {
         String loginMemberId = getLoginMemberId();
@@ -47,14 +48,11 @@ public class TransactionController {
     }
 
     // 거래 삭제
-    @DeleteMapping("/{transactionIdx}")
-    public ResponseEntity<TransactionResponseDto.TransactionTaskSuccessResponseDto> delete(
-            @PathVariable Long transactionIdx,
-            @RequestHeader("memberId") String memberId) {
-        TransactionResponseDto.TransactionTaskSuccessResponseDto responseDto = transactionService.delete(transactionIdx, memberId);
-        return ResponseEntity.ok(responseDto);
+    @DeleteMapping
+    public ApiResponse<?> deleteTransaction(@RequestParam(value = "idx") Long idx) {
+        String loginMemberId = getLoginMemberId();
+        log.info("계좌 삭제 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
+        return ApiResponse.onSuccess(transactionService.delete(idx, loginMemberId));
     }
-
-
 
 }

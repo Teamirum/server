@@ -79,6 +79,7 @@ public class AccountService {
         accountRepository.delete(idx);
         return AccountResponseDto.AccountTaskSuccessResponseDto.builder()
                 .isSuccess(true)
+                .idx(idx)
                 .build();
     }
 

@@ -21,8 +21,9 @@ public interface TransactionMapper {
     // 특정 회원의 모든 거래 내역 조회 (회원 ID로 조회)
     List<Transaction> findAllByMemberIdx(Long memberIdx);
 
-    // 거래 내역 삭제 (거래 ID로 삭제)
-    void deleteTransaction(Transaction transactionIdx);
+    Transaction findByIdxAndMemberIdx(Map<String, Object> map);
+
+    void delete(Long idx);
 
     // 거래 내역 업데이트
     void updateTransaction(Map<String, Object> map);
