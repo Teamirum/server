@@ -8,43 +8,47 @@
         <id property="idx" column="idx" />
         <result property="marketIdx" column="market_idx" />
         <result property="name" column="name" />
-        <result property="memberCnt" column="member_cnt" />
-        <result property="amount" column="amount" />
-        <result property="taxFreeAmount" column="tax_free_amount" />
-        <result property="vatAmount" column="vat_amount" />
-        <result property="orderMemberIdx" column="order_member_idx" />
+        <result property="totalPrice" column="total_price" />
+        <result property="taxFreePrice" column="tax_free_price" />
+        <result property="vatPrice" column="vat_price" />
+        <result property="tableNumber" column="table_number" />
         <result property="createdAt" column="created_at" />
     </resultMap>
 
     <!-- save Order -->
     <insert id="save" parameterType="server.domain.order.domain.Order">
-        INSERT INTO Order (
-            market_idx, name, member_cnt, amount, tax_free_amount, vat_amount, order_member_idx, created_at
-        ) VALUES (
-            #{marketIdx}, #{name}, #{memberCnt}, #{amount}, #{taxFreeAmount}, #{vatAmount}, #{orderMemberIdx}, #{createdAt}
-        )
+        INSERT INTO `Order` (market_idx, name, total_price, tax_free_price, vat_price, table_number)
+        VALUES (#{marketIdx}, #{name}, #{totalPrice}, #{taxFreePrice}, #{vatPrice}, #{tableNumber})
     </insert>
 
     <!-- Select Order by ID -->
     <select id="findByOrderIdx" parameterType="Long" resultMap="OrderResultMap">
         SELECT *
-        FROM Order
+        FROM `Order`
         WHERE idx = #{idx}
     </select>
 
     <!-- Select Order by MarketIdx -->
     <select id="findAllByMarketIdx" parameterType="Long" resultMap="OrderResultMap">
         SELECT *
-        FROM Order
+        FROM `Order`
         WHERE market_idx = #{marketIdx}
     </select>
 
-    <!-- Select Order by OrderMemberIdx -->
-    <select id="findAllByOrderMemberIdx" parameterType="Long" resultMap="OrderResultMap">
+    <!-- Select By Name and MarketIdx-->
+    <select id="findByNameAndMarketIdx" parameterType="map" resultMap="OrderResultMap">
         SELECT *
-        FROM Order
-        WHERE order_member_idx = #{orderMemberIdx}
+        FROM `Order`
+        WHERE name = #{name} AND market_idx = #{marketIdx}
     </select>
+
+    <!-- update Order Price -->
+    <update id="updatePrice" parameterType="server.domain.order.domain.Order">
+        UPDATE `Order`
+        SET total_price = #{totalPrice}, tax_free_price = #{taxFreePrice}, vat_price = #{vatPrice}
+        WHERE idx = #{idx}
+    </update>
+
 
 
 

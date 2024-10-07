@@ -121,28 +121,28 @@ CREATE TABLE `Menu` (
 
 -- OrderMenu 테이블
 CREATE TABLE `OrderMenu` (
-                             `idx` BIGINT AUTO_INCREMENT NOT NULL,
-                             `order_idx` BIGINT NOT NULL,
-                             `menu_idx` BIGINT NOT NULL,
-                             `menu_name` VARCHAR(100) NOT NULL,
-                             `price` INT NOT NULL,
-                             `amount` INT NOT NULL,
-                             PRIMARY KEY (`idx`),
-                             FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
-                             FOREIGN KEY (`menu_idx`) REFERENCES `Menu`(`idx`) ON DELETE CASCADE
+                            `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                            `order_idx` BIGINT NOT NULL,
+                            `menu_idx` BIGINT NOT NULL,
+                            `menu_name` VARCHAR(100) NOT NULL,
+                            `price` INT NOT NULL,
+                            `amount` INT NOT NULL,
+                            PRIMARY KEY (`idx`),
+                            FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
+                            FOREIGN KEY (`menu_idx`) REFERENCES `Menu`(`idx`) ON DELETE CASCADE
 );
 
 -- OrderRoom 테이블
 
 CREATE TABLE `OrderRoom` (
-                             `idx` BIGINT AUTO_INCREMENT NOT NULL,
-                             `order_idx` BIGINT NOT NULL,
-                             `owner_member_idx` VARCHAR(100) NOT NULL,
-                             `member_cnt` INT NOT NULL,
-                             `amount` INT NOT NULL,
-                             `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                             PRIMARY KEY (`idx`),
-                             FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE
+                            `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                            `order_idx` BIGINT NOT NULL,
+                            `owner_member_idx` VARCHAR(100) NOT NULL,
+                            `member_cnt` INT NOT NULL,
+                            `amount` INT NOT NULL,
+                            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                            PRIMARY KEY (`idx`),
+                            FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE
 );
 
 -- BusinessCard 테이블

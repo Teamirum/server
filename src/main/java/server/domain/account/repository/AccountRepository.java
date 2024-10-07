@@ -52,7 +52,6 @@ public class AccountRepository {
         Account account = accountMapper.findByIdxAndMemberIdx(map);
         return account != null;
     }
-
     public Optional<Account> findByMemberIdxAndAccountNumber(Long memberIdx, String accountNumber) {
         Map<String, Object> map = Map.of("memberIdx", memberIdx, "accountNumber", accountNumber);
         Account account = accountMapper.findByMemberIdxAndAccountNumber(map);
@@ -78,5 +77,9 @@ public class AccountRepository {
             return Optional.of(account);
         }
         return Optional.empty();
+      
+    public void payPrice(Long idx, int price) {
+        Map<String, Object> map = Map.of("idx", idx, "price", price);
+        accountMapper.payPrice(map);
     }
 }

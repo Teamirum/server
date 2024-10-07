@@ -30,6 +30,10 @@ import javax.sql.DataSource;
     "server.domain.order.mapper",
     "server.domain.businessCard.mapper",
     "server.domain.transaction.mapper"
+    "server.domain.menu.mapper",
+    "server.domain.orderRoom.mapper",
+    "server.domain.pay.mapper",
+
 })
 @ComponentScan(basePackages = {
     "server.domain",

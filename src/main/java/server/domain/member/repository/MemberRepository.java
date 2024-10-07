@@ -23,6 +23,14 @@ public class MemberRepository {
         return Optional.empty();
     }
 
+    public Optional<Member> findByIdx(Long memberIdx) {
+        Member member = memberMapper.findByIdx(memberIdx);
+        if (member != null) {
+            return Optional.of(member);
+        }
+        return Optional.empty();
+    }
+
     public void save(Member member) {
         memberMapper.save(member);
     }

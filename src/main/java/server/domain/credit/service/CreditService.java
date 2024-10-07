@@ -20,6 +20,8 @@ import server.global.apiPayload.exception.handler.ErrorHandler;
 
 import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,6 +41,8 @@ public class CreditService {
     private final CreditHistoryRespository creditHistoryRespository;
     private final TransactionRepository transactionRepository;
 
+    // 신용카드 등록
+    // POST /api/credit
     public CreditResponseDto.CreditTaskSuccessResponseDto upload(CreditRequestDto.UploadCreditRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         if (creditRepository.existsByCreditNumber(requestDto.getCreditNumber())) {
@@ -64,6 +68,8 @@ public class CreditService {
                 .build();
     }
 
+    // 신용카드 조회
+    // GET /api/credit
     public CreditResponseDto.CreditListResponseDto getCreditList(String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         List<Credit> creditList = creditRepository.findAllCreditByMemberIdx(memberIdx);
@@ -101,8 +107,36 @@ public class CreditService {
                 .build();
     }
 
+
     @Transactional
     public void uploadCreditHistory(Credit credit, Integer amount, String name) {
+
+    public void payWithCredit(Credit credit, int price) {
+        creditRepository.payPrice(credit.getIdx(), price + credit.getAmountSum());
+    }
+
+    public boolean isAbleToUseCredit(Credit credit) {
+        // 만료일을 LocalDateTime으로 변환
+        LocalDateTime expirationDate;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // 문자열 형식에 맞게 조정
+            expirationDate = LocalDateTime.parse(credit.getExpirationDate(), formatter);
+        } catch (DateTimeParseException e) {
+            throw new ErrorHandler(ErrorStatus.CREDIT_EXPIRATION_DATE_FORMAT_ERROR);
+        }
+
+        // 만료일이 현재 시간보다 이전인지 확인
+        if (expirationDate.isBefore(LocalDateTime.now())) {
+            throw new ErrorHandler(ErrorStatus.CREDIT_CARD_EXPIRED);
+        }
+        return true;
+    }
+
+    public Credit getCreditByIdx(Long creditIdx) {
+        return creditRepository.findByCreditIdx(creditIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_CARD_NOT_FOUND));
+    }
+
+
 
         Integer creditAmountSum = credit.getAmountSum() + amount;
         // 카드 결제내역

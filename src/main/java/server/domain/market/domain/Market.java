@@ -21,7 +21,7 @@ public class Market {
 
     private String address;
 
-    public String kakaoCid;
+    public int maxTableCnt;
 
     private LocalDateTime createdAt;
 

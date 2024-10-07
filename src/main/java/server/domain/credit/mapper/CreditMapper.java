@@ -23,9 +23,15 @@ public interface CreditMapper {
 
     void updateCreditImage(Map<String, Object> map);
 
+
     void delete(Long idx);
 
     void updateAmountSum(Map<String, Object> map);
 
    Credit findMemberIdxAndCreditNumber(Map<String, Object> map);
+
+    void deleteCredit(Long creditIdx);
+
+    void payPrice(Map<String, Object> map);
+
 }

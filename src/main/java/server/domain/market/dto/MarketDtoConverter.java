@@ -10,7 +10,7 @@ public class MarketDtoConverter {
                 .memberIdx(market.getMemberIdx())
                 .name(market.getName())
                 .address(market.getAddress())
-                .kakaoCid(market.getKakaoCid())
+                .maxTableCnt(market.getMaxTableCnt())
                 .createdAt(market.getCreatedAt().toString())
                 .modifiedAt(market.getModifiedAt().toString())
                 .build();

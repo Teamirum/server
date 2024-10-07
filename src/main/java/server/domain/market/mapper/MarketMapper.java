@@ -14,6 +14,8 @@ public interface MarketMapper {
 
     Market findByMemberIdx(Long memberIdx);
 
+    Market findByMemberId(String memberId);
+
     List<Market> findAll();
 
 }

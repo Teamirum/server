@@ -22,6 +22,11 @@ public class CreditRepository {
         creditMapper.save(credit);
     }
 
+    public void payPrice(Long creditIdx, int amountSum) {
+        Map<String, Object> map = Map.of("creditIdx", creditIdx, "amountSum", amountSum);
+        creditMapper.payPrice(map);
+    }
+
     public Optional<Credit> findByCreditIdx(Long creditIdx) {
         Credit credit = creditMapper.findByCreditIdx(creditIdx);
         if (credit != null) {

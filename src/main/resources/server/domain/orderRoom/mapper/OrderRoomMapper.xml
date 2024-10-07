@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.orderRoom.mapper.OrderRoomMapper">
+
+    <!-- Result Mapping with Enum TypeHandler -->
+    <resultMap id="OrderRoomResultMap" type="server.domain.orderRoom.domain.OrderRoom">
+        <id property="idx" column="idx" />
+        <result property="orderIdx" column="order_idx" />
+        <result property="ownerMemberIdx" column="owner_member_idx" />
+        <result property="memberCnt" column="member_cnt" />
+        <result property="maxMemberCnt" column="max_member_cnt" />
+        <result property="totalPrice" column="total_price" />
+        <result property="currentPrice" column="current_price" />
+        <result property="type" column="type" />
+        <result property="readyCnt" column="ready_cnt" />
+        <result property="status" column="status" />
+        <result property="createdAt" column="created_at" />
+    </resultMap>
+
+    <!-- save OrderRoom -->
+    <insert id="save" parameterType="server.domain.orderRoom.domain.OrderRoom">
+        INSERT INTO OrderRoom (
+            order_idx, owner_member_idx, member_cnt, max_member_cnt, total_price, current_price, type, ready_cnt, status, created_at
+        ) VALUES (
+            #{orderIdx}, #{ownerMemberIdx}, #{memberCnt}, #{maxMemberCnt}, #{totalPrice}, #{currentPrice}, #{type}, #{readyCnt}, #{status}, #{createdAt}
+        )
+    </insert>
+
+    <!-- Select OrderRoom by orderIdx -->
+    <select id="findByOrderIdx" parameterType="Long" resultMap="OrderRoomResultMap">
+        SELECT *
+        FROM OrderRoom
+        WHERE order_idx = #{orderIdx}
+    </select>
+
+    <!-- Select OrderRoom by orderIdx And ownerMemberIdx -->
+    <select id="findByOrderIdxAndOwnerMemberIdx" parameterType="map" resultMap="OrderRoomResultMap">
+        SELECT *
+        FROM OrderRoom
+        WHERE order_idx = #{orderIdx} AND owner_member_idx = #{ownerMemberIdx}
+    </select>
+
+    <!-- Select OrderRoom by ownerMemberIdx -->
+    <select id="findAllByOwnerMemberIdx" parameterType="Long" resultMap="OrderRoomResultMap">
+        SELECT *
+        FROM OrderRoom
+        WHERE owner_member_idx = #{ownerMemberIdx}
+    </select>
+
+
+</mapper>

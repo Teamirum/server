@@ -1,5 +1,6 @@
 package server.domain.image.controller;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ public class ImageController {
     private final ImageService imageService;
 
     @PostMapping
+    @ApiOperation(value="이미지 업로드")
     public ApiResponse<?> uploadImage(@RequestPart(value="image", required = true) MultipartFile image) {
         String loginMemberId = getLoginMemberId();
         log.info("이미지 업로드 요청 : memberId = {}, image = {}", loginMemberId, image.getOriginalFilename());

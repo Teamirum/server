@@ -9,6 +9,6 @@ public class MarketRequestDto {
         private Long memberIdx;
         private String name;
         private String address;
-        private String kakaoCid;
+        private int maxTableCnt;
     }
 }

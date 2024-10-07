@@ -158,4 +158,16 @@ public class AccountService {
                 .idx(fromAccount.getIdx())
                 .build();
     }
+    public boolean isAbleToUseAccount(Account account, int price) {
+        return account.getAmount() >= price;
+    }
+
+    public void payWithAccount(Account account, int price) {
+        accountRepository.payPrice(account.getIdx(), account.getAmount() - price);
+    }
+
+    public Account getAccountByIdx(Long idx) {
+        return accountRepository.findByAccountIdx(idx).orElseThrow(() -> new ErrorHandler(ErrorStatus.ACCOUNT_NOT_FOUND));
+    }
+
 }

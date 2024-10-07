@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="server.domain.order.mapper.TogetherOrderMapper">
+
+    <!-- Result Mapping with Enum TypeHandler -->
+    <resultMap id="TogetherOrderResultMap" type="server.domain.order.domain.TogetherOrder">
+        <id property="idx" column="idx" />
+        <result property="orderIdx" column="order_idx" />
+        <result property="memberIdx" column="member_idx" />
+        <result property="createdAt" column="created_at" />
+    </resultMap>
+
+    <!-- save TogetherOrder -->
+    <insert id="save" parameterType="server.domain.order.domain.TogetherOrder">
+        INSERT INTO TogetherOrder (
+            order_idx, member_idx, created_at
+        ) VALUES (
+            #{orderIdx}, #{memberIdx}, #{createdAt}
+        )
+    </insert>
+
+    <!-- Select TogetherOrder by orderIdx -->
+    <select id="findAllByOrderIdx" parameterType="Long" resultMap="TogetherOrderResultMap">
+        SELECT *
+        FROM TogetherOrder
+        WHERE order_idx = #{orderIdx}
+    </select>
+
+    <!-- Select TogetherOrder by orderIdx And memberIdx -->
+    <select id="findByMemberIdxAndOrderIdx" parameterType="server.domain.order.domain.TogetherOrder" resultMap="TogetherOrderResultMap">
+        SELECT *
+        FROM TogetherOrder
+        WHERE order_idx = #{orderIdx} AND member_idx = #{memberIdx}
+    </select>
+
+    <!-- Select TogetherOrder by memberIdx -->
+    <select id="findAllByMemberIdx" parameterType="Long" resultMap="TogetherOrderResultMap">
+        SELECT *
+        FROM TogetherOrder
+        WHERE member_idx = #{memberIdx}
+    </select>
+
+    <!-- delete TogetherOrder by orderIdx -->
+    <delete id="deleteByOrderIdx" parameterType="Long">
+        DELETE
+        FROM TogetherOrder
+        WHERE order_idx = #{orderIdx}
+    </delete>
+
+    <!-- delete TogetherOrder by memberIdx And orderIdx -->
+    <delete id="deleteByMemberIdxAndOrderIdx" parameterType="map">
+        DELETE
+        FROM TogetherOrder
+        WHERE order_idx = #{orderIdx} AND member_idx = #{memberIdx}
+    </delete>
+
+    <!-- delete TogetherOrder by memberIdx -->
+    <delete id="deleteByMemberIdx" parameterType="Long">
+        DELETE
+        FROM TogetherOrder
+        WHERE member_idx = #{memberIdx}
+    </delete>
+
+
+</mapper>

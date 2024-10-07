@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import server.domain.order.domain.Order;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface OrderMapper {
@@ -14,6 +15,7 @@ public interface OrderMapper {
 
     List<Order> findAllByMarketIdx(Long marketIdx);
 
-    List<Order> findAllByOrderMemberIdx(Long orderMemberIdx);
+    void updatePrice(Order order);
 
+    Order findByNameAndMarketIdx(Map<String, Object> params);
 }

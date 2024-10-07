@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import server.domain.message.dto.MessageDtoConverter;
 import server.domain.message.dto.MessageResponseDto;
+import server.global.apiPayload.code.status.ErrorStatus;
+import server.global.apiPayload.exception.handler.ErrorHandler;
 import server.global.auth.security.service.JwtService;
 import server.global.util.RedisUtil;
 
@@ -63,10 +65,13 @@ public class MessageService implements InitializingBean {
     }
 
     public MessageResponseDto.CheckMessageSuccessResponseDto checkMessage(String phoneNum, String authNum) {
+        if (authNum == null || authNum.length() != CODE_LENGTH) {
+            throw new ErrorHandler(ErrorStatus.MEMBER_PHONE_CONFIRM_BAD_REQUEST);
+        }
         String data = redisUtil.getData(phoneNum);
         if (data == null || !data.equals(authNum)) {
             log.info("인증에 실패하였습니다. phoneNum = {}", phoneNum);
-            return MessageDtoConverter.convertToCheckMessageSuccessResponseDto(true, null);
+            return MessageDtoConverter.convertToCheckMessageSuccessResponseDto(false, null);
         }
         redisUtil.deleteData(phoneNum);
         String phoneAuthToken = jwtService.createPhoneAuthToken(phoneNum);

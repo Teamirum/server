@@ -17,6 +17,10 @@
         <package name="server.domain.order.domain" />
         <package name="server.domain.businessCard.domain"/>
         <package name="server.domain.transaction.domain"/>
+        <package name="server.domain.menu.domain" />
+        <package name="server.domain.orderRoom.domain" />
+        <package name="server.domain.pay.domain" />
+
     </typeAliases>
 
 </configuration>

@@ -58,6 +58,7 @@ public class MemberService {
                 .name(oAuth2User.getMemberName())
                 .email(oAuth2User.getEmail())
                 .role(Role.ROLE_GUEST)
+                .phoneNum("0000")
                 .createdAt(LocalDateTime.now())
                 .modifiedAt(LocalDateTime.now())
                 .socialType(oAuth2User.getSocialType())
