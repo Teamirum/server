@@ -106,7 +106,7 @@ public class RedisRepository {
     }
 
     public boolean existByOrderRoomIdx(Long orderIdx) {
-        return opsHashOrderRoom.hasKey(ORDER_ROOMS, orderIdx);
+        return opsHashOrderRoom.hasKey(ORDER_ROOMS, orderIdx + "");
     }
 
     public ChannelTopic getTopic(String orderIdx) {

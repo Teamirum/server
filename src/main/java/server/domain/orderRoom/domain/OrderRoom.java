@@ -48,7 +48,7 @@ public class OrderRoom implements Serializable {
 
     private OrderRoomStatus status;
 
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     public void updateCurrentPrice(int price) {
         currentPrice += price;

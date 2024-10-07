@@ -67,7 +67,7 @@ public class OrderRoomService {
                 .readyCnt(0)
                 .type(OrderRoomType.fromName(requestDto.getType()))
                 .status(OrderRoomStatus.ACTIVE)
-                .createdAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now().toString())
                 .build();
 
 

@@ -12,6 +12,8 @@ import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 import server.global.util.SecurityUtil;
 
+import java.security.Principal;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +22,8 @@ public class OrderRoomController {
     private final OrderRoomService orderRoomService;
 
     @MessageMapping("/order/room/create")
-    public void createOrderRoom(@Payload CreateOrderRoomRequestDto requestDto) {
-        String memberId = getLoginMemberId();
+    public void createOrderRoom(@Payload CreateOrderRoomRequestDto requestDto, Principal principal) {
+        String memberId = principal.getName();
         orderRoomService.createOrderRoom(requestDto, memberId);
     }
 
