@@ -1,5 +1,6 @@
 package server.domain.credit.domain;
 
+import io.lettuce.core.ScanArgs;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -19,7 +19,7 @@
 
     <!-- Insert Transaction -->
     <insert id="save" parameterType="server.domain.transaction.domain.Transaction">
-        INSERT INTO `Transaction` (
+        INSERT INTO Transaction (
             member_idx, credit_idx, account_idx, time, pay_method, amount, memo, category, tran_id
         ) VALUES (
                      #{memberIdx}, #{creditIdx}, #{accountIdx}, #{time}, #{payMethod}, #{amount}, #{memo}, #{category}, #{tranId}
@@ -29,34 +29,34 @@
     <!-- Select Transaction by TransactionIdx -->
     <select id="findByTransactionIdx" parameterType="Long" resultMap="TransactionResultMap">
         SELECT *
-        FROM `Transaction`
+        FROM Transaction
         WHERE idx = #{transactionIdx}
     </select>
 
     <!-- Select all Transactions by CreditIdx -->
     <select id="findTransactionsByCreditIdx" parameterType="Long" resultMap="TransactionResultMap">
         SELECT *
-        FROM `Transaction`
+        FROM Transaction
         WHERE credit_idx = #{creditIdx}
     </select>
 
     <!-- Select all Transactions by MemberIdx -->
     <select id="findAllByMemberIdx" parameterType="Long" resultMap="TransactionResultMap">
         SELECT *
-        FROM `Transaction`
-        WHERE member_idx = #{memberIdx}
+        FROM Transaction
+        WHERE member_idx = #{memberIdx} ORDER BY idx DESC
     </select>
 
     <!-- Update Transaction -->
     <update id="updateTransaction" parameterType="map">
-        UPDATE `Transaction`
+        UPDATE Transaction
         SET amount = #{amount}, memo = #{memo}, category = #{category}, pay_method = #{payMethod}, time = #{time}
         WHERE idx = #{idx}
     </update>
 
     <!-- Delete Transaction -->
     <delete id="deleteTransaction" parameterType="Long">
-        DELETE FROM `Transaction`
+        DELETE FROM Transaction
         WHERE idx = #{transactionIdx}
     </delete>
 

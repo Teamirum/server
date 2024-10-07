@@ -4,11 +4,13 @@ import server.domain.transaction.domain.Transaction;  // Transaction 도메인 �
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 public class TransactionDtoConverter {
 
     // 거래 내역 리스트를 DTO로 변환하는 메서드
-    public static TransactionResponseDto.TransactionListResponseDto convertToTransactionListResponseDto(List<Transaction> transactions) {
-        if (transactions == null || transactions.isEmpty()) {
+    public static TransactionResponseDto.TransactionListResponseDto convertToTransactionListResponseDto(List<Transaction> transaction) {
+        if (transaction == null || transaction.isEmpty()) {
             return TransactionResponseDto.TransactionListResponseDto.builder()
                     .count(0)
                     .isSuccess(false)
@@ -17,9 +19,9 @@ public class TransactionDtoConverter {
         }
 
         return TransactionResponseDto.TransactionListResponseDto.builder()
-                .count(transactions.size())
+                .count(transaction.size())
                 .isSuccess(true)
-                .transactionList(transactions.stream().map(TransactionDtoConverter::convertToTransactionInfoResponseDto).collect(Collectors.toList()))
+                .transactionList(transaction.stream().map(TransactionDtoConverter::convertToTransactionInfoResponseDto).collect(toList()))
                 .build();
     }
 

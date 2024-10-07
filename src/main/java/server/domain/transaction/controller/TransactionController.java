@@ -13,11 +13,15 @@ import server.global.apiPayload.exception.handler.ErrorHandler;
 import server.global.util.SecurityUtil;
 
 @RestController
-@RequestMapping("/api/transactions")
+@RequestMapping("/api/transaction")
 @RequiredArgsConstructor
 public class TransactionController {
 
     private final TransactionService transactionService;
+
+    private String getLoginMemberId() {
+        return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
 
     // 거래 추가
     @PostMapping
@@ -30,16 +34,16 @@ public class TransactionController {
     @GetMapping("/{transactionIdx}")
     public ResponseEntity<TransactionResponseDto.TransactionInfoResponseDto> getTransaction(
             @PathVariable Long transactionIdx) {
-        TransactionResponseDto.TransactionInfoResponseDto responseDto = transactionService.getTransaction(transactionIdx);
-        return ResponseEntity.ok(responseDto);
+
+        return ResponseEntity.ok(transactionService.getTransaction(transactionIdx));
     }
 
     // 특정 회원의 모든 거래 내역 조회
-    @GetMapping
-    public ResponseEntity<TransactionResponseDto.TransactionListResponseDto> getAllTransactionsByMemberId(
-            @RequestHeader("memberId") String memberId) {
-        TransactionResponseDto.TransactionListResponseDto responseDto = transactionService.getAllTransactionsByMemberId(memberId);
-        return ResponseEntity.ok(responseDto);
+    @GetMapping("/all")
+    public ResponseEntity<TransactionResponseDto.TransactionListResponseDto> getAllTransactionsByMemberId() {
+        String loginMemberId = getLoginMemberId();
+
+        return ResponseEntity.ok(transactionService.getAllTransactionList(loginMemberId));
     }
 
     // 거래 삭제
@@ -50,7 +54,7 @@ public class TransactionController {
         TransactionResponseDto.TransactionTaskSuccessResponseDto responseDto = transactionService.delete(transactionIdx, memberId);
         return ResponseEntity.ok(responseDto);
     }
-    private String getLoginMemberId() {
-        return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-    }
+
+
+
 }

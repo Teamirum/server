@@ -56,20 +56,11 @@ public class TransactionService {
     }
 
     // 특정 회원의 모든 거래 내역 조회
-    public TransactionResponseDto.TransactionListResponseDto getAllTransactionsByMemberId(String memberId) {
+    public TransactionResponseDto.TransactionListResponseDto getAllTransactionList(String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<Transaction> transactions = transactionRepository.findAllByMemberIdx(memberIdx);
-        List<TransactionResponseDto.TransactionInfoResponseDto> transactionInfoList = transactions.stream()
-                .map(TransactionDtoConverter::convertToTransactionInfoResponseDto)
-                .toList();
-
-        return TransactionResponseDto.TransactionListResponseDto.builder()
-                .count(transactionInfoList.size())
-                .transactionList(transactionInfoList)
-                .isSuccess(true)
-                .build();
+        return TransactionDtoConverter.convertToTransactionListResponseDto(transactionRepository.findAllTransactionByMemberIdx(memberIdx));
     }
 
     // 거래 삭제

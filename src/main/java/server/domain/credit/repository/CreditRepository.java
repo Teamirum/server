@@ -67,7 +67,7 @@ public class CreditRepository {
 
     public Optional<Credit> findMemberIdxAndCreditNumber(Long memberIdx, String creditNumber) {
         Map<String, Object> map = Map.of("memberIdx", memberIdx, "creditNumber", creditNumber);
-        Credit credit = creditMapper.findMemberIdxAndCreditNumber(map);;
+        Credit credit = creditMapper.findMemberIdxAndCreditNumber(map);
         if (credit != null) {
             return Optional.of(credit);
         }

@@ -15,7 +15,6 @@ public class TransactionRepository {
 
     private final TransactionMapper transactionMapper;
 
-    // 거래내역 저장
     public void save(Transaction transaction) {
         transactionMapper.save(transaction);
     }
@@ -32,7 +31,7 @@ public class TransactionRepository {
     }
 
     // 특정 회원의 모든 거래내역 조회
-    public List<Transaction> findAllByMemberIdx(Long memberIdx) {
+    public List<Transaction> findAllTransactionByMemberIdx(Long memberIdx) {
         return transactionMapper.findAllByMemberIdx(memberIdx);
     }
 
