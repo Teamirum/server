@@ -50,7 +50,7 @@ public class StompHandler implements ChannelInterceptor {
             List<String> authorizationHeaders = accessor.getNativeHeader("Authorization");
             String authHeader = null;
             if (authorizationHeaders != null && !authorizationHeaders.isEmpty()) {
-                authHeader = authorizationHeaders.get(0);
+                authHeader = authorizationHeaders.get(0).trim();
             }
 
             Optional<String> accessToken = Optional.ofNullable(authHeader)
@@ -83,6 +83,44 @@ public class StompHandler implements ChannelInterceptor {
             });
 
             log.info("Stomp Handler : CONNECTED. memberId : {}", memberId);
+
+        } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) { // 채팅룸 구독요청(진입) -> CrewMember인지 검증
+            List<String> authorizationHeaders = accessor.getNativeHeader("Authorization");
+            String authHeader = null;
+            if (authorizationHeaders != null && !authorizationHeaders.isEmpty()) {
+                authHeader = authorizationHeaders.get(0).trim();
+            }
+
+            log.info("Stomp Handler SUBSCRIBE : authHeader : {}", authHeader);
+
+            Optional<String> accessToken = Optional.ofNullable(authHeader)
+                    .filter(token -> token.startsWith("Bearer "))
+                    .map(token -> token.replace("Bearer ", ""));
+
+            log.info("Stomp Handler SUBSCRIBE : accessToken : {}", accessToken);
+
+            if (accessToken.isEmpty()) {
+                log.error("Stomp Handler : 유효하지 않은 토큰입니다.");
+                throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
+            }
+
+            String memberId = jwtService.extractMemberId(accessToken.get()).orElse(null);
+
+            if (!jwtService.isTokenValid(accessToken.get())) {
+                log.error("Stomp Handler : 유효하지 않은 토큰입니다. memberId : {}", memberId);
+                throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
+            }
+
+            Member member = memberRepository.findByMemberId(memberId)
+                    .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            saveAuthentication(member);
+            // 사용자 정보를 세션에 저장
+            accessor.setUser(new Principal() {
+                @Override
+                public String getName() {
+                    return memberId;
+                }
+            });
 
         } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
             // DISCONNECT 메시지 처리
