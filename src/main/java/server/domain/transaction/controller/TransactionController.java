@@ -31,12 +31,12 @@ public class TransactionController {
         return ApiResponse.onSuccess(transactionService.upload(requestDto, loginMemberId));
     }
 
-    // 특정 거래 조회
-    @GetMapping("/{transactionIdx}")
-    public ResponseEntity<TransactionResponseDto.TransactionInfoResponseDto> getTransaction(
-            @PathVariable Long transactionIdx) {
 
-        return ResponseEntity.ok(transactionService.getTransaction(transactionIdx));
+    @GetMapping
+    public ApiResponse<?> getTransaction(@RequestParam(value = "idx") Long idx) {
+        String loginMemberId = getLoginMemberId();
+        log.info("거래 조회 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
+        return ApiResponse.onSuccess(transactionService.getTransaction(idx, loginMemberId));
     }
 
 

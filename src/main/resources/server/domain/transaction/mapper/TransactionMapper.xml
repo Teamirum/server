@@ -30,7 +30,7 @@
     <select id="findByTransactionIdx" parameterType="Long" resultMap="TransactionResultMap">
         SELECT *
         FROM Transaction
-        WHERE idx = #{transactionIdx}
+        WHERE idx = #{idx}
     </select>
 
     <!-- Select all Transactions by CreditIdx -->

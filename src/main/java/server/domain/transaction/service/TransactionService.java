@@ -44,12 +44,18 @@ public class TransactionService {
                 .build();
     }
 
-    // 특정 거래 조회
-    public TransactionResponseDto.TransactionInfoResponseDto getTransaction(Long transactionIdx) {
-        Transaction transaction = transactionRepository.findByTransactionIdx(transactionIdx)
-                .orElseThrow(() -> new ErrorHandler(ErrorStatus.TRANSACTION_NOT_FOUND));
+   public Transaction getTransaction(Long idx, String loginMemberId) {
+       Long memberIdx = memberRepository.getIdxByMemberId(loginMemberId)
+               .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        return TransactionDtoConverter.convertToTransactionInfoResponseDto(transaction);
+       Transaction transaction = transactionRepository.findByTransactionIdx(idx)
+               .orElseThrow(() -> new ErrorHandler(ErrorStatus.TRANSACTION_NOT_FOUND));
+
+       if(!transaction.getMemberIdx().equals(memberIdx)) {
+              throw new ErrorHandler(ErrorStatus.TRANSACTION_NOT_FOUND);
+       }
+
+       return transaction;
     }
 
     // 특정 회원의 모든 거래 내역 조회

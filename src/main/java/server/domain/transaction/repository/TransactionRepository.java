@@ -20,9 +20,13 @@ public class TransactionRepository {
     }
 
     // 거래내역 ID로 조회
-    public Optional<Transaction> findByTransactionIdx(Long transactionIdx) {
-        Transaction transaction = transactionMapper.findByTransactionIdx(transactionIdx);
-        return Optional.ofNullable(transaction);
+    public Optional<Transaction> findByTransactionIdx(Long TransactionIdx) {
+        Transaction transaction = transactionMapper.findByTransactionIdx(TransactionIdx);
+        if(transaction != null) {
+            return Optional.of(transaction);
+        }
+
+        return Optional.empty();
     }
 
     // 특정 카드의 거래내역 조회

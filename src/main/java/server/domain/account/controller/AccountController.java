@@ -51,8 +51,6 @@ public class AccountController {
         return ApiResponse.onSuccess(accountService.delete(idx, loginMemberId));
     }
 
-
-
     /**
      * 계좌 송금 로직
      * @param requestDto
@@ -72,7 +70,6 @@ public class AccountController {
         return ResponseEntity.ok(accountTaskSuccessResponseDto);
     }
 
-    // Account History 리스트 조회
     @GetMapping("/{accountIdx}/history")
     public ApiResponse<?> getAccountHistoryList(@PathVariable("accountIdx") Long accountIdx) {
         String loginMemberId = getLoginMemberId();
