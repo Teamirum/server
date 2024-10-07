@@ -1,7 +1,10 @@
 package server.domain.orderRoom.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -30,6 +33,8 @@ public class OrderRoomResponseDto {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class EnterOrderRoomResponseDto implements Serializable {
         private Long orderIdx;
         private Long ownerMemberIdx;
@@ -43,6 +48,9 @@ public class OrderRoomResponseDto {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true) // 추가된 어노테이션
     public static class OrderRoomMenuInfoListDto implements Serializable {
         private Long orderIdx;
 
@@ -71,6 +79,8 @@ public class OrderRoomResponseDto {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class OrderRoomMenuSelectionResponseDto implements Serializable {
 
         private Long orderIdx;
@@ -105,7 +115,9 @@ public class OrderRoomResponseDto {
 
     @Data
     @Builder
-    public static class StartPayResponseDto {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class StartPayResponseDto implements Serializable {
         private Long orderIdx;
         private int totalPrice;
         private int currentPrice;

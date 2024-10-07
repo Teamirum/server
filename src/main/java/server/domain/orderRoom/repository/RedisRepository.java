@@ -48,7 +48,7 @@ public class RedisRepository {
 //        if (existMyInfo(memberIdx)) {
 //            throw new ErrorHandler(ErrorStatus.ORDER_MEMBER_ALREADY_IN_OTHER_ROOM);
 //        }
-        if (getMemberEnteredOrderRoomIdx(memberIdx).equals(orderIdx)) {
+        if (getMemberEnteredOrderRoomIdx(memberIdx) != null) {
             throw new ErrorHandler(ErrorStatus.ORDER_MEMBER_ALREADY_IN_ROOM);
         }
         ChannelTopic topic = getTopic(orderIdxStr);
@@ -58,7 +58,7 @@ public class RedisRepository {
         }
 
         topics.put(orderIdxStr, topic);
-        if (orderRoom.enterMember(memberIdx)) {
+        if (!orderRoom.enterMember(memberIdx)) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_EXCEED);
         }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdxStr, orderRoom);
@@ -170,7 +170,7 @@ public class RedisRepository {
     public Long getMemberEnteredOrderRoomIdx(Long memberIdx) {
         Long orderIdx = opsHashEnterInfo.get(ENTER_INFO, memberIdx + "");
         if (orderIdx == null) {
-            throw new ErrorHandler(ErrorStatus.ORDER_MEMBER_PARTICIPANT_ROOM_NOT_FOUND);
+            return null;
         }
         return orderIdx;
     }

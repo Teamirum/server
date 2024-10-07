@@ -24,12 +24,15 @@ public class OrderRoomController {
     @MessageMapping("/order/room/create")
     public void createOrderRoom(@Payload CreateOrderRoomRequestDto requestDto, Principal principal) {
         String memberId = principal.getName();
+        log.info("createOrderRoom : memberId = {}", memberId);
         orderRoomService.createOrderRoom(requestDto, memberId);
     }
 
-    @MessageMapping("/order/room/enter/{orderIdx}")
-    public void enterOrderRoom(@DestinationVariable Long orderIdx) {
-        orderRoomService.enterOrderRoom(orderIdx, getLoginMemberId());
+    @MessageMapping("/order/room/enter")
+    public void enterOrderRoom(@Payload EnterOrderRoomRequestDto requestDto, Principal principal) {
+        String memberId = principal.getName();
+        log.info("enterOrderRoom : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), memberId);
+        orderRoomService.enterOrderRoom(requestDto.getOrderIdx(), memberId);
     }
 
 

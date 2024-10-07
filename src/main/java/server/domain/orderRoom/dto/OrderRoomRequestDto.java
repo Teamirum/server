@@ -31,6 +31,18 @@ public class OrderRoomRequestDto {
     }
 
     @Data
+    public static class EnterOrderRoomRequestDto {
+        private Long orderIdx;
+
+        @JsonCreator
+        public EnterOrderRoomRequestDto(
+                @JsonProperty("orderIdx") Long orderIdx
+        ) {
+            this.orderIdx = orderIdx;
+        }
+    }
+
+    @Data
     public static class SelectMenuRequestDto {
         private Long orderIdx;
         private Long menuIdx;

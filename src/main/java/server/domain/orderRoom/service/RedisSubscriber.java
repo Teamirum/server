@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
@@ -16,41 +17,44 @@ import static server.domain.orderRoom.dto.OrderRoomResponseDto.*;
 @RequiredArgsConstructor
 @Service
 public class RedisSubscriber implements MessageListener {
-    private final ObjectMapper objectMapper;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final GenericJackson2JsonRedisSerializer serializer;
     private final SimpMessageSendingOperations messagingTemplate;
 
     /**
-     * Redis에서 메시지가 발행되면 대기하고 있던 onMessage가 메시지를 받아 messagingTemplate를 이용하여 websocket 클라이언트들에게 메시지 전달
+     * Redis에서 메시지가 발행되면 이 메서드가 호출되어 WebSocket 클라이언트들에게 메시지를 전달합니다.
      */
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            // redis에서 발행된 데이터를 받아 역직렬화
-            String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
-            JsonNode jsonNode = objectMapper.readTree(publishMessage);
-            String messageType = jsonNode.get("type").asText();
-            if (messageType.equals("ENTER")) {
-                EnterOrderRoomResponseDto enterOrderRoomResponseDto = objectMapper.treeToValue(jsonNode, EnterOrderRoomResponseDto.class);
-                messagingTemplate.convertAndSend("/sub/order/room/" + enterOrderRoomResponseDto.getOrderIdx(), enterOrderRoomResponseDto);
-            } else if (messageType.equals("MENU_INFO")) {
-                OrderRoomMenuInfoListDto orderRoomMenuInfoListDto = objectMapper.treeToValue(jsonNode, OrderRoomMenuInfoListDto.class);
-                messagingTemplate.convertAndSend("/sub/order/room/" + orderRoomMenuInfoListDto.getOrderIdx(), orderRoomMenuInfoListDto);
-            } else if (messageType.equals("MENU_SELECT") || messageType.equals("MENU_CANCEL")) {
-                OrderRoomMenuSelectionResponseDto orderRoomMenuInfoListDto = objectMapper.treeToValue(jsonNode, OrderRoomMenuSelectionResponseDto.class);
-                messagingTemplate.convertAndSend("/sub/order/room/" + orderRoomMenuInfoListDto.getOrderIdx(), orderRoomMenuInfoListDto);
-            } else if (messageType.equals("READY_TO_PAY") || messageType.equals("CANCEL_READY_TO_PAY")) {
-                OrderRoomReadyToPayResponseDto orderRoomReadyToPayResponseDto = objectMapper.treeToValue(jsonNode, OrderRoomReadyToPayResponseDto.class);
-                messagingTemplate.convertAndSend("/sub/order/room/" + orderRoomReadyToPayResponseDto.getOrderIdx(), orderRoomReadyToPayResponseDto);
-            } else if (messageType.equals("START_PAY")) {
-                StartPayResponseDto startPayResponseDto = objectMapper.treeToValue(jsonNode, StartPayResponseDto.class);
-                messagingTemplate.convertAndSend("/sub/order/room/" + startPayResponseDto.getOrderIdx(), startPayResponseDto);
+            // GenericJackson2JsonRedisSerializer를 사용하여 메시지를 역직렬화
+            Object obj = serializer.deserialize(message.getBody());
+
+            if (obj instanceof EnterOrderRoomResponseDto) {
+                EnterOrderRoomResponseDto dto = (EnterOrderRoomResponseDto) obj;
+                messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
+                log.info("Received ENTER message: {}", dto);
+            } else if (obj instanceof OrderRoomMenuInfoListDto) {
+                OrderRoomMenuInfoListDto dto = (OrderRoomMenuInfoListDto) obj;
+                messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
+                log.info("Received MENU_INFO message: {}", dto);
+            } else if (obj instanceof OrderRoomMenuSelectionResponseDto) {
+                OrderRoomMenuSelectionResponseDto dto = (OrderRoomMenuSelectionResponseDto) obj;
+                messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
+                log.info("Received MENU_SELECT or MENU_CANCEL message: {}", dto);
+            } else if (obj instanceof OrderRoomReadyToPayResponseDto) {
+                OrderRoomReadyToPayResponseDto dto = (OrderRoomReadyToPayResponseDto) obj;
+                messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
+                log.info("Received READY_TO_PAY or CANCEL_READY_TO_PAY message: {}", dto);
+            } else if (obj instanceof StartPayResponseDto) {
+                StartPayResponseDto dto = (StartPayResponseDto) obj;
+                messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
+                log.info("Received START_PAY message: {}", dto);
             } else {
-                log.error("RedisSubscriber : 알 수 없는 메시지 타입입니다. type = {}", messageType );
+                log.error("RedisSubscriber: 알 수 없는 메시지 타입입니다. 클래스 = {}", obj.getClass());
             }
 
         } catch (Exception e) {
-            log.error("Exception : {}", e.getMessage());
+            log.error("RedisSubscriber: Exception occurred while processing message - {}", e.getMessage(), e);
         }
     }
 }
