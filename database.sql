@@ -28,19 +28,23 @@ CREATE TABLE `Account` (
                            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                            `account_secret` VARCHAR(20) NOT NULL,
                            PRIMARY KEY (`idx`),
+                           UNIQUE (`account_number`),
                            FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
 );
+
 -- AccountHistory 테이블
 CREATE TABLE `AccountHistory` (
                                   `idx` BIGINT AUTO_INCREMENT NOT NULL,
                                   `account_idx` BIGINT NOT NULL,
+                                  `account_number` VARCHAR(20) NOT NULL,
                                   `account_history_type` ENUM('SEND', 'GET') NOT NULL,
                                   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                   `amount` BIGINT NOT NULL,
                                   `remain_amount` BIGINT NOT NULL,
                                   `name` VARCHAR(100) NOT NULL,
                                   PRIMARY KEY (`idx`),
-                                  FOREIGN KEY (`account_idx`) REFERENCES `Account`(`idx`) ON DELETE CASCADE
+                                  FOREIGN KEY (`account_idx`) REFERENCES `Account`(`idx`) ON DELETE CASCADE,
+                                  FOREIGN KEY (`account_number`) REFERENCES `Account`(`account_number`) ON DELETE CASCADE -- account_number를 참조
 );
 
 -- Credit 테이블
@@ -199,12 +203,14 @@ CREATE TABLE `Transaction` (
                                `idx` BIGINT AUTO_INCREMENT NOT NULL,
                                `member_idx` BIGINT NOT NULL,
                                `credit_idx` BIGINT,
+                               `credit_number` VARCHAR(250),
                                `account_idx` BIGINT,
+                               `account_number` VARCHAR(20),
                                `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                `pay_method` ENUM('CARD', 'ACCOUNT') NOT NULL,
                                `amount` INT NOT NULL,
                                `memo` VARCHAR(100),
-                               `category` ENUM('food', 'transport', 'entertainment') NOT NULL,
+                               `category` ENUM('FOOD', 'TRANSPORT', 'ENTERTAINMENT') NOT NULL,
                                `tran_id` VARCHAR(50),
                                PRIMARY KEY (`idx`),
                                FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE,

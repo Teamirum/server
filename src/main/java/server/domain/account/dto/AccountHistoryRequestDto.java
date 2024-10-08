@@ -58,7 +58,7 @@ public class AccountHistoryRequestDto {
         }
     }
 
-    //계좌 거래 내역 삭제
+
     public static class DeleteAccountHistoryRequestDto {
         public Long idx;
 

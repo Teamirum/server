@@ -22,15 +22,19 @@ public class Transaction {
 
     private Long accountIdx;
 
+    private String accountNumber;
+
+    private String creditNumber;
+
     private LocalDateTime time;
 
-    private PayMethod payMethod;  // 결제 방식 (ENUM)
+    private PayMethod payMethod;
 
     private int amount;
 
     private String memo;
 
-    private Category category;  // 거래 카테고리 (ENUM)
+    private Category category;
 
     private String tranId;
 
@@ -39,8 +43,9 @@ public class Transaction {
         CARD, ACCOUNT
     }
 
-    // 카테고리 ENUM
     public enum Category {
-        FOOD, TRANSPORT, ENTERTAINMENT
+        FOOD, TRANSPORT, ENTERTAINMENT, UNCATEGORIZED
     }
+
+
 }

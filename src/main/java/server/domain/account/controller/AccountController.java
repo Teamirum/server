@@ -16,6 +16,8 @@ import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 import server.global.util.SecurityUtil;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 
 @RestController
 @RequestMapping("/api/account")
@@ -61,6 +63,10 @@ public class AccountController {
         String loginMemberId = getLoginMemberId();
 
         Account fromAccount = accountService.findByMemberIdxAndAccountNumber(loginMemberId, requestDto.fromAccountNumber);
+        if (fromAccount == null) {
+            // 오류 처리
+            System.out.println("fromAccount = " + fromAccount);
+        }
         Account toAccount = accountService.findByAccountNumber(requestDto.getToAccountNumber());
         AccountResponseDto.AccountTaskSuccessResponseDto accountTaskSuccessResponseDto = accountService.updateAmount(fromAccount, toAccount, requestDto.getAmount());
 
@@ -76,5 +82,6 @@ public class AccountController {
         log.info("계좌 히스토리 리스트 조회 요청 : loginMemberId = {}, accountIdx = {}", loginMemberId, accountIdx);
         return ApiResponse.onSuccess(accountService.getAccountHistoryList(accountIdx, loginMemberId));
     }
+
 
 }

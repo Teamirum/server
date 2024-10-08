@@ -8,7 +8,9 @@
         <id property="idx" column="idx" />
         <result property="memberIdx" column="member_idx" />
         <result property="creditIdx" column="credit_idx" />
+        <result property="creditNumber" column="credit_number" />
         <result property="accountIdx" column="account_idx" />
+        <result property="accountNumber" column="account_number" />
         <result property="time" column="time" />
         <result property="payMethod" column="pay_method" />
         <result property="amount" column="amount" />
@@ -20,11 +22,24 @@
     <!-- Insert Transaction -->
     <insert id="save" parameterType="server.domain.transaction.domain.Transaction">
         INSERT INTO Transaction (
-            member_idx, credit_idx, account_idx, time, pay_method, amount, memo, category, tran_id
+        member_idx, credit_idx, credit_number, account_idx, account_number, time, pay_method, amount, memo, category, tran_id
         ) VALUES (
-                     #{memberIdx}, credit_idx = IFNULL(#{creditIdx}, credit_idx), account_idx = IFNULL(#{accountIdx}, account_idx), #{time}, #{payMethod}, #{amount}, #{memo}, #{category}, #{tranId}
-                 )
+        #{memberIdx},
+        <if test="creditIdx != null">#{creditIdx},</if>
+        <if test="creditIdx == null">credit_idx,</if>
+        <if test="creditNumber != null">#{creditNumber},</if>
+        <if test="creditNumber == null">credit_number,</if>
+        <if test="accountIdx != null">#{accountIdx},</if>
+        <if test="accountIdx == null">account_idx,</if>
+        <if test="accountNumber != null">#{accountNumber},</if>
+        <if test="accountNumber == null">account_number,</if>
+        #{time}, #{payMethod}, #{amount}, #{memo},
+        IFNULL(#{category}, 'UNCATEGORIZED'),
+        #{tranId}
+        )
     </insert>
+
+
 
     <!-- Select Transaction by TransactionIdx -->
     <select id="findByTransactionIdx" parameterType="Long" resultMap="TransactionResultMap">
@@ -51,18 +66,19 @@
     <update id="updateTransaction" parameterType="server.domain.transaction.domain.Transaction">
         UPDATE Transaction
         SET
-            credit_idx = IFNULL(#{creditIdx}, credit_idx),
-            account_idx = IFNULL(#{accountIdx}, account_idx),
-            pay_method = #{payMethod},
-            amount = IFNULL(#{amount}, amount),
-            memo = IFNULL(#{memo}, memo),
-            category = IFNULL(#{category}, category),
-            tran_id = #{tranId},
-            time = #{time}
+        credit_idx = IFNULL(#{creditIdx}, credit_idx),
+        account_idx = IFNULL(#{accountIdx}, account_idx),
+        pay_method = #{payMethod},
+        amount = IFNULL(#{amount}, amount),
+        memo = IFNULL(#{memo}, memo),
+        category = IFNULL(#{category}, 'UNCATEGORIZED'),
+        tran_id = #{tranId},
+        time = #{time}
         WHERE
-            idx = #{idx} AND
-            member_idx = #{memberIdx}
+        idx = #{idx} AND
+        member_idx = #{memberIdx}
     </update>
+
 
 
     <!-- Delete Transaction -->

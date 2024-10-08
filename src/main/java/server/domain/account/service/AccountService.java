@@ -59,6 +59,8 @@ public class AccountService {
                 .isSuccess(true)
                 .idx(savedAccount.getIdx())
                 .build();
+
+
     }
 
     private boolean existsByAccountNumber(String accountNumber) {
@@ -91,6 +93,7 @@ public class AccountService {
 
         accountHistoryRepository.save(AccountHistory.builder()
                 .accountIdx(fromAccount.getIdx())
+                .accountNumber(fromAccount.getAccountNumber())
                 .accountHistoryType(SEND)
                 .createdAt(now())
                 .amount(amount)
@@ -100,6 +103,7 @@ public class AccountService {
 
         accountHistoryRepository.save(AccountHistory.builder()
                 .accountIdx(toAccount.getIdx())
+                .accountNumber(toAccount.getAccountNumber())
                 .accountHistoryType(GET)
                 .createdAt(now())
                 .amount(amount)
@@ -110,12 +114,15 @@ public class AccountService {
         transactionRepository.save(Transaction.builder()
                 .memberIdx(fromAccount.getMemberIdx())
                 .accountIdx(fromAccount.getIdx())
+                .accountNumber(fromAccount.getAccountNumber())
                 .time(now())
                 .payMethod(ACCOUNT)
                 .amount(amount)
                 .memo(name)
                 .category(ENTERTAINMENT)
                 .build());
+        System.out.println("accountIdx = " + fromAccount.getIdx());
+
     }
 
 

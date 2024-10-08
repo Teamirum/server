@@ -31,11 +31,12 @@
     <!-- Insert Account History -->
     <insert id="save" parameterType="server.domain.account.domain.AccountHistory">
         INSERT INTO AccountHistory (
-            account_idx, account_history_type, created_at, amount, remain_amount, name
+            account_idx, account_number, account_history_type, created_at, amount, remain_amount, name
         ) VALUES (
-                     #{accountIdx}, #{accountHistoryType}, #{createdAt}, #{amount}, #{remainAmount}, #{name}
+                     #{accountIdx}, #{accountNumber}, #{accountHistoryType}, #{createdAt}, #{amount}, #{remainAmount}, #{name}
                  )
     </insert>
+
 
     <!-- Delete Account History -->
     <delete id="delete" parameterType="Long">
