@@ -147,12 +147,14 @@ public class OrderRoomResponseDto {
         private String status;
         private String code;
         private String message;
+        private String type;
 
         public ErrorResponseDto(Long memberIdx, Long orderIdx, ErrorStatus errorStatus) {
             this.orderIdx = orderIdx;
             this.status = errorStatus.getHttpStatus().toString();
             this.code = errorStatus.getCode();
             this.message = errorStatus.getMessage();
+            this.type = "ERROR";
         }
 
         @Override
