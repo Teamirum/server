@@ -63,17 +63,21 @@ public class RedisRepository {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_EXCEED);
         }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdxStr, orderRoom);
-        opsHashEnterInfo.put(ENTER_INFO, orderIdxStr, memberIdx);
+        opsHashEnterInfo.put(ENTER_INFO, memberIdx + "", orderIdx);
         return topic;
     }
 
     public ChannelTopic saveOrderRoom(OrderRoom orderRoom) {
         String orderIdxStr = orderRoom.getOrderIdx() + "";
-        ChannelTopic topic = new ChannelTopic(orderIdxStr);
-        topics.put(orderIdxStr, topic);
+        if (topics.containsKey(orderIdxStr)) {
+            ChannelTopic topic = new ChannelTopic(orderIdxStr);
+            topics.put(orderIdxStr, topic);
+        }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdxStr, orderRoom);
-        return topic;
+        return topics.get(orderIdxStr);
     }
+
+
 
     public OrderRoom getOrderRoom(Long orderIdx) {
         if (!existByOrderRoomIdx(orderIdx)) {
@@ -169,11 +173,10 @@ public class RedisRepository {
 
     // 유저가 입장해 있는 주문방 ID 조회
     public Long getMemberEnteredOrderRoomIdx(Long memberIdx) {
-        Long orderIdx = opsHashEnterInfo.get(ENTER_INFO, memberIdx + "");
-        if (orderIdx == null) {
+        if (opsHashEnterInfo.get(ENTER_INFO, memberIdx + "") == null) {
             return null;
         }
-        return orderIdx;
+        return Long.parseLong(opsHashEnterInfo.get(ENTER_INFO, memberIdx + "") + "");
     }
 
     // 사용자가 특정 주문방에 입장해 있는지 확인

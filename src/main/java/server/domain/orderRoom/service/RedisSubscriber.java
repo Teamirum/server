@@ -33,7 +33,6 @@ public class RedisSubscriber implements MessageListener {
                 EnterOrderRoomResponseDto dto = (EnterOrderRoomResponseDto) obj;
                 messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
                 log.info("Received ENTER message: {}", dto);
-                messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), "Hello");
             } else if (obj instanceof OrderRoomMenuInfoListDto) {
                 OrderRoomMenuInfoListDto dto = (OrderRoomMenuInfoListDto) obj;
                 messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
@@ -50,7 +49,12 @@ public class RedisSubscriber implements MessageListener {
                 StartPayResponseDto dto = (StartPayResponseDto) obj;
                 messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
                 log.info("Received START_PAY message: {}", dto);
-            } else {
+            } else if (obj instanceof ErrorResponseDto) {
+                ErrorResponseDto dto = (ErrorResponseDto) obj;
+                messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto.toString());
+                log.error("Received START_PAY message: {}", dto);
+            }
+            else {
                 log.error("RedisSubscriber: 알 수 없는 메시지 타입입니다. 클래스 = {}", obj.getClass());
             }
 

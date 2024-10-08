@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import server.global.apiPayload.code.status.ErrorStatus;
 
 import java.io.Serializable;
 import java.util.List;
@@ -69,6 +70,9 @@ public class OrderRoomResponseDto {
 
         @Data
         @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @JsonIgnoreProperties(ignoreUnknown = true)
         public static class OrderMenuInfoDto {
             private Long menuIdx;
             private String menuName;
@@ -81,6 +85,7 @@ public class OrderRoomResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class OrderRoomMenuSelectionResponseDto implements Serializable {
 
         private Long orderIdx;
@@ -101,6 +106,9 @@ public class OrderRoomResponseDto {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class OrderRoomReadyToPayResponseDto implements Serializable {
         private Long orderIdx;
         private Long memberIdx;
@@ -117,6 +125,7 @@ public class OrderRoomResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class StartPayResponseDto implements Serializable {
         private Long orderIdx;
         private int totalPrice;
@@ -124,6 +133,51 @@ public class OrderRoomResponseDto {
         private int maxMemberCnt;
         private Boolean canStartToPay;
         // START_PAY 로 고정
+        private String type;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ErrorResponseDto implements Serializable {
+        private Long memberIdx;
+        private Long orderIdx;
+        private String status;
+        private String code;
+        private String message;
+        private String type;
+
+        public ErrorResponseDto(Long memberIdx, Long orderIdx, ErrorStatus errorStatus) {
+            this.orderIdx = orderIdx;
+            this.status = errorStatus.getHttpStatus().toString();
+            this.code = errorStatus.getCode();
+            this.message = errorStatus.getMessage();
+            this.type = "ERROR";
+        }
+
+        @Override
+        public String toString() {
+            return "ErrorResponseDto{" +
+                    "orderIdx=" + orderIdx +
+                    ", status='" + status + '\'' +
+                    ", code='" + code + '\'' +
+                    ", message='" + message + '\'' +
+                    '}';
+        }
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class OrderRoomPriceSelectionResponseDto implements Serializable {
+        private Long orderIdx;
+        private Long memberIdx;
+        private int price;
+        // READY_TO_PAY, CANCEL_READY_TO_PAY 로 고정
         private String type;
     }
 }
