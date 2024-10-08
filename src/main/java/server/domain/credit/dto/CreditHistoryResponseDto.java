@@ -9,14 +9,6 @@ public class CreditHistoryResponseDto {
 
     @Data
     @Builder
-    public static class CreditHistoryListResponseDto {
-        private Boolean isSuccess;
-        private int cnt;
-        private List<CreditHistoryInfoResponseDto> creditHistoryList;
-    }
-
-    @Data
-    @Builder
     public static class CreditHistoryInfoResponseDto {
         private Long idx;
         private Long creditIdx;
@@ -29,8 +21,18 @@ public class CreditHistoryResponseDto {
 
     @Data
     @Builder
-    public static class CreditHistoryTransactionResponseDto {
-        private String cardName;
+    public static class CreditHistoryListResponseDto {
+        private boolean isSuccess;
+        private int cnt;
         private List<CreditHistoryInfoResponseDto> creditHistoryList;
     }
+
+
+   @Data
+   @Builder
+    public static class CreditHistoryDetailResponseDto {
+        private boolean isSuccess;
+        private int cnt;
+        private CreditHistoryInfoResponseDto creditHistoryDetail;
+   }
 }

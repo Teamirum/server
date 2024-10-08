@@ -158,7 +158,6 @@ public class CreditService {
         return creditRepository.findByCreditIdx(creditIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_CARD_NOT_FOUND));
     }
 
-
     public CreditHistoryResponseDto.CreditHistoryListResponseDto getCreditHistoryList(Long creditIdx, String memberId) {
         Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         if(!creditRepository.existsByCreditIdxAndMemberIdx(creditIdx, member.getIdx())) {
@@ -167,4 +166,16 @@ public class CreditService {
         List<CreditHistory> creditHistoryList = creditHistoryRespository.findAllCreditHistoryByCreditIdx(creditIdx);
         return CreditHistoryDtoConverter.convertToCreditHistoryListResponseDto(creditHistoryList);
     }
+
+    public CreditHistoryResponseDto.CreditHistoryDetailResponseDto getCreditHistoryDetail(Long creditIdx, Long creditHistoryIdx, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        CreditHistory creditHistory = creditHistoryRespository.findByCreditHistoryIdx(creditIdx, creditHistoryIdx, member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.CREDIT_HISTORY_NOT_FOUND));
+        return CreditHistoryResponseDto.CreditHistoryDetailResponseDto.builder()
+                .isSuccess(true)
+                .cnt(1)
+                .creditHistoryDetail(CreditHistoryDtoConverter.convertToCreditHistoryInfoResponseDto(creditHistory))
+                .build();
+
+    }
+
 }

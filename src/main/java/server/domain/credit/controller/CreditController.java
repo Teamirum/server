@@ -29,10 +29,6 @@ public class CreditController {
 
     private final CreditService creditService;
 
-    private String getLoginMemberId() {
-        return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-    }
-
     @PostMapping
     @ApiOperation(value="신용카드 등록")
     public ApiResponse<?> uploadCredit(@RequestBody CreditRequestDto.UploadCreditRequestDto requestDto) {
@@ -72,16 +68,24 @@ public class CreditController {
     }
 
     //카드 결제 내역 조회
-    @GetMapping("{creditIdx}/history")
-    public ApiResponse<?> getCreditHistoryList(@PathVariable("creditIdx") Long creditIdx) {
+    @GetMapping("history")
+    public ApiResponse<?> getCreditHistoryList(@RequestParam("creditIdx") Long creditIdx) {
         String loginMemberId = getLoginMemberId();
         log.info("신용카드 내역 조회 요청 : loginMemberId = {}", loginMemberId);
         return ApiResponse.onSuccess(creditService.getCreditHistoryList(creditIdx, loginMemberId));
     }
 
+    @GetMapping("/history/detail")
+    public ApiResponse<?> getCreditHistory(
+            @RequestParam("creditIdx") Long creditIdx,
+            @RequestParam("historyIdx") Long historyIdx) {
+        String loginMemberId = getLoginMemberId();
+        log.info("신용카드 내역 상세 조회 요청 : loginMemberId = {}, creditIdx = {}, historyIdx = {}", loginMemberId, creditIdx, historyIdx);
+        return ApiResponse.onSuccess(creditService.getCreditHistoryDetail(creditIdx, historyIdx, loginMemberId));
+    }
 
-
-
-
+    private String getLoginMemberId() {
+        return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
 
 }

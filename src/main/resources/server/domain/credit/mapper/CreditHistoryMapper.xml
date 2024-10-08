@@ -29,6 +29,19 @@
         WHERE idx = #{idx}
     </select>
 
+
+    <select id="findByCreditHistoryIdx" parameterType="map" resultMap="CreditHistoryResultMap">
+        SELECT *
+        FROM CreditHistory
+        WHERE credit_idx = #{creditIdx}
+          AND idx = #{historyIdx}
+          AND credit_number IN (
+            SELECT credit_number
+            FROM Credit
+            WHERE idx = #{creditIdx}
+        )
+    </select>
+
     <!-- Insert CreditHistory -->
     <insert id="save" parameterType="server.domain.credit.domain.CreditHistory">
         INSERT INTO CreditHistory (

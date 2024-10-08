@@ -1,10 +1,8 @@
 package server.domain.credit.dto;
 
 import server.domain.credit.domain.CreditHistory;
-import server.domain.credit.domain.Credit;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CreditHistoryDtoConverter {
 
@@ -31,7 +29,7 @@ public class CreditHistoryDtoConverter {
                 .cnt(creditHistories.size())
                 .creditHistoryList(creditHistories.stream()
                         .map(CreditHistoryDtoConverter::convertToCreditHistoryInfoResponseDto)
-                        .collect(Collectors.toList()))
+                        .toList())
                 .isSuccess(true)
                 .build();
     }

@@ -62,6 +62,7 @@ public enum ErrorStatus implements BaseErrorCode {
     UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "CREDIT400, UNAUTHORIZED", "카드 권한이 없습니다."),
     CREDIT_NOT_FOUND(HttpStatus.BAD_REQUEST, "CREDIT4001", "해당 카드가 존재하지 않습니다."),
     CREDIT_CARD_EXPIRED(HttpStatus.BAD_REQUEST, "CARD4003", "카드가 만료되었습니다."),
+    CREDIT_HISTORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CREDIT4004", "해당 카드 히스토리가 존재하지 않습니다."),
 
 
     CREDIT_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "CREDIT5001", "카드 저장에 실패하였습니다."),
