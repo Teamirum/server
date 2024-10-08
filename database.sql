@@ -65,6 +65,7 @@ CREATE TABLE `Credit` (
 CREATE TABLE `CreditHistory` (
                                  `idx` BIGINT AUTO_INCREMENT NOT NULL,
                                  `credit_idx` BIGINT NOT NULL,
+                                 `credit_number` VARCHAR(250) NOT NULL,
                                  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                  `amount` BIGINT NOT NULL,
                                  `amount_sum` BIGINT NOT NULL,

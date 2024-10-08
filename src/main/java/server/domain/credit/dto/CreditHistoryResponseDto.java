@@ -20,6 +20,7 @@ public class CreditHistoryResponseDto {
     public static class CreditHistoryInfoResponseDto {
         private Long idx;
         private Long creditIdx;
+        private String creditNumber;
         private String name;
         private int amount;
         private int amountSum;

@@ -7,6 +7,7 @@
     <resultMap id="CreditHistoryResultMap" type="server.domain.credit.domain.CreditHistory">
         <id property="idx" column="idx" />
         <result property="creditIdx" column="credit_idx" />
+        <result property="creditNumber" column="credit_number" />
         <result property="createdAt" column="created_at" />
         <result property="amount" column="amount" />
         <result property="amountSum" column="amount_sum" />
@@ -31,9 +32,9 @@
     <!-- Insert CreditHistory -->
     <insert id="save" parameterType="server.domain.credit.domain.CreditHistory">
         INSERT INTO CreditHistory (
-            credit_idx, created_at, amount, amount_sum, name
+            credit_idx, credit_number, created_at, amount, amount_sum, name
         ) VALUES (
-                     #{creditIdx}, #{createdAt}, #{amount}, #{amountSum}, #{name}
+                     #{creditIdx}, #{creditNumber}, #{createdAt}, #{amount}, #{amountSum}, #{name}
                  )
     </insert>
 

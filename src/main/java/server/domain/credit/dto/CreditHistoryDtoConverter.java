@@ -8,6 +8,18 @@ import java.util.stream.Collectors;
 
 public class CreditHistoryDtoConverter {
 
+    public static CreditHistoryResponseDto.CreditHistoryInfoResponseDto convertToCreditHistoryInfoResponseDto(CreditHistory creditHistory) {
+    return CreditHistoryResponseDto.CreditHistoryInfoResponseDto.builder()
+            .idx(creditHistory.getIdx())
+            .creditIdx(creditHistory.getCreditIdx())
+            .creditNumber(creditHistory.getCreditNumber())
+            .name(creditHistory.getName())
+            .amount(Math.toIntExact(creditHistory.getAmount()))
+            .amountSum(Math.toIntExact(creditHistory.getAmountSum()))
+            .createdAt(creditHistory.getCreatedAt().toString())
+            .build();
+}
+
     public static CreditHistoryResponseDto.CreditHistoryListResponseDto convertToCreditHistoryListResponseDto(List<CreditHistory> creditHistories) {
         if (creditHistories == null) {
             return CreditHistoryResponseDto.CreditHistoryListResponseDto.builder()
@@ -24,14 +36,5 @@ public class CreditHistoryDtoConverter {
                 .build();
     }
 
-    public static CreditHistoryResponseDto.CreditHistoryInfoResponseDto convertToCreditHistoryInfoResponseDto(CreditHistory creditHistory) {
-        return CreditHistoryResponseDto.CreditHistoryInfoResponseDto.builder()
-                .idx(creditHistory.getIdx())
-                .creditIdx(creditHistory.getCreditIdx())
-                .name(creditHistory.getName())
-                .amount(Math.toIntExact(creditHistory.getAmount()))
-                .amountSum(Math.toIntExact(creditHistory.getAmountSum()))
-                .createdAt(creditHistory.getCreatedAt().toString()) // createdAt을 문자열로 변환
-                .build();
-    }
+
 }

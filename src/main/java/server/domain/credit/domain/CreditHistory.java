@@ -18,6 +18,8 @@ public class CreditHistory {
 
     private Long creditIdx;
 
+    private String creditNumber;
+
     private LocalDateTime createdAt;
 
     private Integer amount;

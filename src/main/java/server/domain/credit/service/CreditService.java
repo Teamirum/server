@@ -116,6 +116,7 @@ public class CreditService {
         // 카드 결제내역
         creditHistoryRespository.save(CreditHistory.builder()
                 .creditIdx(credit.getIdx())
+                .creditNumber(credit.getCreditNumber())
                 .amount(amount)
                 .amountSum(creditAmountSum)
                 .name(name)
@@ -125,6 +126,7 @@ public class CreditService {
         transactionRepository.save(Transaction.builder()
                 .memberIdx(credit.getMemberIdx())
                 .creditIdx(credit.getIdx())
+                .creditNumber(credit.getCreditNumber())
                 .time(now())
                 .payMethod(CARD)
                 .amount(amount)
@@ -138,7 +140,6 @@ public class CreditService {
     }
 
     public boolean isAbleToUseCredit(Credit credit) {
-        // 만료일을 LocalDateTime으로 변환
         LocalDateTime expirationDate;
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // 문자열 형식에 맞게 조정
@@ -147,7 +148,6 @@ public class CreditService {
             throw new ErrorHandler(ErrorStatus.CREDIT_EXPIRATION_DATE_FORMAT_ERROR);
         }
 
-        // 만료일이 현재 시간보다 이전인지 확인
         if (expirationDate.isBefore(LocalDateTime.now())) {
             throw new ErrorHandler(ErrorStatus.CREDIT_CARD_EXPIRED);
         }
