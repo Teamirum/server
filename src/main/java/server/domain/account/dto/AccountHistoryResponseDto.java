@@ -10,18 +10,10 @@ public class AccountHistoryResponseDto {
 
     @Data
     @Builder
-    public static class AccountHistoryListResponseDto {
-        private boolean isSuccess;
-        private int cnt;
-        private List<AccountHistoryInfoResponseDto> accountHistoryList;
-    }
-
-    @Data
-    @Builder
     public static class AccountHistoryInfoResponseDto {
         private Long idx;
         private Long accountIdx;
-        private Long accountNumber;
+        private String accountNumber;
         private AccountHistory.AccountHistoryType accountHistoryType;
         private Long amount;
         private Long remainAmount;
@@ -31,8 +23,17 @@ public class AccountHistoryResponseDto {
 
     @Data
     @Builder
-    public static class AccountHistoryTransactionResponseDto {
-        private String accountHolderName;
+    public static class AccountHistoryListResponseDto {
+        private boolean isSuccess;
+        private int cnt;
         private List<AccountHistoryInfoResponseDto> accountHistoryList;
+    }
+
+    @Data
+    @Builder
+    public static class AccountHistoryDetailResponseDto {
+        private boolean isSuccess;
+        private int cnt;
+        private AccountHistoryInfoResponseDto accountHistoryDetail;
     }
 }

@@ -135,6 +135,16 @@ public class AccountService {
         return AccountHistoryDtoConverter.convertToAccountHistoryListResponseDto(accountHistoryList);
     }
 
+public AccountHistoryResponseDto.AccountHistoryDetailResponseDto getAccountHistoryDetail(Long accountIdx,Long accountHistoryIdx, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        AccountHistory accountHistory = accountHistoryRepository.findByAccountHistoryIdx(accountIdx, accountHistoryIdx, member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ACCOUNT_HISTORY_NOT_FOUND));
+        return AccountHistoryResponseDto.AccountHistoryDetailResponseDto.builder()
+                .isSuccess(true)
+                .cnt(1)
+                .accountHistoryDetail(AccountHistoryDtoConverter.convertToAccountHistoryInfoResponseDto(accountHistory))
+                .build();
+    }
+
     public Account findByMemberIdxAndAccountNumber(String loginMemberId, String fromAccountNumber) {
         Long memberIdx = memberRepository.getIdxByMemberId(loginMemberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 

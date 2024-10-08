@@ -50,6 +50,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     ACCOUNT_NOT_ENOUGH_AMOUNT(HttpStatus.BAD_REQUEST, "ACCOUNT4003", "계좌 잔액이 부족합니다."),
     ACCOUNT_HISTORY_TYPE_NOT_VALID(HttpStatus.BAD_REQUEST, "ACCOUNT4004", "유효하지 않은 계좌 히스토리 타입입니다."),
+    ACCOUNT_HISTORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "ACCOUNT4005", "해당 계좌 히스토리가 존재하지 않습니다."),
 
     ACCOUNT_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ACCOUNT5001", "계좌 저장에 실패하였습니다."),
 

@@ -7,6 +7,7 @@
     <resultMap id="AccountHistoryResultMap" type="server.domain.account.domain.AccountHistory">
         <id property="idx" column="idx" />
         <result property="accountIdx" column="account_idx" />
+        <result property="accountNumber" column="account_number" />
         <result property="accountHistoryType" column="account_history_type" />
         <result property="createdAt" column="created_at" />
         <result property="amount" column="amount" />
@@ -27,6 +28,19 @@
         FROM AccountHistory
         WHERE idx = #{idx}
     </select>
+
+    <select id="findByAccountHistoryIdx" parameterType="map" resultMap="AccountHistoryResultMap">
+        SELECT *
+        FROM AccountHistory
+        WHERE account_idx = #{accountIdx}
+          AND idx = #{historyIdx}
+          AND account_number IN (
+            SELECT account_number
+            FROM Account
+            WHERE idx = #{accountIdx}
+        )
+    </select>
+
 
     <!-- Insert Account History -->
     <insert id="save" parameterType="server.domain.account.domain.AccountHistory">

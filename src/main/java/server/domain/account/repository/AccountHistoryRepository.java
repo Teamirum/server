@@ -6,6 +6,7 @@ import server.domain.account.domain.AccountHistory;
 import server.domain.account.mapper.AccountHistoryMapper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -25,5 +26,15 @@ public class AccountHistoryRepository {
     public List<AccountHistory> findAllAccountHistoryByAccountIdx(Long accountIdx) {
         return accountHistoryMapper.findAllByAccountIdx(accountIdx);
     }
+
+    public Optional<AccountHistory> findByAccountHistoryIdx(Long accountIdx, Long historyIdx, Long memberIdx) {
+        Map<String, Object> map = Map.of("accountIdx", accountIdx, "historyIdx", historyIdx, "memberIdx", memberIdx);
+        AccountHistory accountHistory = accountHistoryMapper.findByAccountHistoryIdx(map);
+        if (accountHistory != null) {
+            return Optional.of(accountHistory);
+        }
+        return Optional.empty();
+    }
+
 
 }
