@@ -65,6 +65,8 @@ public class OrderRoomService {
                 .maxMemberCnt(requestDto.getMaxMemberCnt())
                 .memberCnt(0)
                 .readyCnt(0)
+                .totalPrice(order.getTotalPrice())
+                .currentPrice(0)
                 .memberIdxList(new ArrayList<>())
                 .type(OrderRoomType.fromName(requestDto.getType()))
                 .status(OrderRoomStatus.ACTIVE)

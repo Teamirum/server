@@ -63,7 +63,7 @@ public class RedisRepository {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_EXCEED);
         }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdxStr, orderRoom);
-        opsHashEnterInfo.put(ENTER_INFO, orderIdxStr, memberIdx);
+        opsHashEnterInfo.put(ENTER_INFO, memberIdx + "", orderIdx);
         return topic;
     }
 
@@ -169,11 +169,10 @@ public class RedisRepository {
 
     // 유저가 입장해 있는 주문방 ID 조회
     public Long getMemberEnteredOrderRoomIdx(Long memberIdx) {
-        Long orderIdx = opsHashEnterInfo.get(ENTER_INFO, memberIdx + "");
-        if (orderIdx == null) {
+        if (opsHashEnterInfo.get(ENTER_INFO, memberIdx + "") == null) {
             return null;
         }
-        return orderIdx;
+        return Long.parseLong(opsHashEnterInfo.get(ENTER_INFO, memberIdx + "") + "");
     }
 
     // 사용자가 특정 주문방에 입장해 있는지 확인

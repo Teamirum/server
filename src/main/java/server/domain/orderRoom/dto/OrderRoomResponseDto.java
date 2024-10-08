@@ -69,6 +69,9 @@ public class OrderRoomResponseDto {
 
         @Data
         @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @JsonIgnoreProperties(ignoreUnknown = true)
         public static class OrderMenuInfoDto {
             private Long menuIdx;
             private String menuName;
@@ -81,6 +84,7 @@ public class OrderRoomResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class OrderRoomMenuSelectionResponseDto implements Serializable {
 
         private Long orderIdx;
@@ -101,6 +105,9 @@ public class OrderRoomResponseDto {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class OrderRoomReadyToPayResponseDto implements Serializable {
         private Long orderIdx;
         private Long memberIdx;
@@ -117,6 +124,7 @@ public class OrderRoomResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class StartPayResponseDto implements Serializable {
         private Long orderIdx;
         private int totalPrice;
