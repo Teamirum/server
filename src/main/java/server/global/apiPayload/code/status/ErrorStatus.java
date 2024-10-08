@@ -50,6 +50,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     ACCOUNT_NOT_ENOUGH_AMOUNT(HttpStatus.BAD_REQUEST, "ACCOUNT4003", "계좌 잔액이 부족합니다."),
     ACCOUNT_HISTORY_TYPE_NOT_VALID(HttpStatus.BAD_REQUEST, "ACCOUNT4004", "유효하지 않은 계좌 히스토리 타입입니다."),
+    ACCOUNT_HISTORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "ACCOUNT4005", "해당 계좌 히스토리가 존재하지 않습니다."),
 
     ACCOUNT_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ACCOUNT5001", "계좌 저장에 실패하였습니다."),
 
@@ -61,6 +62,7 @@ public enum ErrorStatus implements BaseErrorCode {
     UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "CREDIT400, UNAUTHORIZED", "카드 권한이 없습니다."),
     CREDIT_NOT_FOUND(HttpStatus.BAD_REQUEST, "CREDIT4001", "해당 카드가 존재하지 않습니다."),
     CREDIT_CARD_EXPIRED(HttpStatus.BAD_REQUEST, "CARD4003", "카드가 만료되었습니다."),
+    CREDIT_HISTORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CREDIT4004", "해당 카드 히스토리가 존재하지 않습니다."),
 
 
     CREDIT_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "CREDIT5001", "카드 저장에 실패하였습니다."),

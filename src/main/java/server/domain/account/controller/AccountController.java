@@ -16,6 +16,8 @@ import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 import server.global.util.SecurityUtil;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 
 @RestController
 @RequestMapping("/api/account")
@@ -61,6 +63,10 @@ public class AccountController {
         String loginMemberId = getLoginMemberId();
 
         Account fromAccount = accountService.findByMemberIdxAndAccountNumber(loginMemberId, requestDto.fromAccountNumber);
+        if (fromAccount == null) {
+            // 오류 처리
+            System.out.println("fromAccount = " + fromAccount);
+        }
         Account toAccount = accountService.findByAccountNumber(requestDto.getToAccountNumber());
         AccountResponseDto.AccountTaskSuccessResponseDto accountTaskSuccessResponseDto = accountService.updateAmount(fromAccount, toAccount, requestDto.getAmount());
 
@@ -70,11 +76,26 @@ public class AccountController {
         return ResponseEntity.ok(accountTaskSuccessResponseDto);
     }
 
-    @GetMapping("/{accountIdx}/history")
-    public ApiResponse<?> getAccountHistoryList(@PathVariable("accountIdx") Long accountIdx) {
+    // 계좌 히스토리 리스트 조회
+    @GetMapping("/history")
+    public ApiResponse<?> getAccountHistoryList(@RequestParam("accountIdx") Long accountIdx) {
         String loginMemberId = getLoginMemberId();
         log.info("계좌 히스토리 리스트 조회 요청 : loginMemberId = {}, accountIdx = {}", loginMemberId, accountIdx);
         return ApiResponse.onSuccess(accountService.getAccountHistoryList(accountIdx, loginMemberId));
     }
+
+    // 계좌의 특정 히스토리 조회
+    @GetMapping("/history/detail")
+    public ApiResponse<?> getAccountHistory(
+            @RequestParam("accountIdx") Long accountIdx,
+            @RequestParam("historyIdx") Long historyIdx) {
+        String loginMemberId = getLoginMemberId();
+        log.info("계좌 히스토리 조회 요청 : loginMemberId = {}, accountIdx = {}, historyIdx = {}",
+                loginMemberId, accountIdx, historyIdx);
+        return ApiResponse.onSuccess(accountService.getAccountHistoryDetail(accountIdx, historyIdx, loginMemberId));
+    }
+
+
+
 
 }

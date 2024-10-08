@@ -10,7 +10,8 @@ public class AccountHistoryDtoConverter {
         return AccountHistoryResponseDto.AccountHistoryInfoResponseDto.builder()
                 .idx(accountHistory.getIdx())
                 .accountIdx(accountHistory.getAccountIdx())
-                .accountHistoryType(AccountHistory.AccountHistoryType.valueOf(accountHistory.getAccountHistoryType().toString())) // ENUM을 String으로 변환
+                .accountNumber(accountHistory.getAccountNumber())
+                .accountHistoryType(AccountHistory.AccountHistoryType.valueOf(accountHistory.getAccountHistoryType().toString()))
                 .amount(Long.valueOf(accountHistory.getAmount()))
                 .remainAmount(Long.valueOf(accountHistory.getRemainAmount()))
                 .createdAt(accountHistory.getCreatedAt().toString())

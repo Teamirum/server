@@ -18,4 +18,6 @@ public interface CreditHistoryMapper {
     void delete(Long idx);
 
     void updateCreditHistory(CreditHistory creditHistory);
+
+    CreditHistory findByCreditHistoryIdx(Map<String, Object> map);
 }

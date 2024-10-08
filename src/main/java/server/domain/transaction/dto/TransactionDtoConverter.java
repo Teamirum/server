@@ -29,12 +29,12 @@ public class TransactionDtoConverter {
     public static TransactionResponseDto.TransactionInfoResponseDto convertToTransactionInfoResponseDto(Transaction transaction) {
         return TransactionResponseDto.TransactionInfoResponseDto.builder()
                 .idx(transaction.getIdx())
-                .creditIdx(transaction.getCreditIdx()) // 연관된 신용 카드 ID
-                .time(transaction.getTime()) // 거래 시간
+                .creditIdx(transaction.getCreditIdx())
+                .time(transaction.getTime())
                 .amount(transaction.getAmount())
-                .memo(transaction.getMemo()) // 설명
-                .payMethod(transaction.getPayMethod()) // 결제 방법
-                .category(transaction.getCategory()) // 거래 카테고리
+                .memo(transaction.getMemo())
+                .payMethod(transaction.getPayMethod())
+                .category(transaction.getCategory())
                 .build();
     }
 }

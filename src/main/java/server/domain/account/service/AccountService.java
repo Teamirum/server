@@ -59,6 +59,8 @@ public class AccountService {
                 .isSuccess(true)
                 .idx(savedAccount.getIdx())
                 .build();
+
+
     }
 
     private boolean existsByAccountNumber(String accountNumber) {
@@ -91,6 +93,7 @@ public class AccountService {
 
         accountHistoryRepository.save(AccountHistory.builder()
                 .accountIdx(fromAccount.getIdx())
+                .accountNumber(fromAccount.getAccountNumber())
                 .accountHistoryType(SEND)
                 .createdAt(now())
                 .amount(amount)
@@ -100,6 +103,7 @@ public class AccountService {
 
         accountHistoryRepository.save(AccountHistory.builder()
                 .accountIdx(toAccount.getIdx())
+                .accountNumber(toAccount.getAccountNumber())
                 .accountHistoryType(GET)
                 .createdAt(now())
                 .amount(amount)
@@ -110,12 +114,15 @@ public class AccountService {
         transactionRepository.save(Transaction.builder()
                 .memberIdx(fromAccount.getMemberIdx())
                 .accountIdx(fromAccount.getIdx())
+                .accountNumber(fromAccount.getAccountNumber())
                 .time(now())
                 .payMethod(ACCOUNT)
                 .amount(amount)
                 .memo(name)
                 .category(ENTERTAINMENT)
                 .build());
+        System.out.println("accountIdx = " + fromAccount.getIdx());
+
     }
 
 
@@ -126,6 +133,16 @@ public class AccountService {
         }
         List<AccountHistory> accountHistoryList = accountHistoryRepository.findAllAccountHistoryByAccountIdx(accountIdx);
         return AccountHistoryDtoConverter.convertToAccountHistoryListResponseDto(accountHistoryList);
+    }
+
+public AccountHistoryResponseDto.AccountHistoryDetailResponseDto getAccountHistoryDetail(Long accountIdx,Long accountHistoryIdx, String memberId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        AccountHistory accountHistory = accountHistoryRepository.findByAccountHistoryIdx(accountIdx, accountHistoryIdx, member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ACCOUNT_HISTORY_NOT_FOUND));
+        return AccountHistoryResponseDto.AccountHistoryDetailResponseDto.builder()
+                .isSuccess(true)
+                .cnt(1)
+                .accountHistoryDetail(AccountHistoryDtoConverter.convertToAccountHistoryInfoResponseDto(accountHistory))
+                .build();
     }
 
     public Account findByMemberIdxAndAccountNumber(String loginMemberId, String fromAccountNumber) {

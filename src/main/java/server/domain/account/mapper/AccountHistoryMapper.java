@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import server.domain.account.domain.AccountHistory;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface AccountHistoryMapper {
@@ -18,4 +19,6 @@ public interface AccountHistoryMapper {
     void delete(Long idx);
 
     void updateAccountHistory(AccountHistory accountHistory);
+
+    AccountHistory findByAccountHistoryIdx(Map<String, Object> map);
 }

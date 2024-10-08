@@ -7,6 +7,7 @@
     <resultMap id="AccountHistoryResultMap" type="server.domain.account.domain.AccountHistory">
         <id property="idx" column="idx" />
         <result property="accountIdx" column="account_idx" />
+        <result property="accountNumber" column="account_number" />
         <result property="accountHistoryType" column="account_history_type" />
         <result property="createdAt" column="created_at" />
         <result property="amount" column="amount" />
@@ -28,14 +29,28 @@
         WHERE idx = #{idx}
     </select>
 
+    <select id="findByAccountHistoryIdx" parameterType="map" resultMap="AccountHistoryResultMap">
+        SELECT *
+        FROM AccountHistory
+        WHERE account_idx = #{accountIdx}
+          AND idx = #{historyIdx}
+          AND account_number IN (
+            SELECT account_number
+            FROM Account
+            WHERE idx = #{accountIdx}
+        )
+    </select>
+
+
     <!-- Insert Account History -->
     <insert id="save" parameterType="server.domain.account.domain.AccountHistory">
         INSERT INTO AccountHistory (
-            account_idx, account_history_type, created_at, amount, remain_amount, name
+            account_idx, account_number, account_history_type, created_at, amount, remain_amount, name
         ) VALUES (
-                     #{accountIdx}, #{accountHistoryType}, #{createdAt}, #{amount}, #{remainAmount}, #{name}
+                     #{accountIdx}, #{accountNumber}, #{accountHistoryType}, #{createdAt}, #{amount}, #{remainAmount}, #{name}
                  )
     </insert>
+
 
     <!-- Delete Account History -->
     <delete id="delete" parameterType="Long">
