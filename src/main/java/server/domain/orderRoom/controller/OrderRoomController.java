@@ -5,9 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import server.domain.orderRoom.dto.OrderRoomRequestDto.*;
 import server.domain.orderRoom.service.OrderRoomService;
+import server.global.apiPayload.ApiResponse;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 import server.global.util.SecurityUtil;
@@ -21,11 +24,11 @@ public class OrderRoomController {
 
     private final OrderRoomService orderRoomService;
 
-    @MessageMapping("/order/room/create")
-    public void createOrderRoom(@Payload CreateOrderRoomRequestDto requestDto, Principal principal) {
-        String memberId = principal.getName();
+    @PostMapping("/api/order/room/create")
+    public ApiResponse<?> createOrderRoom(@RequestBody CreateOrderRoomRequestDto requestDto) {
+        String memberId = getLoginMemberId();
         log.info("createOrderRoom : memberId = {}", memberId);
-        orderRoomService.createOrderRoom(requestDto, memberId);
+        return ApiResponse.onSuccess(orderRoomService.createOrderRoom(requestDto, memberId));
     }
 
     @MessageMapping("/order/room/enter")
@@ -59,6 +62,10 @@ public class OrderRoomController {
     public void cancelReadyOrderRoom(@DestinationVariable Long orderIdx, Principal principal) {
         String memberId = principal.getName();
         orderRoomService.cancelReadyToPay(orderIdx, memberId);
+    }
+
+    public String getLoginMemberId() {
+        return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
 }

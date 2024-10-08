@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import server.global.apiPayload.code.status.ErrorStatus;
 
 import java.io.Serializable;
 import java.util.List;
@@ -133,5 +134,35 @@ public class OrderRoomResponseDto {
         private Boolean canStartToPay;
         // START_PAY 로 고정
         private String type;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ErrorResponseDto implements Serializable {
+        private Long memberIdx;
+        private Long orderIdx;
+        private String status;
+        private String code;
+        private String message;
+
+        public ErrorResponseDto(Long memberIdx, Long orderIdx, ErrorStatus errorStatus) {
+            this.orderIdx = orderIdx;
+            this.status = errorStatus.getHttpStatus().toString();
+            this.code = errorStatus.getCode();
+            this.message = errorStatus.getMessage();
+        }
+
+        @Override
+        public String toString() {
+            return "ErrorResponseDto{" +
+                    "orderIdx=" + orderIdx +
+                    ", status='" + status + '\'' +
+                    ", code='" + code + '\'' +
+                    ", message='" + message + '\'' +
+                    '}';
+        }
     }
 }
