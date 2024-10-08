@@ -25,6 +25,7 @@ import server.domain.orderRoom.model.OrderRoomStatus;
 import server.domain.orderRoom.model.OrderRoomType;
 import server.domain.orderRoom.repository.OrderRoomRepository;
 import server.domain.orderRoom.repository.RedisRepository;
+import server.global.aop.annotation.RedisLock;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
@@ -196,6 +197,70 @@ public class OrderRoomService {
                 .type("MENU_SELECT")
                 .build();
         redisPublisher.publish(channelTopic, menuSelect);
+    }
+
+    @Transactional
+    public void selectPrice(SelectPriceRequestDto requestDto, String memberId) {
+        Member member = getMemberById(memberId);
+        ChannelTopic channelTopic = redisRepository.getTopic(requestDto.getOrderIdx().toString());
+        if (channelTopic == null) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND);
+        }
+
+        if (!redisRepository.existByOrderRoomIdx(requestDto.getOrderIdx())) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_NOT_FOUND));
+            return;
+        }
+        if (!redisRepository.existByOrderRoomIdx(requestDto.getOrderIdx())) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_NOT_FOUND));
+            return;
+        }
+        Order order = orderRepository.findByOrderIdx(requestDto.getOrderIdx()).orElse(null);
+        if (order == null) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(null, requestDto.getOrderIdx(), ErrorStatus.ORDER_NOT_FOUND));
+            return;
+        }
+        if (order.getTotalPrice() != requestDto.getTotalPrice()) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_PRICE_NOT_MATCH));
+            return;
+        }
+
+        OrderRoom orderRoom = redisRepository.getOrderRoom(requestDto.getOrderIdx());
+        if (requestDto.getMemberCnt() != orderRoom.getMaxMemberCnt()) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_MEMBER_CNT_NOT_MATCH));
+            return;
+        }
+        List<MemberPriceInfoDto> memberPriceInfoList = requestDto.getMemberPriceInfoList();
+        for (MemberPriceInfoDto memberPriceInfo : memberPriceInfoList) {
+            if (memberPriceInfo.getPrice() < 0) {
+                redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_PRICE_NOT_VALID));
+                return;
+            }
+            if (!orderRoom.getMemberIdxList().contains(memberPriceInfo.getMemberIdx())) {
+                redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_MEMBER_NOT_FOUND));
+                return;
+            }
+            TogetherOrder togetherOrder = TogetherOrder.builder()
+                    .orderIdx(order.getIdx())
+                    .memberIdx(member.getIdx())
+                    .price(memberPriceInfo.getPrice())
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            togetherOrderRepository.save(togetherOrder);
+
+            orderRoom.updateCurrentPrice(memberPriceInfo.getPrice());
+        }
+        redisRepository.saveOrderRoom(orderRoom);
+        orderRoomRepository.save(orderRoom);
+
+        OrderRoomPriceSelectionResponseDto priceSelect = OrderRoomPriceSelectionResponseDto.builder()
+                .orderIdx(requestDto.getOrderIdx())
+                .memberIdx(member.getIdx())
+                .price(requestDto.getTotalPrice())
+                .type("PRICE_SELECT")
+                .build();
+        redisPublisher.publish(channelTopic, priceSelect);
     }
 
     public void cancelOrderMenu(SelectMenuRequestDto requestDto, String memberId) {

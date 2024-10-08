@@ -167,4 +167,17 @@ public class OrderRoomResponseDto {
                     '}';
         }
     }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class OrderRoomPriceSelectionResponseDto implements Serializable {
+        private Long orderIdx;
+        private Long memberIdx;
+        private int price;
+        // READY_TO_PAY, CANCEL_READY_TO_PAY 로 고정
+        private String type;
+    }
 }

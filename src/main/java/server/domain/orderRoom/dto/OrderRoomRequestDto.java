@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class OrderRoomRequestDto {
 
@@ -63,6 +64,41 @@ public class OrderRoomRequestDto {
             this.menuName = menuName;
             this.menuPrice = menuPrice;
             this.amount = amount;
+        }
+    }
+
+    @Data
+    public static class SelectPriceRequestDto {
+        private Long orderIdx;
+        private int totalPrice;
+        private int memberCnt;
+        List<MemberPriceInfoDto> memberPriceInfoList;
+
+        @JsonCreator
+        public SelectPriceRequestDto(
+                @JsonProperty("orderIdx") Long orderIdx,
+                @JsonProperty("totalPrice") int totalPrice,
+                @JsonProperty("memberPriceInfoList") List<MemberPriceInfoDto> memberPriceInfoList
+        ) {
+            this.orderIdx = orderIdx;
+            this.totalPrice = totalPrice;
+            this.memberPriceInfoList = memberPriceInfoList;
+        }
+
+    }
+
+    @Data
+    public static class MemberPriceInfoDto {
+        private Long memberIdx;
+        private int price;
+
+        @JsonCreator
+        public MemberPriceInfoDto(
+                @JsonProperty("memberIdx") Long memberIdx,
+                @JsonProperty("price") int price
+        ) {
+            this.memberIdx = memberIdx;
+            this.price = price;
         }
     }
 

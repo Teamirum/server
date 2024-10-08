@@ -38,7 +38,6 @@ public class OrderRoomController {
         orderRoomService.enterOrderRoom(requestDto.getOrderIdx(), memberId);
     }
 
-
     @MessageMapping("/order/room/select")
     public void selectOrderMenu(@Payload SelectMenuRequestDto requestDto, Principal principal) {
         String memberId = principal.getName();
@@ -50,6 +49,12 @@ public class OrderRoomController {
     public void cancelOrderMenu(@Payload SelectMenuRequestDto requestDto, Principal principal) {
         String memberId = principal.getName();
         orderRoomService.cancelOrderMenu(requestDto, memberId);
+    }
+
+    @MessageMapping("/order/room/price")
+    public void selectPrice(@Payload SelectPriceRequestDto requestDto, Principal principal) {
+        String memberId = principal.getName();
+        orderRoomService.selectPrice(requestDto, memberId);
     }
 
     @MessageMapping("/order/room/ready/{orderIdx}")

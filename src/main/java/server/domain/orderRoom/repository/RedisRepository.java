@@ -69,11 +69,15 @@ public class RedisRepository {
 
     public ChannelTopic saveOrderRoom(OrderRoom orderRoom) {
         String orderIdxStr = orderRoom.getOrderIdx() + "";
-        ChannelTopic topic = new ChannelTopic(orderIdxStr);
-        topics.put(orderIdxStr, topic);
+        if (topics.containsKey(orderIdxStr)) {
+            ChannelTopic topic = new ChannelTopic(orderIdxStr);
+            topics.put(orderIdxStr, topic);
+        }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdxStr, orderRoom);
-        return topic;
+        return topics.get(orderIdxStr);
     }
+
+
 
     public OrderRoom getOrderRoom(Long orderIdx) {
         if (!existByOrderRoomIdx(orderIdx)) {
