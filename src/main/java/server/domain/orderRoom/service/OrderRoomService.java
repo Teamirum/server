@@ -186,7 +186,6 @@ public class OrderRoomService {
             return;
         }
         OrderRoom orderRoom = redisRepository.selectMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice() * requestDto.getAmount(), channelTopic);
-d
 
         log.info("{} 님이 주문방에 메뉴를 선택하였습니다. 주문방 ID : {}, 메뉴 이름 : {}", memberId, requestDto.getOrderIdx(), requestDto.getMenuName());
         OrderRoomMenuSelectionResponseDto menuSelect = OrderRoomMenuSelectionResponseDto.builder()
@@ -423,6 +422,7 @@ d
                 .totalPrice(orderRoom.getTotalPrice())
                 .currentPrice(orderRoom.getCurrentPrice())
                 .maxMemberCnt(orderRoom.getMaxMemberCnt())
+                .canStartToPay(orderRoom.getTotalPrice() == orderRoom.getCurrentPrice())
                 .type("START_PAY")
                 .build();
 
