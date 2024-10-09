@@ -17,7 +17,7 @@ import server.domain.order.repository.TogetherOrderRepository;
 import server.domain.pay.domain.Pay;
 import server.domain.pay.dto.PayDtoConverter;
 import server.domain.pay.dto.PayRequestDto;
-import server.domain.pay.dto.PayResponseDto;
+import server.domain.pay.dto.PayResponseDto.*;
 import server.domain.pay.model.PayMethod;
 import server.domain.pay.model.PayStatus;
 import server.domain.pay.model.PayType;
@@ -40,14 +40,14 @@ public class PayService {
     private final AccountService accountService;
 
     // 계좌, 카드 통합조회
-    public PayResponseDto.PayMethodResponseDto getAllPayMethod(String memberId) {
-        return PayResponseDto.PayMethodResponseDto.builder()
+    public PayMethodResponseDto getAllPayMethod(String memberId) {
+        return PayMethodResponseDto.builder()
                 .credit(creditService.getCreditList(memberId))
                 .account(accountService.getAccountList(memberId))
                 .build();
     }
 
-    public Object startTogetherPay(PayRequestDto.StartPayRequestDto requestDto, String memberId) {
+    public PaySuccessResponseDto startTogetherPay(PayRequestDto.StartPayRequestDto requestDto, String memberId) {
         Member member = getMember(memberId);
         Order order = orderRepository.findByOrderIdx(requestDto.getOrderIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_NOT_FOUND));
 
@@ -65,7 +65,7 @@ public class PayService {
                     .price(order.getTotalPrice())
                     .tid(order.getIdx() + " " + member.getIdx())
                     .payMethod(PayMethod.fromName(requestDto.getPayMethod()))
-                    .payType(PayType.fromName(requestDto.getPayType()))
+                    .payType(PayType.TOGETHER)
                     .payStatus(PayStatus.ACCEPT)
                     .createdAt(LocalDateTime.now())
                     .modifiedAt(LocalDateTime.now())
@@ -89,7 +89,7 @@ public class PayService {
                     .price(order.getTotalPrice())
                     .tid(order.getIdx() + " " + member.getIdx())
                     .payMethod(PayMethod.fromName(requestDto.getPayMethod()))
-                    .payType(PayType.fromName(requestDto.getPayType()))
+                    .payType(PayType.TOGETHER)
                     .payStatus(PayStatus.ACCEPT)
                     .createdAt(LocalDateTime.now())
                     .modifiedAt(LocalDateTime.now())
@@ -104,6 +104,57 @@ public class PayService {
 
     }
 
+    public PaySuccessResponseDto startAlonePay(PayRequestDto.StartPayRequestDto requestDto, String memberId) {
+        Member member = getMember(memberId);
+        Order order = orderRepository.findByOrderIdx(requestDto.getOrderIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_NOT_FOUND));
+
+        if (requestDto.getPayMethod().equals("CREDIT")) {
+            Credit credit = creditService.getCreditByIdx(requestDto.getCreditIdx());
+            if (creditService.isAbleToUseCredit(credit)) {
+                creditService.payWithCredit(credit, order.getTotalPrice());
+            }
+            Pay pay = Pay.builder()
+                    .orderIdx(order.getIdx())
+                    .memberIdx(member.getIdx())
+                    .creditIdx(requestDto.getCreditIdx())
+                    .price(order.getTotalPrice())
+                    .tid(order.getIdx() + " " + member.getIdx())
+                    .payMethod(PayMethod.fromName(requestDto.getPayMethod()))
+                    .payType(PayType.ALONE)
+                    .payStatus(PayStatus.ACCEPT)
+                    .createdAt(LocalDateTime.now())
+                    .modifiedAt(LocalDateTime.now())
+                    .build();
+            payRepository.save(pay);
+
+            payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+
+            return PayDtoConverter.convertToPaySuccessResponseDto(pay, credit.getCreditName(), credit.getCreditNumber());
+        } else if (requestDto.getPayMethod().equals("ACCOUNT")) {
+            Account account = accountService.getAccountByIdx(requestDto.getAccountIdx());
+            if (accountService.isAbleToUseAccount(account, order.getTotalPrice())) {
+                accountService.payWithAccount(account, order.getTotalPrice());
+            }
+            Pay pay = Pay.builder()
+                    .orderIdx(order.getIdx())
+                    .memberIdx(member.getIdx())
+                    .accountIdx(requestDto.getAccountIdx())
+                    .price(order.getTotalPrice())
+                    .tid(order.getIdx() + " " + member.getIdx())
+                    .payMethod(PayMethod.fromName(requestDto.getPayMethod()))
+                    .payType(PayType.ALONE)
+                    .payStatus(PayStatus.ACCEPT)
+                    .createdAt(LocalDateTime.now())
+                    .modifiedAt(LocalDateTime.now())
+                    .build();
+            payRepository.save(pay);
+
+            payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+
+            return PayDtoConverter.convertToPaySuccessResponseDto(pay, account.getBankName(), account.getAccountNumber());
+        }
+        throw new ErrorHandler(ErrorStatus.PAY_METHOD_NOT_FOUND);
+    }
     private Member getMember(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }

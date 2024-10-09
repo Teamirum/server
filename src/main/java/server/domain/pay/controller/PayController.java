@@ -25,15 +25,18 @@ public class PayController {
         return ApiResponse.onSuccess(payService.getAllPayMethod(memberId));
     }
 
-    @PostMapping("/together")
-    public ApiResponse<?> startPay(@RequestBody PayRequestDto.StartPayRequestDto requestDto) {
+    @PostMapping
+    public ApiResponse<?> startPay(@RequestBody PayRequestDto.StartPayRequestDto requestDto, @RequestParam(value = "payType") String payType) {
         String memberId = getLoginMemberId();
         log.info("결제 요청 : memberId = {}, orderIdx = {}", memberId, requestDto.getOrderIdx());
-        if (requestDto.getPayType().equals("TOGETHER")) {
-            return ApiResponse.onSuccess(payService.startTogetherPay(requestDto, memberId));
-        }
         // 개인 결제는 아래
-        return ApiResponse.onSuccess(payService.startTogetherPay(requestDto, memberId));
+        if (payType.equals("TOGETHER")) {
+            return ApiResponse.onSuccess(payService.startTogetherPay(requestDto, memberId));
+        } else if (payType.equals("ALONE")) {
+            return ApiResponse.onSuccess(payService.startAlonePay(requestDto, memberId));
+        } else {
+            throw new ErrorHandler(ErrorStatus.PAY_TYPE_NOT_FOUND);
+        }
     }
 
     private String getLoginMemberId() {
