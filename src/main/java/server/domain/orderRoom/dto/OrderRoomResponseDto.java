@@ -43,6 +43,7 @@ public class OrderRoomResponseDto {
         private int maxMemberCnt;
         private int memberCnt;
         private Boolean isFull;
+        private String roomType;
         // ENTER 로 고정
         private String type;
     }
@@ -175,9 +176,18 @@ public class OrderRoomResponseDto {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class OrderRoomPriceSelectionResponseDto implements Serializable {
         private Long orderIdx;
-        private Long memberIdx;
-        private int price;
+        List<OrderRoomMemberPriceSelectionInfoDto> memberPriceInfoList;
         // READY_TO_PAY, CANCEL_READY_TO_PAY 로 고정
         private String type;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class OrderRoomMemberPriceSelectionInfoDto implements Serializable {
+        private Long memberIdx;
+        private int price;
     }
 }

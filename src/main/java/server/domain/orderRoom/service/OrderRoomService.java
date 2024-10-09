@@ -89,6 +89,7 @@ public class OrderRoomService {
             OrderMenuResponseDto orderMenuResponseDto = OrderMenuResponseDto.builder()
                     .menuIdx(orderMenu.getMenuIdx())
                     .menuName(orderMenu.getMenuName())
+                    .price(orderMenu.getPrice())
                     .amount(orderMenu.getAmount())
                     .build();
             orderMenuResponseDtoList.add(orderMenuResponseDto);
@@ -98,10 +99,10 @@ public class OrderRoomService {
         }
         orderRoom.setMenuAmount(menuAmount);
         orderRoom.setMenuSelect(currentMenuSelect);
+        redisRepository.saveOrderRoom(orderRoom);
 
-        ChannelTopic channelTopic = redisRepository.saveOrderRoom(orderRoom);
-        redisMessageListener.addMessageListener(redisSubscriber, channelTopic);
         log.info("주문방 생성 : {} 번 방", requestDto.getOrderIdx());
+
 
         return CreateOrderRoomResponseDto.builder()
                 .orderIdx(requestDto.getOrderIdx())
@@ -121,7 +122,7 @@ public class OrderRoomService {
 
         if (!redisRepository.existByOrderRoomIdx(orderIdx)) {
             redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), orderIdx, ErrorStatus.ORDER_ROOM_NOT_FOUND));
-            return;
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_NOT_FOUND);
         }
 
         OrderRoom orderRoom = redisRepository.getOrderRoom(orderIdx);
@@ -134,6 +135,7 @@ public class OrderRoomService {
                 .maxMemberCnt(orderRoom.getMaxMemberCnt())
                 .memberCnt(orderRoom.getMemberCnt())
                 .isFull(isFull)
+                .roomType(orderRoom.getType().name())
                 .type("ENTER")
                 .build();
 
@@ -231,13 +233,18 @@ public class OrderRoomService {
             return;
         }
         List<MemberPriceInfoDto> memberPriceInfoList = requestDto.getMemberPriceInfoList();
+        // 요청온 멤버와 참여중인 멤버 정보 확인
+        for (MemberPriceInfoDto memberPriceInfo : memberPriceInfoList) {
+            if (!orderRoom.getMemberIdxList().contains(memberPriceInfo.getMemberIdx())) {
+                redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_MEMBER_NOT_FOUND));
+                return;
+            }
+        }
+        // 응답 Dto
+        List<OrderRoomMemberPriceSelectionInfoDto> orderRoomMemberPriceSelectionInfoDtos = new ArrayList<>();
         for (MemberPriceInfoDto memberPriceInfo : memberPriceInfoList) {
             if (memberPriceInfo.getPrice() < 0) {
                 redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_PRICE_NOT_VALID));
-                return;
-            }
-            if (!orderRoom.getMemberIdxList().contains(memberPriceInfo.getMemberIdx())) {
-                redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_MEMBER_NOT_FOUND));
                 return;
             }
             TogetherOrder togetherOrder = TogetherOrder.builder()
@@ -250,14 +257,17 @@ public class OrderRoomService {
             togetherOrderRepository.save(togetherOrder);
 
             orderRoom.updateCurrentPrice(memberPriceInfo.getPrice());
+            orderRoomMemberPriceSelectionInfoDtos.add(OrderRoomMemberPriceSelectionInfoDto.builder()
+                    .memberIdx(memberPriceInfo.getMemberIdx())
+                    .price(memberPriceInfo.getPrice())
+                    .build());
         }
         redisRepository.saveOrderRoom(orderRoom);
         orderRoomRepository.save(orderRoom);
 
         OrderRoomPriceSelectionResponseDto priceSelect = OrderRoomPriceSelectionResponseDto.builder()
                 .orderIdx(requestDto.getOrderIdx())
-                .memberIdx(member.getIdx())
-                .price(requestDto.getTotalPrice())
+                .memberPriceInfoList(orderRoomMemberPriceSelectionInfoDtos)
                 .type("PRICE_SELECT")
                 .build();
         redisPublisher.publish(channelTopic, priceSelect);
