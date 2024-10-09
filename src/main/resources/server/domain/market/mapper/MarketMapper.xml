@@ -9,7 +9,7 @@
         <result property="memberIdx" column="member_idx" />
         <result property="name" column="name" />
         <result property="address" column="address" />
-        <result property="maxTableCnt" column="maxTable_cnt" />
+        <result property="maxTableCnt" column="max_table_cnt" />
         <result column="created_at" property="createdAt" />
         <result column="modified_at" property="modifiedAt" />
     </resultMap>
@@ -44,9 +44,12 @@
 
 
     <!-- insert Market -->
-    <insert id="insert" parameterType="server.domain.market.domain.Market">
-        INSERT INTO Market (member_idx, name, address, maxTable_cnt)
-        VALUES (#{memberIdx}, #{name}, #{address}, #{maxTableCnt})
+    <insert id="save" parameterType="server.domain.market.domain.Market">
+        INSERT INTO Market (
+            member_idx, name, address, max_table_cnt
+        ) VALUES (
+            #{memberIdx}, #{name}, #{address}, #{maxTableCnt}
+        )
     </insert>
 
 </mapper>

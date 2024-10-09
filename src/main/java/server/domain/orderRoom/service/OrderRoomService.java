@@ -89,6 +89,7 @@ public class OrderRoomService {
             OrderMenuResponseDto orderMenuResponseDto = OrderMenuResponseDto.builder()
                     .menuIdx(orderMenu.getMenuIdx())
                     .menuName(orderMenu.getMenuName())
+                    .price(orderMenu.getPrice())
                     .amount(orderMenu.getAmount())
                     .build();
             orderMenuResponseDtoList.add(orderMenuResponseDto);
@@ -134,6 +135,7 @@ public class OrderRoomService {
                 .maxMemberCnt(orderRoom.getMaxMemberCnt())
                 .memberCnt(orderRoom.getMemberCnt())
                 .isFull(isFull)
+                .roomType(orderRoom.getType().name())
                 .type("ENTER")
                 .build();
 

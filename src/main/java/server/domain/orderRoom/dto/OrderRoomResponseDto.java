@@ -43,6 +43,7 @@ public class OrderRoomResponseDto {
         private int maxMemberCnt;
         private int memberCnt;
         private Boolean isFull;
+        private String roomType;
         // ENTER 로 고정
         private String type;
     }
