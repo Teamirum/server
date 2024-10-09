@@ -16,7 +16,6 @@ public class BusinessCardRequestDto {
         public String part;
         public String company;
         public String address;
-        public String faxNum;
         public String memo;
 
         @JsonCreator
@@ -28,7 +27,8 @@ public class BusinessCardRequestDto {
                 @JsonProperty("position") String position,
                 @JsonProperty("part") String part,
                 @JsonProperty("company") String company,
-                @JsonProperty("address") String address
+                @JsonProperty("address") String address,
+                @JsonProperty("memo") String memo
         ) {
             this.memberIdx = memberIdx;
             this.name = name;
@@ -38,6 +38,7 @@ public class BusinessCardRequestDto {
             this.part = part;
             this.company = company;
             this.address = address;
+            this.memo = memo;
         }
 
     }
@@ -52,6 +53,7 @@ public class BusinessCardRequestDto {
         public String part;
         public String company;
         public String address;
+        public String memo;
 
         @JsonCreator
         public UpdateBusinessCardRequestDto(
@@ -62,7 +64,8 @@ public class BusinessCardRequestDto {
                 @JsonProperty("position") String position,
                 @JsonProperty("part") String part,
                 @JsonProperty("company") String company,
-                @JsonProperty("address") String address
+                @JsonProperty("address") String address,
+                @JsonProperty("memo") String memo
         ) {
             this.idx = idx;
             this.name = name;
@@ -72,6 +75,7 @@ public class BusinessCardRequestDto {
             this.part = part;
             this.company = company;
             this.address = address;
+            this.memo = memo;
         }
     }
 }

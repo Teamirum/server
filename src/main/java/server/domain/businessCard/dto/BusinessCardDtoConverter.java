@@ -16,6 +16,7 @@ public class BusinessCardDtoConverter {
                 .part(businessCard.getPart())
                 .company(businessCard.getCompany())
                 .address(businessCard.getAddress())
+                .memo(businessCard.getMemo())
                 .build();
     }
 

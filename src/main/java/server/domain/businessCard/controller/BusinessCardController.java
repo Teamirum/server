@@ -68,6 +68,7 @@ public class BusinessCardController {
         return ApiResponse.onSuccess(businessCardService.getBusinessCard(idx, loginMemberId));
     }
 
+    //명함 등록시 QR 코드 생성
     @PostMapping("/qr-code")
     public ApiResponse<?> generateQRCode(@RequestBody BusinessCardRequestDto.UploadBusinessCardRequestDto requestDto) {
         String loginMemberId = getLoginMemberId();
@@ -101,20 +102,5 @@ public class BusinessCardController {
             return ApiResponse.onFailure("QR_CODE_GENERATION_ERROR", "QR 코드 생성에 실패했습니다.", null);
         }
     }
-
-
-    @GetMapping("/qr-code")
-    public ApiResponse<?> getBusinessCardQR(@RequestParam(value = "idx") Long idx) {
-        String loginMemberId = getLoginMemberId();
-        log.info("명함 조회 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
-
-        // 명함 정보를 조회합니다.
-        BusinessCard card = businessCardService.getBusinessCard(idx, loginMemberId);
-        if (card != null) {
-            return ApiResponse.onSuccess(card); // 성공적으로 명함을 조회한 경우.
-        }
-        return ApiResponse.onFailure("Business card not found", "명함을 찾지 못했습니다.", null);
-    }
-
 
 }
