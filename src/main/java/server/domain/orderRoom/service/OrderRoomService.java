@@ -240,6 +240,8 @@ public class OrderRoomService {
                 return;
             }
         }
+        // 응답 Dto
+        List<OrderRoomMemberPriceSelectionInfoDto> orderRoomMemberPriceSelectionInfoDtos = new ArrayList<>();
         for (MemberPriceInfoDto memberPriceInfo : memberPriceInfoList) {
             if (memberPriceInfo.getPrice() < 0) {
                 redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_PRICE_NOT_VALID));
@@ -255,14 +257,17 @@ public class OrderRoomService {
             togetherOrderRepository.save(togetherOrder);
 
             orderRoom.updateCurrentPrice(memberPriceInfo.getPrice());
+            orderRoomMemberPriceSelectionInfoDtos.add(OrderRoomMemberPriceSelectionInfoDto.builder()
+                    .memberIdx(memberPriceInfo.getMemberIdx())
+                    .price(memberPriceInfo.getPrice())
+                    .build());
         }
         redisRepository.saveOrderRoom(orderRoom);
         orderRoomRepository.save(orderRoom);
 
         OrderRoomPriceSelectionResponseDto priceSelect = OrderRoomPriceSelectionResponseDto.builder()
                 .orderIdx(requestDto.getOrderIdx())
-                .memberIdx(member.getIdx())
-                .price(requestDto.getTotalPrice())
+                .memberPriceInfoList(orderRoomMemberPriceSelectionInfoDtos)
                 .type("PRICE_SELECT")
                 .build();
         redisPublisher.publish(channelTopic, priceSelect);
