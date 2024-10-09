@@ -247,9 +247,10 @@ public class OrderRoomService {
                 redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_PRICE_NOT_VALID));
                 return;
             }
+            log.info("{} 님. 함께 결제 주문정보 저장 주문방 ID : {}, 금액 : {}", memberId, requestDto.getOrderIdx(), memberPriceInfo.getPrice());
             TogetherOrder togetherOrder = TogetherOrder.builder()
                     .orderIdx(order.getIdx())
-                    .memberIdx(member.getIdx())
+                    .memberIdx(memberPriceInfo.getMemberIdx())
                     .price(memberPriceInfo.getPrice())
                     .createdAt(LocalDateTime.now())
                     .build();
