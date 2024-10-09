@@ -49,12 +49,6 @@ public class RedisRepository {
     public ChannelTopic enterOrderRoom(Long memberIdx, Long orderIdx) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         String orderIdxStr = orderRoom.getOrderIdx() + "";
-//        if (existMyInfo(memberIdx)) {
-//            throw new ErrorHandler(ErrorStatus.ORDER_MEMBER_ALREADY_IN_OTHER_ROOM);
-//        }
-        if (getMemberEnteredOrderRoomIdx(memberIdx) != null) {
-            throw new ErrorHandler(ErrorStatus.ORDER_MEMBER_ALREADY_IN_ROOM);
-        }
         ChannelTopic topic = getTopic(orderIdxStr);
         if (topic == null) {
             log.info("기존에 등록된 topic이 없습니다. 새로운 topic 생성 : orderIdx = {}", orderIdxStr);
@@ -63,7 +57,20 @@ public class RedisRepository {
         log.info("topic 생성 : orderIdx = {}, topic = {}", orderIdxStr, topic);
 
         topics.put(orderIdxStr, topic);
+//        if (existMyInfo(memberIdx)) {
+//            throw new ErrorHandler(ErrorStatus.ORDER_MEMBER_ALREADY_IN_OTHER_ROOM);
+//        }
+        if (getMemberEnteredOrderRoomIdx(memberIdx) != null) {
+            redisPublisher.publish(topics.get(orderIdx + ""), new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MEMBER_ALREADY_IN_ROOM));
+            throw new RuntimeException(ErrorStatus.ORDER_MEMBER_ALREADY_IN_ROOM.getMessage());
+        }
+        if (orderRoom.getMemberIdxList().contains(memberIdx)) {
+            redisPublisher.publish(topics.get(orderIdx + ""), new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MEMBER_ALREADY_IN_ROOM));
+            throw new RuntimeException(ErrorStatus.ORDER_MEMBER_ALREADY_IN_ROOM.getMessage());
+        }
+
         if (!orderRoom.enterMember(memberIdx)) {
+            redisPublisher.publish(topic, new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_EXCEED));
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_EXCEED);
         }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdxStr, orderRoom);
@@ -91,10 +98,11 @@ public class RedisRepository {
     }
 
     @RedisLock(lockName = "lock:orderRoom:#{#orderIdx}")
-    public OrderRoom readyToPay(Long orderIdx) {
+    public OrderRoom readyToPay(Long orderIdx, Long memberIdx, ChannelTopic topic) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         String orderIdxStr = orderRoom.getOrderIdx() + "";
-        if (orderRoom.readyToPay()) {
+        if (!orderRoom.readyToPay()) {
+            redisPublisher.publish(topic, new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_ROOM_MEMBER_CNT_NOT_MATCH));
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_NOT_MATCH);
         }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdxStr, orderRoom);
@@ -102,12 +110,14 @@ public class RedisRepository {
     }
 
     @RedisLock(lockName = "lock:orderRoom:#{#orderIdx}")
-    public OrderRoom cancelReadyToPay(Long orderIdx) {
+    public OrderRoom cancelReadyToPay(Long orderIdx, Long memberIdx, ChannelTopic topic) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         if (orderRoom.getReadyCnt() == orderRoom.getMaxMemberCnt()) {
+            redisPublisher.publish(topic, new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_ROOM_PAY_ALREADY_STARTED));
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_PAY_ALREADY_STARTED);
         }
-        if (orderRoom.cancelReadyToPay()) {
+        if (!orderRoom.cancelReadyToPay()) {
+            redisPublisher.publish(topic, new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_ROOM_MEMBER_CNT_NOT_MATCH));
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_NOT_MATCH);
         }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdx + "", orderRoom);
