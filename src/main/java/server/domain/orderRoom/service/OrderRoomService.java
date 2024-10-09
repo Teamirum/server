@@ -185,7 +185,7 @@ public class OrderRoomService {
             redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_NOT_FOUND));
             return;
         }
-        OrderRoom orderRoom = redisRepository.selectMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice());
+        OrderRoom orderRoom = redisRepository.selectMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice(), channelTopic);
 
 
         log.info("{} 님이 주문방에 메뉴를 선택하였습니다. 주문방 ID : {}, 메뉴 이름 : {}", memberId, requestDto.getOrderIdx(), requestDto.getMenuName());

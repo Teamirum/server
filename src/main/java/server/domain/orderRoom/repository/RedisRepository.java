@@ -7,6 +7,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 import server.domain.orderRoom.domain.OrderRoom;
+import server.domain.orderRoom.dto.OrderRoomResponseDto;
+import server.domain.orderRoom.service.RedisPublisher;
 import server.global.aop.annotation.RedisLock;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
@@ -20,6 +22,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 public class RedisRepository {
+
+    private final RedisPublisher redisPublisher;
 
     // Redis
     private static final String ORDER_ROOMS = "ORDER_ROOM";
@@ -120,14 +124,16 @@ public class RedisRepository {
     }
 
     @RedisLock(lockName = "lock:orderRoom:#{#orderIdx}")
-    public OrderRoom selectMenu(Long orderIdx, Long menuIdx, Long memberIdx, int price) {
+    public OrderRoom selectMenu(Long orderIdx, Long menuIdx, Long memberIdx, int price, ChannelTopic topic) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         HashMap<Long, List<Long>> menuSelect = orderRoom.getMenuSelect();
         HashMap<Long, Integer> menuAmount = orderRoom.getMenuAmount();
         if (!menuSelect.containsKey(menuIdx)) {
+            redisPublisher.publish(topic, new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_NOT_FOUND));
             throw new ErrorHandler(ErrorStatus.ORDER_MENU_NOT_FOUND);
         }
         if (menuSelect.get(menuIdx).size() >= menuAmount.get(menuIdx)) {
+            redisPublisher.publish(topic, new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR));
             throw new ErrorHandler(ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR);
         }
         menuSelect.get(menuIdx).add(memberIdx);
