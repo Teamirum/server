@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BusinessCard {
 
-    private Long idx;
+    private Long  idx;
 
     private Long memberIdx;      // 외래키, Member 테이블의 idx를 참조
 

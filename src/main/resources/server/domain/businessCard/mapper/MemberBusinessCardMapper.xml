@@ -35,9 +35,9 @@
     </select>
 
     <!-- 명함 등록 -->
-    <insert id="save" useGeneratedKeys="true" keyProperty="idx">
+    <insert id="save" parameterType="server.domain.businessCard.domain.MemberBusinessCard" >
         INSERT INTO MemberBusinessCard (member_idx, businessCard_idx, status, memo)
-        VALUES (#{memberIdx}, #{businessCardIdx}, #{status}, #{memo})
+        VALUES (#{memberIdx}, #{businessCardIdx}, #{status},NULLIF(#{memo}, null))
     </insert>
 
     <!-- 명함 삭제 -->

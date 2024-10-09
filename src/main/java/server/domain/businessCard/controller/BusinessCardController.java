@@ -76,6 +76,7 @@ public class BusinessCardController {
 
         businessCardService.upload(requestDto, loginMemberId);
 
+
         // QR 코드 데이터를 JSON 형식으로 구조화
         String qrCodeData = String.format(
                 "{\"name\":\"%s\", \"phone\":\"%s\", \"email\":\"%s\", \"position\":\"%s\", \"part\":\"%s\", \"company\":\"%s\", \"address\":\"%s\"}",
@@ -94,6 +95,12 @@ public class BusinessCardController {
 
             // ByteArrayOutputStream을 Base64로 변환
             String qrCodeBase64 = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+
+
+            BusinessCard businessCard = businessCardService.findMemberIdx(loginMemberId);
+
+            //MemberBusinessCard 테이블에 저장
+            businessCardService.uploadMemberBusinessCard(businessCard);
 
             return ApiResponse.onSuccess(qrCodeBase64);
         } catch (Exception e) {

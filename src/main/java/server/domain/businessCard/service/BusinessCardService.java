@@ -3,10 +3,12 @@ package server.domain.businessCard.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import server.domain.businessCard.domain.BusinessCard;
+import server.domain.businessCard.domain.MemberBusinessCard;
 import server.domain.businessCard.dto.BusinessCardDtoConverter;
 import server.domain.businessCard.dto.BusinessCardRequestDto;
 import server.domain.businessCard.dto.BusinessCardResponseDto;
 import server.domain.businessCard.repository.BusinessCardRepository;
+import server.domain.businessCard.repository.MemberBusinessCardRepository;
 import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
@@ -14,12 +16,15 @@ import server.global.apiPayload.exception.handler.ErrorHandler;
 
 import java.util.List;
 
+import static server.domain.businessCard.domain.MemberBusinessCard.Status.*;
+
 @Service
 @RequiredArgsConstructor
 public class BusinessCardService {
 
     private final BusinessCardRepository businessCardRepository;
-    private  final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
+    private final MemberBusinessCardRepository memberBusinessCardRepository;
 
     public BusinessCardResponseDto.BusinessCardTaskSuccessResponseDto upload(BusinessCardRequestDto.UploadBusinessCardRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId)
@@ -115,5 +120,22 @@ public class BusinessCardService {
         return businessCard;
     }
 
+    public BusinessCard findMemberIdx(String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        return businessCardRepository.findByMemberIdx(memberIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
+    }
+
+
+    public void uploadMemberBusinessCard(BusinessCard businessCard) {
+
+
+        memberBusinessCardRepository.save(MemberBusinessCard.builder()
+                .memberIdx(businessCard.getMemberIdx())
+                .businessCardIdx(businessCard.getIdx())
+                .status(OWNER)
+                .memo(businessCard.getMemo())
+                .build());
+    }
 }

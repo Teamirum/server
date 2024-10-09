@@ -2,6 +2,7 @@ package server.domain.businessCard.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import server.domain.businessCard.domain.BusinessCard;
 import server.domain.businessCard.domain.MemberBusinessCard;
 import server.domain.businessCard.mapper.MemberBusinessCardMapper;
 
@@ -29,7 +30,6 @@ public class MemberBusinessCardRepository {
     // 명함 등록
     public void save(MemberBusinessCard memberBusinessCard) {
         memberBusinessCardMapper.save(memberBusinessCard);
-        System.out.println("MemberBusinessCard ID: " + memberBusinessCard.getIdx()); // 저장 후 idx 확인
     }
 
     // 명함 삭제
@@ -46,6 +46,5 @@ public class MemberBusinessCardRepository {
         return memberBusinessCardMapper.findByMemberIdx(memberIdx) != null;
     }
 
-    // 특정 회원이 특정 명함을 소유하고 있는지 확인
 
 }
