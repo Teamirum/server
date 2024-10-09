@@ -134,6 +134,11 @@ dependencies {
 
   implementation("org.redisson:redisson:3.16.3")
 
+// ZXing 의존성 추가
+  implementation 'com.google.zxing:core:3.4.1'
+  implementation 'com.google.zxing:javase:3.4.1'
+
+
 }
 
 
