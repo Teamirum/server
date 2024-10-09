@@ -98,10 +98,10 @@ public class OrderRoomService {
         }
         orderRoom.setMenuAmount(menuAmount);
         orderRoom.setMenuSelect(currentMenuSelect);
+        redisRepository.saveOrderRoom(orderRoom);
 
-        ChannelTopic channelTopic = redisRepository.saveOrderRoom(orderRoom);
-        redisMessageListener.addMessageListener(redisSubscriber, channelTopic);
         log.info("주문방 생성 : {} 번 방", requestDto.getOrderIdx());
+
 
         return CreateOrderRoomResponseDto.builder()
                 .orderIdx(requestDto.getOrderIdx())
@@ -121,7 +121,7 @@ public class OrderRoomService {
 
         if (!redisRepository.existByOrderRoomIdx(orderIdx)) {
             redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), orderIdx, ErrorStatus.ORDER_ROOM_NOT_FOUND));
-            return;
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_NOT_FOUND);
         }
 
         OrderRoom orderRoom = redisRepository.getOrderRoom(orderIdx);
@@ -231,13 +231,16 @@ public class OrderRoomService {
             return;
         }
         List<MemberPriceInfoDto> memberPriceInfoList = requestDto.getMemberPriceInfoList();
+        // 요청온 멤버와 참여중인 멤버 정보 확인
+        for (MemberPriceInfoDto memberPriceInfo : memberPriceInfoList) {
+            if (!orderRoom.getMemberIdxList().contains(memberPriceInfo.getMemberIdx())) {
+                redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_MEMBER_NOT_FOUND));
+                return;
+            }
+        }
         for (MemberPriceInfoDto memberPriceInfo : memberPriceInfoList) {
             if (memberPriceInfo.getPrice() < 0) {
                 redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_PRICE_NOT_VALID));
-                return;
-            }
-            if (!orderRoom.getMemberIdxList().contains(memberPriceInfo.getMemberIdx())) {
-                redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_MEMBER_NOT_FOUND));
                 return;
             }
             TogetherOrder togetherOrder = TogetherOrder.builder()
