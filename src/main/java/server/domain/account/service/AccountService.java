@@ -19,7 +19,7 @@ import java.util.List;
 import static java.time.LocalDateTime.now;
 import static server.domain.account.domain.AccountHistory.AccountHistoryType.GET;
 import static server.domain.account.domain.AccountHistory.AccountHistoryType.SEND;
-import static server.domain.transaction.domain.Transaction.Category.ENTERTAINMENT;
+import static server.domain.transaction.domain.Transaction.Category.UNCATEGORIZED;
 import static server.domain.transaction.domain.Transaction.PayMethod.ACCOUNT;
 
 @Service
@@ -119,7 +119,6 @@ public class AccountService {
                 .payMethod(ACCOUNT)
                 .amount(amount)
                 .memo(name)
-                .category(ENTERTAINMENT)
                 .build());
         System.out.println("accountIdx = " + fromAccount.getIdx());
 

@@ -32,7 +32,6 @@ public class TransactionService {
                 .time(LocalDateTime.now())
                 .payMethod(Transaction.PayMethod.valueOf(requestDto.getPayMethod()))
                 .amount(requestDto.getAmount())
-                .memo(requestDto.getMemo())
                 .category(Transaction.Category.valueOf(requestDto.getCategory()))
                 .build();
 
@@ -92,8 +91,6 @@ public class TransactionService {
             throw new ErrorHandler(ErrorStatus.TRANSACTION_NOT_FOUND);
         }
 
-//        transaction.setCreditIdx(requestDto.getCreditIdx());
-//        transaction.setAccountIdx(requestDto.getAccountIdx());
         transaction.setPayMethod(Transaction.PayMethod.valueOf(requestDto.getPayMethod()));
         transaction.setAmount(requestDto.getAmount());
         transaction.setMemo(requestDto.getMemo());

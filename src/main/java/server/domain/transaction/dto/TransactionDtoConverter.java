@@ -30,6 +30,7 @@ public class TransactionDtoConverter {
         return TransactionResponseDto.TransactionInfoResponseDto.builder()
                 .idx(transaction.getIdx())
                 .creditIdx(transaction.getCreditIdx())
+                .accountIdx(transaction.getAccountIdx())
                 .time(transaction.getTime())
                 .amount(transaction.getAmount())
                 .memo(transaction.getMemo())
