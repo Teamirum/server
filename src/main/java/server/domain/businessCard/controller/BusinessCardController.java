@@ -34,21 +34,21 @@ public class BusinessCardController {
     public ApiResponse<?> uploadBusinessCard(@RequestBody BusinessCardRequestDto.UploadBusinessCardRequestDto requestDto) {
         String loginMemberId = getLoginMemberId();
         log.info("명함 업로드 요청 : 현재loginMemberId = {}, businessName = {}", loginMemberId ,requestDto.name);
-        return ApiResponse.onSuccess(businessCardService.upload(requestDto, loginMemberId), HttpStatus.NOT_FOUND);
+        return ApiResponse.onSuccess(businessCardService.upload(requestDto, loginMemberId));
     }
 
     @GetMapping("/all")
     public ApiResponse<?> getBusinessCardList() {
         String loginMemberId = getLoginMemberId();
         log.info("명함 리스트 조회 요청 : loginMemberId = {}", loginMemberId);
-        return ApiResponse.onSuccess(businessCardService.getBusinessCardList(loginMemberId), HttpStatus.NOT_FOUND);
+        return ApiResponse.onSuccess(businessCardService.getBusinessCardList(loginMemberId));
     }
 
     @DeleteMapping
     public ApiResponse<?> deleteBusinessCard(@RequestParam(value = "idx") Long idx) {
         String loginMemberId = getLoginMemberId();
         log.info("명함 삭제 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
-        return ApiResponse.onSuccess(businessCardService.delete(idx, loginMemberId), HttpStatus.NOT_FOUND);
+        return ApiResponse.onSuccess(businessCardService.delete(idx, loginMemberId));
     }
 
     @PatchMapping
@@ -58,14 +58,14 @@ public class BusinessCardController {
         String loginMemberId = getLoginMemberId();
         requestDto.setIdx(idx);
         log.info("명함 수정 요청 : loginMemberId = {}, idx = {}, 수정 내용 = {}", loginMemberId, idx, requestDto);
-        return ApiResponse.onSuccess(businessCardService.update(requestDto, loginMemberId), HttpStatus.NOT_FOUND);
+        return ApiResponse.onSuccess(businessCardService.update(requestDto, loginMemberId));
     }
 
     @GetMapping
     public ApiResponse<?> getBusinessCard(@RequestParam(value = "idx") Long idx) {
         String loginMemberId = getLoginMemberId();
         log.info("명함 조회 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
-        return ApiResponse.onSuccess(businessCardService.getBusinessCard(idx, loginMemberId), HttpStatus.NOT_FOUND);
+        return ApiResponse.onSuccess(businessCardService.getBusinessCard(idx, loginMemberId));
     }
 
     @PostMapping("/qr-code")
@@ -94,7 +94,7 @@ public class BusinessCardController {
             // ByteArrayOutputStream을 Base64로 변환
             String qrCodeBase64 = Base64.getEncoder().encodeToString(outputStream.toByteArray());
 
-            return ApiResponse.onSuccess(qrCodeBase64, HttpStatus.OK);
+            return ApiResponse.onSuccess(qrCodeBase64);
         } catch (Exception e) {
             log.error("QR 코드 생성 중 오류 발생", e);
             // 실패한 경우 응답 생성
@@ -105,15 +105,15 @@ public class BusinessCardController {
 
     @GetMapping("/qr-code")
     public ApiResponse<?> getBusinessCardQR(@RequestParam(value = "idx") Long idx) {
-        String loginMemberId = getLoginMemberId(); // 로그인한 회원의 ID를 가져옵니다.
+        String loginMemberId = getLoginMemberId();
         log.info("명함 조회 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
 
         // 명함 정보를 조회합니다.
         BusinessCard card = businessCardService.getBusinessCard(idx, loginMemberId);
         if (card != null) {
-            return ApiResponse.onSuccess(card, HttpStatus.NOT_FOUND); // 성공적으로 명함을 조회한 경우.
+            return ApiResponse.onSuccess(card); // 성공적으로 명함을 조회한 경우.
         }
-        return ApiResponse.onSuccess("Business card not found", HttpStatus.NOT_FOUND); // 명함을 찾지 못한 경우.
+        return ApiResponse.onFailure("Business card not found", "명함을 찾지 못했습니다.", null);
     }
 
 
