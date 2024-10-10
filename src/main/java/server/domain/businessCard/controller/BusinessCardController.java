@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import server.domain.businessCard.domain.BusinessCard;
 import server.domain.businessCard.dto.BusinessCardRequestDto;
+import server.domain.businessCard.dto.BusinessCardResponseDto;
 import server.domain.businessCard.service.BusinessCardService;
 import server.domain.businessCard.service.QRCodeService;
 import server.global.apiPayload.ApiResponse;
@@ -58,7 +59,36 @@ public class BusinessCardController {
         String loginMemberId = getLoginMemberId();
         requestDto.setIdx(idx);
         log.info("명함 수정 요청 : loginMemberId = {}, idx = {}, 수정 내용 = {}", loginMemberId, idx, requestDto);
-        return ApiResponse.onSuccess(businessCardService.update(requestDto, loginMemberId));
+
+        // 명함 정보 업데이트
+        businessCardService.update(requestDto, loginMemberId);
+        // 수정된 명함 정보를 가져옴
+        BusinessCard updatedCard = businessCardService.getBusinessCard(idx, loginMemberId);
+
+        // 수정된 정보로 QR 코드 데이터를 JSON 형식으로 구조화
+        String qrCodeData = String.format(
+                "{\"name\":\"%s\", \"phone\":\"%s\", \"email\":\"%s\", \"position\":\"%s\", \"part\":\"%s\", \"company\":\"%s\", \"address\":\"%s\"}",
+                updatedCard.getName(),
+                updatedCard.getPhoneNum(),
+                updatedCard.getEmail(),
+                updatedCard.getPosition(),
+                updatedCard.getPart(),
+                updatedCard.getCompany(),
+                updatedCard.getAddress()
+        );
+
+        try {
+            // QR 코드 이미지 생성
+            ByteArrayOutputStream outputStream = qrCodeService.generateQRCode(qrCodeData);
+
+            // ByteArrayOutputStream을 Base64로 변환
+            String qrCodeBase64 = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+
+            return ApiResponse.onSuccess(qrCodeBase64);  // 업데이트된 QR 코드 반환
+        } catch (Exception e) {
+            log.error("QR 코드 생성 중 오류 발생", e);
+            return ApiResponse.onFailure("QR_CODE_GENERATION_ERROR", "QR 코드 생성에 실패했습니다.", null);
+        }
     }
 
     @GetMapping
@@ -108,6 +138,20 @@ public class BusinessCardController {
             // 실패한 경우 응답 생성
             return ApiResponse.onFailure("QR_CODE_GENERATION_ERROR", "QR 코드 생성에 실패했습니다.", null);
         }
+    }
+
+    @PostMapping("/scanFriendQrCode")
+    public ApiResponse<?> scanFriendBusinessCard(@RequestParam("businessCardId") Long businessCardId) {
+        String loginMemberId = getLoginMemberId();
+        log.info("친구 명함 추가 요청: businessCardId = {}, loginMemberId = {}", businessCardId, loginMemberId);
+
+        // 1. QR 코드로 명함 정보 가져오기
+        BusinessCard businessCard = businessCardService.getBusinessCard(businessCardId, loginMemberId);
+
+        // 2. 해당 명함을 MemberBusinessCard에 저장 (상태는 NOT_OWNER)
+        businessCardService.addFriendBusinessCard(businessCardId, loginMemberId);
+
+        return ApiResponse.onSuccess(businessCard);
     }
 
 }
