@@ -24,6 +24,5 @@ public interface TogetherOrderMapper {
     void deleteByMemberIdxAndOrderIdx(Long memberIdx, Long orderIdx);
 
 
-
-
+    void updateStatusByIdx(Map<String, Object> map);
 }

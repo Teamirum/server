@@ -12,6 +12,7 @@ import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
 import server.domain.order.domain.Order;
 import server.domain.order.domain.TogetherOrder;
+import server.domain.order.model.TogetherOrderStatus;
 import server.domain.order.repository.OrderRepository;
 import server.domain.order.repository.TogetherOrderRepository;
 import server.domain.pay.domain.Pay;
@@ -53,6 +54,9 @@ public class PayService {
 
         // 함께 결제 로직
         TogetherOrder togetherOrder = togetherOrderRepository.findByMemberIdxAndOrderIdx(member.getIdx() ,requestDto.getOrderIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_MEMBER_PARTICIPANT_ROOM_NOT_FOUND));
+        if (togetherOrder.getStatus().equals(TogetherOrderStatus.COMPLETE)) {
+            throw new ErrorHandler(ErrorStatus.PAY_ALREADY_COMPLETE);
+        }
         if (requestDto.getPayMethod().equals("CREDIT")) {
             Credit credit = creditService.getCreditByIdx(requestDto.getCreditIdx());
             if (creditService.isAbleToUseCredit(credit)) {
@@ -73,6 +77,7 @@ public class PayService {
             payRepository.save(pay);
 
             Pay savedPay = payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            togetherOrderRepository.updateStatusByIdx(togetherOrder.getIdx(), TogetherOrderStatus.COMPLETE);
 
             return PayDtoConverter.convertToPaySuccessResponseDto(savedPay, credit.getCreditName(), credit.getCreditNumber());
         }
@@ -97,6 +102,7 @@ public class PayService {
             payRepository.save(pay);
 
             Pay savedPay = payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            togetherOrderRepository.updateStatusByIdx(togetherOrder.getIdx(), TogetherOrderStatus.COMPLETE);
 
             return PayDtoConverter.convertToPaySuccessResponseDto(savedPay, account.getBankName(), account.getAccountNumber());
         }

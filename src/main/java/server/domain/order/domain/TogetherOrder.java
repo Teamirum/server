@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import server.domain.order.model.TogetherOrderStatus;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +19,8 @@ public class TogetherOrder {
     private Long orderIdx;
 
     private Long memberIdx;
+
+    private TogetherOrderStatus status;
 
     private int price;
 

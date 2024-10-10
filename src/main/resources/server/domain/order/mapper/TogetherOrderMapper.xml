@@ -9,15 +9,16 @@
         <result property="orderIdx" column="order_idx" />
         <result property="memberIdx" column="member_idx" />
         <result property="price" column="price" />
+        <result property="status" column="status" />
         <result property="createdAt" column="created_at" />
     </resultMap>
 
     <!-- save TogetherOrder -->
     <insert id="save" parameterType="server.domain.order.domain.TogetherOrder">
         INSERT INTO TogetherOrder (
-            order_idx, member_idx, price, created_at
+            order_idx, member_idx, price, status, created_at
         ) VALUES (
-            #{orderIdx}, #{memberIdx}, #{price}, #{createdAt}
+            #{orderIdx}, #{memberIdx}, #{price}, #{status.name}, #{createdAt}
         )
     </insert>
 
@@ -62,6 +63,13 @@
         FROM TogetherOrder
         WHERE member_idx = #{memberIdx}
     </delete>
+
+    <!-- updateStatusByIdx -->
+    <update id="updateStatusByIdx" parameterType="map">
+        UPDATE TogetherOrder
+        SET status = #{status}
+        WHERE idx = #{idx}
+    </update>
 
 
 </mapper>

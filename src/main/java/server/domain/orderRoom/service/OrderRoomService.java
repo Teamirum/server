@@ -14,6 +14,7 @@ import server.domain.menu.repository.MenuRepository;
 import server.domain.order.domain.Order;
 import server.domain.order.domain.OrderMenu;
 import server.domain.order.domain.TogetherOrder;
+import server.domain.order.model.TogetherOrderStatus;
 import server.domain.order.repository.OrderMenuRepository;
 import server.domain.order.repository.OrderRepository;
 import server.domain.order.repository.TogetherOrderRepository;
@@ -251,6 +252,7 @@ public class OrderRoomService {
                     .orderIdx(order.getIdx())
                     .memberIdx(memberPriceInfo.getMemberIdx())
                     .price(memberPriceInfo.getPrice())
+                    .status(TogetherOrderStatus.WAIT)
                     .createdAt(LocalDateTime.now())
                     .build();
 
@@ -411,6 +413,7 @@ public class OrderRoomService {
                     .orderIdx(order.getIdx())
                     .memberIdx(member.getIdx())
                     .price(totalPrice)
+                    .status(TogetherOrderStatus.WAIT)
                     .createdAt(LocalDateTime.now())
                     .build();
             togetherOrderRepository.save(togetherOrder);

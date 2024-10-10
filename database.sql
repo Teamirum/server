@@ -107,6 +107,7 @@ CREATE TABLE `TogetherOrder` (
                                  `order_idx` BIGINT NOT NULL,
                                 `price` INT NOT NULL,
                                  `member_idx` BIGINT NOT NULL,
+                                 `status` ENUM('WAIT', 'CANCEL', 'COMPLETE') NOT NULL,
                                  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                  PRIMARY KEY (`idx`),
                                  FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
