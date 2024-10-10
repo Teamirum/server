@@ -12,6 +12,7 @@ import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
 import server.domain.order.domain.Order;
 import server.domain.order.domain.TogetherOrder;
+import server.domain.order.model.TogetherOrderStatus;
 import server.domain.order.repository.OrderRepository;
 import server.domain.order.repository.TogetherOrderRepository;
 import server.domain.pay.domain.Pay;
@@ -26,6 +27,8 @@ import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -53,17 +56,20 @@ public class PayService {
 
         // 함께 결제 로직
         TogetherOrder togetherOrder = togetherOrderRepository.findByMemberIdxAndOrderIdx(member.getIdx() ,requestDto.getOrderIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_MEMBER_PARTICIPANT_ROOM_NOT_FOUND));
+        if (togetherOrder.getStatus().equals(TogetherOrderStatus.COMPLETE)) {
+            throw new ErrorHandler(ErrorStatus.PAY_ALREADY_COMPLETE);
+        }
         if (requestDto.getPayMethod().equals("CREDIT")) {
             Credit credit = creditService.getCreditByIdx(requestDto.getCreditIdx());
             if (creditService.isAbleToUseCredit(credit)) {
-                creditService.payWithCredit(credit, togetherOrder.getPrice());
+                creditService.payWithCredit(credit, togetherOrder.getPrice(), order.getName());
             }
             Pay pay = Pay.builder()
                     .orderIdx(order.getIdx())
                     .memberIdx(member.getIdx())
                     .creditIdx(requestDto.getCreditIdx())
-                    .price(order.getTotalPrice())
-                    .tid(order.getIdx() + " " + member.getIdx())
+                    .price(togetherOrder.getPrice())
+                    .tid("TOGETHER" + order.getIdx() + member.getIdx())
                     .payMethod(PayMethod.fromName(requestDto.getPayMethod()))
                     .payType(PayType.TOGETHER)
                     .payStatus(PayStatus.ACCEPT)
@@ -72,9 +78,10 @@ public class PayService {
                     .build();
             payRepository.save(pay);
 
-            payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            Pay savedPay = payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            togetherOrderRepository.updateStatusByIdx(togetherOrder.getIdx(), TogetherOrderStatus.COMPLETE);
 
-            return PayDtoConverter.convertToPaySuccessResponseDto(pay, credit.getCreditName(), credit.getCreditNumber());
+            return PayDtoConverter.convertToPaySuccessResponseDto(savedPay, credit.getCreditName(), credit.getCreditNumber());
         }
 
         else if (requestDto.getPayMethod().equals("ACCOUNT")) {
@@ -87,7 +94,7 @@ public class PayService {
                     .memberIdx(member.getIdx())
                     .accountIdx(requestDto.getAccountIdx())
                     .price(order.getTotalPrice())
-                    .tid(order.getIdx() + " " + member.getIdx())
+                    .tid("ALONE" + order.getIdx() + member.getIdx())
                     .payMethod(PayMethod.fromName(requestDto.getPayMethod()))
                     .payType(PayType.TOGETHER)
                     .payStatus(PayStatus.ACCEPT)
@@ -96,9 +103,10 @@ public class PayService {
                     .build();
             payRepository.save(pay);
 
-            payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            Pay savedPay = payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            togetherOrderRepository.updateStatusByIdx(togetherOrder.getIdx(), TogetherOrderStatus.COMPLETE);
 
-            return PayDtoConverter.convertToPaySuccessResponseDto(pay, account.getBankName(), account.getAccountNumber());
+            return PayDtoConverter.convertToPaySuccessResponseDto(savedPay, account.getBankName(), account.getAccountNumber());
         }
         throw new ErrorHandler(ErrorStatus.PAY_METHOD_NOT_FOUND);
 
@@ -111,7 +119,7 @@ public class PayService {
         if (requestDto.getPayMethod().equals("CREDIT")) {
             Credit credit = creditService.getCreditByIdx(requestDto.getCreditIdx());
             if (creditService.isAbleToUseCredit(credit)) {
-                creditService.payWithCredit(credit, order.getTotalPrice());
+                creditService.payWithCredit(credit, order.getTotalPrice(), order.getName());
             }
             Pay pay = Pay.builder()
                     .orderIdx(order.getIdx())
@@ -127,9 +135,9 @@ public class PayService {
                     .build();
             payRepository.save(pay);
 
-            payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            Pay savedPay = payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
 
-            return PayDtoConverter.convertToPaySuccessResponseDto(pay, credit.getCreditName(), credit.getCreditNumber());
+            return PayDtoConverter.convertToPaySuccessResponseDto(savedPay, credit.getCreditName(), credit.getCreditNumber());
         } else if (requestDto.getPayMethod().equals("ACCOUNT")) {
             Account account = accountService.getAccountByIdx(requestDto.getAccountIdx());
             if (accountService.isAbleToUseAccount(account, order.getTotalPrice())) {
@@ -149,12 +157,40 @@ public class PayService {
                     .build();
             payRepository.save(pay);
 
-            payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            Pay savedPay = payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
 
-            return PayDtoConverter.convertToPaySuccessResponseDto(pay, account.getBankName(), account.getAccountNumber());
+            return PayDtoConverter.convertToPaySuccessResponseDto(savedPay, account.getBankName(), account.getAccountNumber());
         }
         throw new ErrorHandler(ErrorStatus.PAY_METHOD_NOT_FOUND);
     }
+
+    public PayListResponseDto getAllPay(String memberId) {
+        Member member = getMember(memberId);
+        List<Pay> payList = payRepository.findAllByMemberIdx(member.getIdx());
+
+        List<TogetherPayInfoResponseDto> togetherPayList = new ArrayList<>();
+        List<TogetherPayInfoResponseDto> alonePayList = new ArrayList<>();
+
+        for (Pay pay : payList) {
+            Order order = orderRepository.findByOrderIdx(pay.getOrderIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_NOT_FOUND));
+            if (pay.getPayType().equals(PayType.TOGETHER)) {
+                Credit credit = creditService.getCreditByIdx(pay.getCreditIdx());
+                togetherPayList.add(PayDtoConverter.convertToTogetherPayInfoResponseDto(pay, order, null, credit));
+            } else {
+                Account account = accountService.getAccountByIdx(pay.getAccountIdx());
+                alonePayList.add(PayDtoConverter.convertToTogetherPayInfoResponseDto(pay, order, account, null));
+            }
+        }
+        return PayListResponseDto.builder()
+                .togetherPayList(togetherPayList)
+                .alonePayList(alonePayList)
+                .togetherPayCnt(togetherPayList.size())
+                .alonePayCnt(alonePayList.size())
+                .totalCnt(togetherPayList.size() + alonePayList.size())
+                .isSuccess(true)
+                .build();
+    }
+
     private Member getMember(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }

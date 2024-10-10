@@ -33,12 +33,15 @@ public class OrderRoomRequestDto {
 
     @Data
     public static class EnterOrderRoomRequestDto {
+        private String memberId;
         private Long orderIdx;
 
         @JsonCreator
         public EnterOrderRoomRequestDto(
+                @JsonProperty("memberIdx") String memberId,
                 @JsonProperty("orderIdx") Long orderIdx
         ) {
+            this.memberId = memberId;
             this.orderIdx = orderIdx;
         }
     }
@@ -47,6 +50,7 @@ public class OrderRoomRequestDto {
     public static class SelectMenuRequestDto {
         private Long orderIdx;
         private Long menuIdx;
+        private String memberId;
         private String menuName;
         private int menuPrice;
         private int amount;
@@ -55,12 +59,14 @@ public class OrderRoomRequestDto {
         public SelectMenuRequestDto(
                 @JsonProperty("orderIdx") Long orderIdx,
                 @JsonProperty("menuIdx") Long menuIdx,
+                @JsonProperty("memberId") String memberId,
                 @JsonProperty("menuName") String menuName,
                 @JsonProperty("menuPrice") int menuPrice,
                 @JsonProperty("amount") int amount
         ) {
             this.orderIdx = orderIdx;
             this.menuIdx = menuIdx;
+            this.memberId = memberId;
             this.menuName = menuName;
             this.menuPrice = menuPrice;
             this.amount = amount;
@@ -70,6 +76,7 @@ public class OrderRoomRequestDto {
     @Data
     public static class SelectPriceRequestDto {
         private Long orderIdx;
+        private String memberId;
         private int totalPrice;
         private int memberCnt;
         List<MemberPriceInfoDto> memberPriceInfoList;
@@ -77,14 +84,33 @@ public class OrderRoomRequestDto {
         @JsonCreator
         public SelectPriceRequestDto(
                 @JsonProperty("orderIdx") Long orderIdx,
+                @JsonProperty("memberId") String memberId,
                 @JsonProperty("totalPrice") int totalPrice,
+                @JsonProperty("memberCnt") int memberCnt,
                 @JsonProperty("memberPriceInfoList") List<MemberPriceInfoDto> memberPriceInfoList
         ) {
             this.orderIdx = orderIdx;
+            this.memberId = memberId;
             this.totalPrice = totalPrice;
+            this.memberCnt = memberCnt;
             this.memberPriceInfoList = memberPriceInfoList;
         }
 
+    }
+
+    @Data
+    public static class ReadyOrderRoomRequestDto {
+        private Long orderIdx;
+        private String memberId;
+
+        @JsonCreator
+        public ReadyOrderRoomRequestDto(
+                @JsonProperty("orderIdx") Long orderIdx,
+                @JsonProperty("memberId") String memberId
+        ) {
+            this.orderIdx = orderIdx;
+            this.memberId = memberId;
+        }
     }
 
     @Data

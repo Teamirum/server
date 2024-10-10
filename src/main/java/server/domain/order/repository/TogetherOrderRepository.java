@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import server.domain.order.domain.TogetherOrder;
 import server.domain.order.mapper.TogetherOrderMapper;
+import server.domain.order.model.TogetherOrderStatus;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -27,7 +29,8 @@ public class TogetherOrderRepository {
     }
 
     public Optional<TogetherOrder> findByMemberIdxAndOrderIdx(Long memberIdx, Long orderIdx) {
-        TogetherOrder togetherOrder = togetherOrderMapper.findByMemberIdxAndOrderIdx(memberIdx, orderIdx);
+        Map<String, Object> map = Map.of("memberIdx", memberIdx, "orderIdx", orderIdx);
+        TogetherOrder togetherOrder = togetherOrderMapper.findByMemberIdxAndOrderIdx(map);
         if (togetherOrder != null) {
             return Optional.of(togetherOrder);
         }
@@ -44,5 +47,10 @@ public class TogetherOrderRepository {
 
     public void deleteByMemberIdxAndOrderIdx(Long memberIdx, Long orderIdx) {
         togetherOrderMapper.deleteByMemberIdxAndOrderIdx(memberIdx, orderIdx);
+    }
+
+    public void updateStatusByIdx(Long idx, TogetherOrderStatus status) {
+        Map<String, Object> map = Map.of("idx", idx, "status", status.name());
+        togetherOrderMapper.updateStatusByIdx(map);
     }
 }

@@ -109,10 +109,10 @@ public class CreditService {
 
 
     @Transactional
-    public void uploadCreditHistory(Credit credit, Integer amount, String name) {
+    public void uploadCreditHistory(Credit credit, int amount, String name) {
 
 
-        Integer creditAmountSum = credit.getAmountSum() + amount;
+        int creditAmountSum = credit.getAmountSum() + amount;
         // 카드 결제내역
         creditHistoryRespository.save(CreditHistory.builder()
                 .creditIdx(credit.getIdx())
@@ -135,22 +135,24 @@ public class CreditService {
                 .build());
     }
 
-    public void payWithCredit(Credit credit, int price) {
+    @Transactional
+    public void payWithCredit(Credit credit, int price, String name) {
         creditRepository.payPrice(credit.getIdx(), price + credit.getAmountSum());
+        uploadCreditHistory(credit, price, name);
     }
 
     public boolean isAbleToUseCredit(Credit credit) {
-        LocalDateTime expirationDate;
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // 문자열 형식에 맞게 조정
-            expirationDate = LocalDateTime.parse(credit.getExpirationDate(), formatter);
-        } catch (DateTimeParseException e) {
-            throw new ErrorHandler(ErrorStatus.CREDIT_EXPIRATION_DATE_FORMAT_ERROR);
-        }
-
-        if (expirationDate.isBefore(LocalDateTime.now())) {
-            throw new ErrorHandler(ErrorStatus.CREDIT_CARD_EXPIRED);
-        }
+//        LocalDateTime expirationDate;
+//        try {
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // 문자열 형식에 맞게 조정
+//            expirationDate = LocalDateTime.parse(credit.getExpirationDate(), formatter);
+//        } catch (DateTimeParseException e) {
+//            throw new ErrorHandler(ErrorStatus.CREDIT_EXPIRATION_DATE_FORMAT_ERROR);
+//        }
+//
+//        if (expirationDate.isBefore(LocalDateTime.now())) {
+//            throw new ErrorHandler(ErrorStatus.CREDIT_CARD_EXPIRED);
+//        }
         return true;
     }
 

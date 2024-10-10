@@ -32,4 +32,36 @@ public class PayResponseDto {
         String createdAt;
         Boolean isSuccess;
     }
+
+    @Data
+    @Builder
+    public static class PayListResponseDto {
+        List<TogetherPayInfoResponseDto> togetherPayList;
+        List<TogetherPayInfoResponseDto> alonePayList;
+        int togetherPayCnt;
+        int alonePayCnt;
+        int totalCnt;
+        Boolean isSuccess;
+    }
+
+    @Data
+    @Builder
+    public static class TogetherPayInfoResponseDto {
+        Long idx;
+        Long orderIdx;
+        Long marketIdx;
+        int price;
+        String bankName;
+        String accountNumber;
+        String creditName;
+        String creditNumber;
+        String orderName;
+        String payMethod;
+        String tid;
+        String payStatus;
+        String payType;
+        String createdAt;
+        Boolean isSuccess;
+    }
+
 }
