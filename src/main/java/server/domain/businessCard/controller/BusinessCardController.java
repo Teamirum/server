@@ -141,15 +141,15 @@ public class BusinessCardController {
     }
 
     @PostMapping("/scanFriendQrCode")
-    public ApiResponse<?> scanFriendBusinessCard(@RequestParam("businessCardId") Long businessCardId) {
+    public ApiResponse<?> scanFriendBusinessCard(@RequestParam("businessCardIdx") Long businessCardIdx) {
         String loginMemberId = getLoginMemberId();
-        log.info("친구 명함 추가 요청: businessCardId = {}, loginMemberId = {}", businessCardId, loginMemberId);
+        log.info("친구 명함 추가 요청: businessCardIdx = {}, loginMemberId = {}", businessCardIdx, loginMemberId);
 
         // 1. QR 코드로 명함 정보 가져오기
-        BusinessCard businessCard = businessCardService.getBusinessCard(businessCardId, loginMemberId);
+        BusinessCard businessCard = businessCardService.getBusinessCard(businessCardIdx, loginMemberId);
 
         // 2. 해당 명함을 MemberBusinessCard에 저장 (상태는 NOT_OWNER)
-        businessCardService.addFriendBusinessCard(businessCardId, loginMemberId);
+        businessCardService.addFriendBusinessCard(businessCardIdx, loginMemberId);
 
         return ApiResponse.onSuccess(businessCard);
     }

@@ -6,6 +6,7 @@ import server.domain.businessCard.domain.BusinessCard;
 import server.domain.businessCard.mapper.BusinessCardMapper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -51,6 +52,12 @@ public class BusinessCardRepository {
     public BusinessCard updateBusinessCard(BusinessCard businessCard) {
         businessCardMapper.updateBusinessCard(businessCard);
         return businessCard;
+    }
+
+    public boolean existsByMemberIdxAndBusinessCardIdx(Long idx, Long memberIdx) {
+        Map<String, Object> map = Map.of("idx", idx, "memberIdx", memberIdx);
+        BusinessCard businessCard = businessCardMapper.findByIdxAndMemberIdx(map);
+        return businessCard != null;
     }
 
 

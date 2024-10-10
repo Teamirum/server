@@ -113,10 +113,6 @@ public class BusinessCardService {
         BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(idx)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
 
-        if (!businessCard.getMemberIdx().equals(memberIdx)) {
-            throw new ErrorHandler(ErrorStatus.BUSINESS_CARD_ACCESS_DENIED);
-        }
-
         return businessCard;
     }
 
@@ -136,6 +132,21 @@ public class BusinessCardService {
                 .businessCardIdx(businessCard.getIdx())
                 .status(OWNER)
                 .memo(businessCard.getMemo())
+                .build());
+    }
+
+    public void addFriendBusinessCard(Long businessCardIdx, String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (businessCardRepository.existsByMemberIdxAndBusinessCardIdx(businessCardIdx, memberIdx)) {
+            throw new ErrorHandler(ErrorStatus.BUSINESS_CARD_DUPLICATE);
+        }
+
+        memberBusinessCardRepository.save(MemberBusinessCard.builder()
+                .memberIdx(memberIdx)
+                .businessCardIdx(businessCardIdx)
+                .status(NOT_OWNER)
+                .memo("")
                 .build());
     }
 }

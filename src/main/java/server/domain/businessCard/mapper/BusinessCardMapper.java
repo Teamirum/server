@@ -20,4 +20,6 @@ public interface BusinessCardMapper {
     void delete(Long idx);
 
     void updateBusinessCard(BusinessCard businessCard);
+
+    BusinessCard findByIdxAndMemberIdx(Map<String, Object> map);
 }

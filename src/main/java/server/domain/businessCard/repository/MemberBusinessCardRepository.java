@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import server.domain.businessCard.domain.BusinessCard;
 import server.domain.businessCard.domain.MemberBusinessCard;
+import server.domain.businessCard.mapper.BusinessCardMapper;
 import server.domain.businessCard.mapper.MemberBusinessCardMapper;
 
+import java.io.ObjectStreamClass;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -14,6 +17,7 @@ import java.util.Optional;
 public class MemberBusinessCardRepository {
 
     private final MemberBusinessCardMapper memberBusinessCardMapper;
+    private final BusinessCardMapper BusinessCardMapper;
 
 
 
@@ -42,8 +46,10 @@ public class MemberBusinessCardRepository {
         memberBusinessCardMapper.updateStatus(memberBusinessCard);
     }
 
-    public boolean existsMemberBusinessCardByMemberIdx(Long memberIdx) {
-        return memberBusinessCardMapper.findByMemberIdx(memberIdx) != null;
+    public boolean existsByMemberIdxAndBusinessCardIdx(Long idx, Long memberIdx) {
+        Map<String, Object> map = Map.of("idx", idx, "memberIdx", memberIdx);
+        BusinessCard businessCard = BusinessCardMapper.findByIdxAndMemberIdx(map);
+        return businessCard != null;
     }
 
 
