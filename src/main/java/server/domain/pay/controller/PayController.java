@@ -39,6 +39,13 @@ public class PayController {
         }
     }
 
+    @GetMapping("/all")
+    public ApiResponse<?> getAllPay() {
+        String memberId = getLoginMemberId();
+        log.info("결제 내역 조회 : memberId = {}", memberId);
+        return ApiResponse.onSuccess(payService.getAllPay(memberId));
+    }
+
     private String getLoginMemberId() {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }

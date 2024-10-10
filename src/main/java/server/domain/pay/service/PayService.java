@@ -27,6 +27,8 @@ import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -161,6 +163,33 @@ public class PayService {
         }
         throw new ErrorHandler(ErrorStatus.PAY_METHOD_NOT_FOUND);
     }
+
+    public PayListResponseDto getAllPay(String memberId) {
+        Member member = getMember(memberId);
+        List<Pay> payList = payRepository.findAllByMemberIdx(member.getIdx());
+
+        List<TogetherPayInfoResponseDto> togetherPayList = new ArrayList<>();
+        List<TogetherPayInfoResponseDto> alonePayList = new ArrayList<>();
+
+        for (Pay pay : payList) {
+            Order order = orderRepository.findByOrderIdx(pay.getOrderIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.ORDER_NOT_FOUND));
+            if (pay.getPayType().equals(PayType.TOGETHER)) {
+                Credit credit = creditService.getCreditByIdx(pay.getCreditIdx());
+                togetherPayList.add(PayDtoConverter.convertToTogetherPayInfoResponseDto(pay, order, null, credit));
+            } else {
+                Account account = accountService.getAccountByIdx(pay.getAccountIdx());
+                alonePayList.add(PayDtoConverter.convertToTogetherPayInfoResponseDto(pay, order, account, null));
+            }
+        }
+        return PayListResponseDto.builder()
+                .togetherPayList(togetherPayList)
+                .alonePayList(alonePayList)
+                .togetherPayCnt(togetherPayList.size())
+                .alonePayCnt(alonePayList.size())
+                .totalCnt(togetherPayList.size() + alonePayList.size())
+                .build();
+    }
+
     private Member getMember(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
