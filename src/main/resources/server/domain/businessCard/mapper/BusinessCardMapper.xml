@@ -15,7 +15,6 @@
         <result property="part" column="part" />
         <result property="position" column="position" />
         <result property="address" column="address" />
-
     </resultMap>
 
     <!-- Select All BusinessCards by MemberIdx -->
@@ -46,7 +45,8 @@
         SET name = #{name}, company = #{company}, phone_num = #{phoneNum}, email = #{email},
             tel_num = IFNULL(#{telNum}, tel_num),
             part = IFNULL(#{part}, part),
-            position = #{position}, address = #{address}
+            position = #{position}, address = #{address},
+            part = #{part}, position = #{position}, address = #{address}
         WHERE idx = #{idx} AND member_idx = #{memberIdx}
     </update>
 
@@ -69,6 +69,14 @@
         FROM BusinessCard
         WHERE idx = #{idx}
     </select>
+
+    <select id="findAllFriendBusinessCards" parameterType="Long" resultMap="BusinessCardResultMap">
+        SELECT bc.*
+        FROM BusinessCard bc
+                 JOIN MemberBusinessCard mbc ON bc.idx = mbc.businessCard_idx
+        WHERE mbc.member_idx != #{memberIdx}
+    </select>
+
 
 
 </mapper>

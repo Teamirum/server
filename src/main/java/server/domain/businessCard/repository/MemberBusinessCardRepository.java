@@ -2,10 +2,14 @@ package server.domain.businessCard.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import server.domain.businessCard.domain.BusinessCard;
 import server.domain.businessCard.domain.MemberBusinessCard;
+import server.domain.businessCard.mapper.BusinessCardMapper;
 import server.domain.businessCard.mapper.MemberBusinessCardMapper;
 
+import java.io.ObjectStreamClass;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -13,6 +17,7 @@ import java.util.Optional;
 public class MemberBusinessCardRepository {
 
     private final MemberBusinessCardMapper memberBusinessCardMapper;
+    private final BusinessCardMapper BusinessCardMapper;
 
 
 
@@ -21,20 +26,26 @@ public class MemberBusinessCardRepository {
         return Optional.ofNullable(memberBusinessCardMapper.findByBusinessCardIdx(businessCardIdx));
     }
 
-    // 특정 회원 ID와 명함 ID로 조회
+
     public Optional<MemberBusinessCard> findByMemberIdxAndBusinessCardIdx(Long memberIdx, Long businessCardIdx) {
-        return Optional.ofNullable(memberBusinessCardMapper.findByMemberIdxAndBusinessCardIdx(memberIdx, businessCardIdx));
+        Map<String, Object> map = Map.of("memberIdx", memberIdx, "businessCardIdx", businessCardIdx);
+        System.out.println("map = " + map);
+        MemberBusinessCard memberBusinessCard = memberBusinessCardMapper.findByMemberIdxAndBusinessCardIdx(map);
+        if (memberBusinessCard != null) {
+            return Optional.of(memberBusinessCard);
+        }
+        return Optional.empty();
     }
 
     // 명함 등록
     public void save(MemberBusinessCard memberBusinessCard) {
         memberBusinessCardMapper.save(memberBusinessCard);
-        System.out.println("MemberBusinessCard ID: " + memberBusinessCard.getIdx()); // 저장 후 idx 확인
     }
 
     // 명함 삭제
-    public void delete(Long idx) {
-        memberBusinessCardMapper.delete(idx);
+    public void delete(Long memberIdx, Long businessCardIdx) {
+        Map<String, Object> map = Map.of("memberIdx", memberIdx, "businessCardIdx", businessCardIdx);
+        memberBusinessCardMapper.delete(map);
     }
 
     // 명함 상태 업데이트
@@ -42,10 +53,11 @@ public class MemberBusinessCardRepository {
         memberBusinessCardMapper.updateStatus(memberBusinessCard);
     }
 
-    public boolean existsMemberBusinessCardByMemberIdx(Long memberIdx) {
-        return memberBusinessCardMapper.findByMemberIdx(memberIdx) != null;
+    public boolean existsByMemberIdxAndBusinessCardIdx(Long idx, Long memberIdx) {
+        Map<String, Object> map = Map.of("idx", idx, "memberIdx", memberIdx);
+        BusinessCard businessCard = BusinessCardMapper.findByIdxAndMemberIdx(map);
+        return businessCard != null;
     }
 
-    // 특정 회원이 특정 명함을 소유하고 있는지 확인
 
 }

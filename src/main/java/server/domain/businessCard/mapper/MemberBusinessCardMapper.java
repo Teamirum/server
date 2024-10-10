@@ -5,6 +5,7 @@ import server.domain.businessCard.domain.BusinessCard;
 import server.domain.businessCard.domain.MemberBusinessCard;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface MemberBusinessCardMapper {
@@ -21,11 +22,12 @@ public interface MemberBusinessCardMapper {
     void save(MemberBusinessCard memberBusinessCard);
 
     // 명함 삭제
-    void delete(Long idx);
+    void delete(Map<String, Object> map);
 
     // 명함 상태 업데이트
     void updateStatus(MemberBusinessCard memberBusinessCard);
 
-    // 특정 회원이 특정 명함을 소유하고 있는지 확인
-    // boolean existsByMemberIdxAndBusinessCardIdx(Long memberIdx, Long businessCardIdx);
+    MemberBusinessCard findByMemberIdxAndBusinessCardIdx(Map<String, Object> map);
+
+
 }

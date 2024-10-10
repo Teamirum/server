@@ -168,6 +168,7 @@ CREATE TABLE `BusinessCard` (
                                 `part` VARCHAR(50),
                                 `position` VARCHAR(100),
                                 `address` VARCHAR(255),
+                                `memo` VARCHAR(255),
                                 PRIMARY KEY (`idx`),
                                 FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE
 );
@@ -217,7 +218,7 @@ CREATE TABLE `Transaction` (
                                `pay_method` ENUM('CARD', 'ACCOUNT') NOT NULL,
                                `amount` INT NOT NULL,
                                `memo` VARCHAR(100),
-                               `category` ENUM('FOOD', 'TRANSPORT', 'ENTERTAINMENT') NOT NULL,
+                               `category` ENUM('FOOD', 'TRANSPORT', 'ENTERTAINMENT', 'UNCATEGORIZED') NOT NULL,
                                `tran_id` VARCHAR(50),
                                PRIMARY KEY (`idx`),
                                FOREIGN KEY (`member_idx`) REFERENCES `Member`(`idx`) ON DELETE CASCADE,

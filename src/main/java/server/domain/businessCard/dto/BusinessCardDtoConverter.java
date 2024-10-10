@@ -11,6 +11,7 @@ public class BusinessCardDtoConverter {
                 .idx(businessCard.getIdx())
                 .name(businessCard.getName())
                 .phoneNumber(businessCard.getPhoneNum())
+                .tel_num(businessCard.getTelNum())
                 .email(businessCard.getEmail())
                 .position(businessCard.getPosition())
                 .part(businessCard.getPart())

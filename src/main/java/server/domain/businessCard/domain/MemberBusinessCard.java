@@ -17,7 +17,11 @@ public class MemberBusinessCard {
 
     private Long businessCardIdx;
 
-    private String status;
+    private Status status;
 
     private String memo;
+
+    public enum Status {
+        OWNER,NOT_OWNER
+    }
 }

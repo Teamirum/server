@@ -11,7 +11,7 @@ public class MemberBusinessCardDtoConverter {
                 .idx(memberBusinessCard.getIdx())
                 .memberIdx(memberBusinessCard.getMemberIdx())
                 .businessCardIdx(memberBusinessCard.getBusinessCardIdx())
-                .status(memberBusinessCard.getStatus())
+                .status(String.valueOf(memberBusinessCard.getStatus()))
                 .memo(memberBusinessCard.getMemo())
                 .build();
     }
