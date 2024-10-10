@@ -15,8 +15,6 @@
         <result property="part" column="part" />
         <result property="position" column="position" />
         <result property="address" column="address" />
-        <result property="memo" column="memo" />
-
     </resultMap>
 
     <!-- Select All BusinessCards by MemberIdx -->
@@ -35,8 +33,8 @@
 
     <!-- insert BusinessCard -->
     <insert id="save" parameterType="server.domain.businessCard.domain.BusinessCard">
-        INSERT INTO BusinessCard (member_idx, name, company, phone_num, email, tel_num, part, position, address, memo)
-        VALUES (#{memberIdx}, #{name}, #{company}, #{phoneNum}, #{email}, #{telNum}, #{part}, #{position}, #{address}, IFNULL(#{memo}, null))
+        INSERT INTO BusinessCard (member_idx, name, company, phone_num, email, tel_num, part, position, address)
+        VALUES (#{memberIdx}, #{name}, #{company}, #{phoneNum}, #{email}, #{telNum}, #{part}, #{position}, #{address})
     </insert>
 
 
@@ -48,7 +46,7 @@
             tel_num = IFNULL(#{telNum}, tel_num),
             part = IFNULL(#{part}, part),
             position = #{position}, address = #{address},
-            part = #{part}, position = #{position}, address = #{address}, memo = IFNULL(#{memo}, memo)
+            part = #{part}, position = #{position}, address = #{address}
         WHERE idx = #{idx} AND member_idx = #{memberIdx}
     </update>
 

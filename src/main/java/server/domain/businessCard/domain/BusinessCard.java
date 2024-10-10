@@ -31,7 +31,4 @@ public class BusinessCard {
 
     private String address;      // 주소
 
-    private String memo;       // QR 코드
-
-
 }

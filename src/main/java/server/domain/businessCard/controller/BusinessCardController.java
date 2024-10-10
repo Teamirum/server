@@ -38,7 +38,7 @@ public class BusinessCardController {
         return ApiResponse.onSuccess(businessCardService.upload(requestDto, loginMemberId));
     }
 
-    @GetMapping("/all")
+    @GetMapping("/myBusinessCard")
     public ApiResponse<?> getBusinessCardList() {
         String loginMemberId = getLoginMemberId();
         log.info("명함 리스트 조회 요청 : loginMemberId = {}", loginMemberId);

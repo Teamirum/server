@@ -99,7 +99,6 @@ public class BusinessCardService {
         businessCard.setPhoneNum(requestDto.getPhoneNum());
         businessCard.setAddress(requestDto.getAddress());
         businessCard.setPart(requestDto.getPart());
-        businessCard.setMemo(requestDto.getMemo());
 
         businessCardRepository.updateBusinessCard(businessCard);
 
@@ -134,7 +133,7 @@ public class BusinessCardService {
                 .memberIdx(businessCard.getMemberIdx())
                 .businessCardIdx(businessCard.getIdx())
                 .status(OWNER)
-                .memo(businessCard.getMemo())
+                .memo("")
                 .build());
     }
 

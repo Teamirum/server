@@ -28,11 +28,11 @@ public class BusinessCardResponseDto {
         public Long idx;
         public String name;
         public String phoneNumber;
+        public String tel_num;
         public String email;
         public String position;
         public String part;
         public String company;
         public String address;
-        public String memo;
     }
 }
