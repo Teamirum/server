@@ -45,10 +45,11 @@ public class StompHandler implements ChannelInterceptor {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         log.info("StompHandler - preSend called. Command: {}", accessor.getCommand());
 
-        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+        if (StompCommand.CONNECT.equals(accessor.getCommand()) || StompCommand.SUBSCRIBE.equals(accessor.getCommand()) || StompCommand.SEND.equals(accessor.getCommand())) {
             // CONNECT 메시지 처리
             List<String> authorizationHeaders = accessor.getNativeHeader("Authorization");
             String authHeader = null;
+            String getMemberId = accessor.getFirstNativeHeader("MemberId");
             if (authorizationHeaders != null && !authorizationHeaders.isEmpty()) {
                 authHeader = authorizationHeaders.get(0).trim();
             }
@@ -57,8 +58,6 @@ public class StompHandler implements ChannelInterceptor {
                     .filter(token -> token.startsWith("Bearer "))
                     .map(token -> token.replace("Bearer ", ""));
 
-            log.info("Stomp Handler : accessToken : {}", accessToken);
-
             if (accessToken.isEmpty()) {
                 log.error("Stomp Handler : 유효하지 않은 토큰입니다.");
                 throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
@@ -66,8 +65,8 @@ public class StompHandler implements ChannelInterceptor {
 
             String memberId = jwtService.extractMemberId(accessToken.get()).orElse(null);
 
-            if (!jwtService.isTokenValid(accessToken.get())) {
-                log.error("Stomp Handler : 유효하지 않은 토큰입니다. memberId : {}", memberId);
+            if (!jwtService.isTokenValid(accessToken.get()) || !memberId.equals(getMemberId)) {
+                log.error("Stomp Handler : 유효하지 않은 토큰입니다. memberId : {}", getMemberId);
                 throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
             }
 
@@ -82,21 +81,14 @@ public class StompHandler implements ChannelInterceptor {
                 }
             });
 
-            log.info("Stomp Handler : CONNECTED. memberId : {}", memberId);
-
-        } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
-            Principal user = accessor.getUser();
-            if (user == null) {
-                log.error("Stomp Handler : 사용자 정보를 찾을 수 없습니다.");
-                throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
-            }
-            log.info("Stomp Handler : SUBSCRIBED. memberId : {}", user.getName());
+            log.info("Stomp Handler : SUCCESS. memberId : {}", memberId);
 
         } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
             // DISCONNECT 메시지 처리
-            Principal principal = accessor.getUser();
-            if (principal != null) {
-                String memberId = principal.getName();
+            String memberId = accessor.getFirstNativeHeader("MemberId");
+            log.info("Stomp Handler : DISCONNECT. memberId : {}", memberId);
+            if (memberId != null) {
+
                 Member member = memberRepository.findByMemberId(memberId)
                         .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 

@@ -187,6 +187,7 @@ public class PayService {
                 .togetherPayCnt(togetherPayList.size())
                 .alonePayCnt(alonePayList.size())
                 .totalCnt(togetherPayList.size() + alonePayList.size())
+                .isSuccess(true)
                 .build();
     }
 

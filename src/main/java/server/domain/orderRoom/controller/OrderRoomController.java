@@ -32,41 +32,35 @@ public class OrderRoomController {
     }
 
     @MessageMapping("/order/room/enter")
-    public void enterOrderRoom(@Payload EnterOrderRoomRequestDto requestDto, Principal principal) {
-        String memberId = principal.getName();
-        log.info("enterOrderRoom : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), memberId);
-        orderRoomService.enterOrderRoom(requestDto.getOrderIdx(), memberId);
+    public void enterOrderRoom(@Payload EnterOrderRoomRequestDto requestDto) {
+        log.info("enterOrderRoom : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
+        orderRoomService.enterOrderRoom(requestDto.getOrderIdx(), requestDto.getMemberId());
     }
 
     @MessageMapping("/order/room/select")
-    public void selectOrderMenu(@Payload SelectMenuRequestDto requestDto, Principal principal) {
-        String memberId = principal.getName();
-        log.info("selectOrderMenu : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), memberId);
-        orderRoomService.selectOrderMenu(requestDto, memberId);
+    public void selectOrderMenu(@Payload SelectMenuRequestDto requestDto) {
+        log.info("selectOrderMenu : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
+        orderRoomService.selectOrderMenu(requestDto, requestDto.getMemberId());
     }
 
     @MessageMapping("/order/room/cancel")
-    public void cancelOrderMenu(@Payload SelectMenuRequestDto requestDto, Principal principal) {
-        String memberId = principal.getName();
-        orderRoomService.cancelOrderMenu(requestDto, memberId);
+    public void cancelOrderMenu(@Payload SelectMenuRequestDto requestDto) {
+        orderRoomService.cancelOrderMenu(requestDto, requestDto.getMemberId());
     }
 
     @MessageMapping("/order/room/price")
-    public void selectPrice(@Payload SelectPriceRequestDto requestDto, Principal principal) {
-        String memberId = principal.getName();
-        orderRoomService.selectPrice(requestDto, memberId);
+    public void selectPrice(@Payload SelectPriceRequestDto requestDto) {
+        orderRoomService.selectPrice(requestDto, requestDto.getMemberId());
     }
 
-    @MessageMapping("/order/room/ready/{orderIdx}")
-    public void readyOrderRoom(@DestinationVariable Long orderIdx, Principal principal) {
-        String memberId = principal.getName();
-        orderRoomService.readyToPay(orderIdx, memberId);
+    @MessageMapping("/order/room/ready")
+    public void readyOrderRoom(@Payload ReadyOrderRoomRequestDto requestDto) {
+        orderRoomService.readyToPay(requestDto.getOrderIdx(), requestDto.getMemberId());
     }
 
     @MessageMapping("/order/room/ready/cancel/{orderIdx}")
-    public void cancelReadyOrderRoom(@DestinationVariable Long orderIdx, Principal principal) {
-        String memberId = principal.getName();
-        orderRoomService.cancelReadyToPay(orderIdx, memberId);
+    public void cancelReadyOrderRoom(@Payload ReadyOrderRoomRequestDto requestDto) {
+        orderRoomService.cancelReadyToPay(requestDto.getOrderIdx(), requestDto.getMemberId());
     }
 
     public String getLoginMemberId() {
