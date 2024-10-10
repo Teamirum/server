@@ -1,12 +1,14 @@
 package server.domain.businessCard.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import server.domain.businessCard.domain.BusinessCard;
 import server.domain.businessCard.domain.MemberBusinessCard;
 import server.domain.businessCard.dto.BusinessCardDtoConverter;
 import server.domain.businessCard.dto.BusinessCardRequestDto;
 import server.domain.businessCard.dto.BusinessCardResponseDto;
+import server.domain.businessCard.dto.MemberBusinessCardResponseDto;
 import server.domain.businessCard.repository.BusinessCardRepository;
 import server.domain.businessCard.repository.MemberBusinessCardRepository;
 import server.domain.member.domain.Member;
@@ -20,6 +22,7 @@ import static server.domain.businessCard.domain.MemberBusinessCard.Status.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BusinessCardService {
 
     private final BusinessCardRepository businessCardRepository;
@@ -154,6 +157,20 @@ public class BusinessCardService {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
         List<BusinessCard> businessCardList = businessCardRepository.findAllFriendBusinessCards(memberIdx);
         return BusinessCardDtoConverter.convertToBusinessCardListResponseDto(businessCardList);
+    }
+
+    public MemberBusinessCardResponseDto.MemberBusinessCardTaskSuccessResponseDto deleteFriendBusinessCard(Long businessCardIdx, String memberId) {
+        log.info("서비스에서 전달된 BusinessCardIdx: {}", businessCardIdx);
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (memberBusinessCardRepository.findByMemberIdxAndBusinessCardIdx(memberIdx, businessCardIdx).isEmpty()) {
+            throw new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND);
+        }
+        memberBusinessCardRepository.delete(memberIdx, businessCardIdx);
+        return MemberBusinessCardResponseDto.MemberBusinessCardTaskSuccessResponseDto.builder()
+                .isSuccess(true)
+                .idx(businessCardIdx)
+                .build();
     }
 
 

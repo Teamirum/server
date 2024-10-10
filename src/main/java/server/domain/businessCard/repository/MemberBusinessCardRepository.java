@@ -26,9 +26,15 @@ public class MemberBusinessCardRepository {
         return Optional.ofNullable(memberBusinessCardMapper.findByBusinessCardIdx(businessCardIdx));
     }
 
-    // 특정 회원 ID와 명함 ID로 조회
+
     public Optional<MemberBusinessCard> findByMemberIdxAndBusinessCardIdx(Long memberIdx, Long businessCardIdx) {
-        return Optional.ofNullable(memberBusinessCardMapper.findByMemberIdxAndBusinessCardIdx(memberIdx, businessCardIdx));
+        Map<String, Object> map = Map.of("memberIdx", memberIdx, "businessCardIdx", businessCardIdx);
+        System.out.println("map = " + map);
+        MemberBusinessCard memberBusinessCard = memberBusinessCardMapper.findByMemberIdxAndBusinessCardIdx(map);
+        if (memberBusinessCard != null) {
+            return Optional.of(memberBusinessCard);
+        }
+        return Optional.empty();
     }
 
     // 명함 등록
@@ -37,8 +43,9 @@ public class MemberBusinessCardRepository {
     }
 
     // 명함 삭제
-    public void delete(Long idx) {
-        memberBusinessCardMapper.delete(idx);
+    public void delete(Long memberIdx, Long businessCardIdx) {
+        Map<String, Object> map = Map.of("memberIdx", memberIdx, "businessCardIdx", businessCardIdx);
+        memberBusinessCardMapper.delete(map);
     }
 
     // 명함 상태 업데이트

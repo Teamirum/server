@@ -162,5 +162,14 @@ public class BusinessCardController {
         return ApiResponse.onSuccess(businessCardService.getFriendBusinessCards(loginMemberId));
     }
 
+    // 친구 명함 삭제
+    @DeleteMapping("/friends")
+    public ApiResponse<?> deleteFriendBusinessCard(@RequestParam("businessCardIdx") Long businessCardIdx) {
+        String loginMemberId = getLoginMemberId();
+        log.info("친구 명함 삭제 요청: BusinessCardIdx = {}, loginMemberId = {}", businessCardIdx, loginMemberId);
+        return ApiResponse.onSuccess( businessCardService.deleteFriendBusinessCard(businessCardIdx, loginMemberId));
+    }
+    
+
 
 }
