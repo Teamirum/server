@@ -71,10 +71,14 @@
     </select>
 
     <select id="findAllFriendBusinessCards" parameterType="Long" resultMap="BusinessCardResultMap">
-        SELECT bc.*
-        FROM BusinessCard bc
-                 JOIN MemberBusinessCard mbc ON bc.idx = mbc.businessCard_idx
-        WHERE mbc.member_idx != #{memberIdx}
+        SELECT b.*
+        FROM BusinessCard b
+        WHERE b.idx IN (
+            SELECT mbc.businessCard_idx
+            FROM MemberBusinessCard mbc
+            WHERE mbc.member_idx = #{memberIdx}
+              AND mbc.status = 'NOT_OWNER'
+        )
     </select>
 
     <select id="findByFriendBusinessCardIdxAndMemberIdx"

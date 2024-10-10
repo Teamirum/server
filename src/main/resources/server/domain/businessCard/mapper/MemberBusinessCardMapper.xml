@@ -61,6 +61,12 @@
           AND mbc.member_idx = #{memberIdx}
           AND mbc.status = 'NOT_OWNER';
     </select>
+    <select id="findByMemberIdxAndStatus" resultMap="MemberBusinessCardResultMap">
+        SELECT *
+        FROM MemberBusinessCard
+        WHERE member_idx = #{memberIdx}
+          AND status = 'NOT_OWNER';
+    </select>
 
 
 </mapper>

@@ -31,4 +31,6 @@ public interface MemberBusinessCardMapper {
 
     MemberBusinessCard findByFriendBusinessCardIdx(Map<String, Object> map);
 
+    MemberBusinessCard findByMemberIdxAndStatus(Long memberIdx);
+
 }

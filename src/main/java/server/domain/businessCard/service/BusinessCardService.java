@@ -154,8 +154,13 @@ public class BusinessCardService {
                 .build());
     }
 
-    public BusinessCardResponseDto.BusinessCardListResponseDto getFriendBusinessCards(String memberId) {
+    public BusinessCardResponseDto.BusinessCardListResponseDto getAllFriendBusinessCards(String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if(!memberBusinessCardRepository.existsByMemberIdxAndStatus(memberIdx)) {
+            throw new ErrorHandler(ErrorStatus.BUSINESS_FRIEND_CARD_NOT_FOUND);
+        }
+
         List<BusinessCard> businessCardList = businessCardRepository.findAllFriendBusinessCards(memberIdx);
         return BusinessCardDtoConverter.convertToBusinessCardListResponseDto(businessCardList);
     }

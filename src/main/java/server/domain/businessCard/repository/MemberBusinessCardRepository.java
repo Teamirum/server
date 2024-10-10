@@ -65,4 +65,9 @@ public class MemberBusinessCardRepository {
         return memberBusinessCard != null;
     }
 
+    public boolean existsByMemberIdxAndStatus(Long memberIdx) {
+        MemberBusinessCard memberBusinessCard = memberBusinessCardMapper.findByMemberIdxAndStatus(memberIdx);
+        return memberBusinessCard!=null;
+    }
+
 }

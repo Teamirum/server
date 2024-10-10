@@ -160,7 +160,7 @@ public class BusinessCardController {
     public ApiResponse<?> getFriendBusinessCardList() {
         String loginMemberId = getLoginMemberId();
         log.info("친구 명함 목록 조회 요청: loginMemberId = {}", loginMemberId);
-        return ApiResponse.onSuccess(businessCardService.getFriendBusinessCards(loginMemberId));
+        return ApiResponse.onSuccess(businessCardService.getAllFriendBusinessCards(loginMemberId));
     }
 
     // 친구 명함 삭제
