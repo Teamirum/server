@@ -109,10 +109,10 @@ public class CreditService {
 
 
     @Transactional
-    public void uploadCreditHistory(Credit credit, Integer amount, String name) {
+    public void uploadCreditHistory(Credit credit, int amount, String name) {
 
 
-        Integer creditAmountSum = credit.getAmountSum() + amount;
+        int creditAmountSum = credit.getAmountSum() + amount;
         // 카드 결제내역
         creditHistoryRespository.save(CreditHistory.builder()
                 .creditIdx(credit.getIdx())
@@ -135,8 +135,10 @@ public class CreditService {
                 .build());
     }
 
-    public void payWithCredit(Credit credit, int price) {
+    @Transactional
+    public void payWithCredit(Credit credit, int price, String name) {
         creditRepository.payPrice(credit.getIdx(), price + credit.getAmountSum());
+        uploadCreditHistory(credit, price, name);
     }
 
     public boolean isAbleToUseCredit(Credit credit) {

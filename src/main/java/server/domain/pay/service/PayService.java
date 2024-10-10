@@ -56,13 +56,13 @@ public class PayService {
         if (requestDto.getPayMethod().equals("CREDIT")) {
             Credit credit = creditService.getCreditByIdx(requestDto.getCreditIdx());
             if (creditService.isAbleToUseCredit(credit)) {
-                creditService.payWithCredit(credit, togetherOrder.getPrice());
+                creditService.payWithCredit(credit, togetherOrder.getPrice(), order.getName());
             }
             Pay pay = Pay.builder()
                     .orderIdx(order.getIdx())
                     .memberIdx(member.getIdx())
                     .creditIdx(requestDto.getCreditIdx())
-                    .price(order.getTotalPrice())
+                    .price(togetherOrder.getPrice())
                     .tid("TOGETHER" + order.getIdx() + member.getIdx())
                     .payMethod(PayMethod.fromName(requestDto.getPayMethod()))
                     .payType(PayType.TOGETHER)
@@ -111,7 +111,7 @@ public class PayService {
         if (requestDto.getPayMethod().equals("CREDIT")) {
             Credit credit = creditService.getCreditByIdx(requestDto.getCreditIdx());
             if (creditService.isAbleToUseCredit(credit)) {
-                creditService.payWithCredit(credit, order.getTotalPrice());
+                creditService.payWithCredit(credit, order.getTotalPrice(), order.getName());
             }
             Pay pay = Pay.builder()
                     .orderIdx(order.getIdx())

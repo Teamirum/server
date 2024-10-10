@@ -22,8 +22,8 @@ public class CreditRepository {
         creditMapper.save(credit);
     }
 
-    public void payPrice(Long creditIdx, int amountSum) {
-        Map<String, Object> map = Map.of("creditIdx", creditIdx, "amountSum", amountSum);
+    public void payPrice(Long idx, int amountSum) {
+        Map<String, Object> map = Map.of("idx", idx, "amountSum", amountSum);
         creditMapper.payPrice(map);
     }
 
