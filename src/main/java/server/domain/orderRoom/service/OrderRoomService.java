@@ -185,8 +185,7 @@ public class OrderRoomService {
             redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_NOT_FOUND));
             return;
         }
-        OrderRoom orderRoom = redisRepository.selectMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice());
-
+        OrderRoom orderRoom = redisRepository.selectMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice() * requestDto.getAmount(), channelTopic);
 
         log.info("{} 님이 주문방에 메뉴를 선택하였습니다. 주문방 ID : {}, 메뉴 이름 : {}", memberId, requestDto.getOrderIdx(), requestDto.getMenuName());
         OrderRoomMenuSelectionResponseDto menuSelect = OrderRoomMenuSelectionResponseDto.builder()
@@ -247,9 +246,10 @@ public class OrderRoomService {
                 redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_PRICE_NOT_VALID));
                 return;
             }
+            log.info("{} 님. 함께 결제 주문정보 저장 주문방 ID : {}, 금액 : {}", memberId, requestDto.getOrderIdx(), memberPriceInfo.getPrice());
             TogetherOrder togetherOrder = TogetherOrder.builder()
                     .orderIdx(order.getIdx())
-                    .memberIdx(member.getIdx())
+                    .memberIdx(memberPriceInfo.getMemberIdx())
                     .price(memberPriceInfo.getPrice())
                     .createdAt(LocalDateTime.now())
                     .build();
@@ -303,7 +303,7 @@ public class OrderRoomService {
     @Transactional
     public void readyToPay(Long orderIdx, String memberId) {
         Member member = getMemberById(memberId);
-        ChannelTopic channelTopic = redisRepository.getTopic(orderIdx.toString());
+        ChannelTopic channelTopic = redisRepository.getTopic(orderIdx + "");
         if (channelTopic == null) {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND);
         }
@@ -316,7 +316,7 @@ public class OrderRoomService {
             redisPublisher.publish(channelTopic, new ErrorResponseDto(null, orderIdx, ErrorStatus.ORDER_NOT_FOUND));
             return;
         }
-        OrderRoom orderRoom = redisRepository.readyToPay(orderIdx);
+        OrderRoom orderRoom = redisRepository.readyToPay(orderIdx, member.getIdx(), channelTopic);
         log.info("{} 님이 주문방에 결제 준비를 하였습니다. 주문방 ID : {}", memberId, orderIdx);
         OrderRoomReadyToPayResponseDto readyToPay = OrderRoomReadyToPayResponseDto.builder()
                 .orderIdx(orderIdx)
@@ -356,7 +356,7 @@ public class OrderRoomService {
             redisPublisher.publish(channelTopic, new ErrorResponseDto(null, orderIdx, ErrorStatus.ORDER_NOT_FOUND));
             return;
         }
-        OrderRoom orderRoom = redisRepository.cancelReadyToPay(orderIdx);
+        OrderRoom orderRoom = redisRepository.cancelReadyToPay(orderIdx, member.getIdx(), channelTopic);
         log.info("{} 님이 주문방에 결제 준비를 취소하였습니다. 주문방 ID : {}", memberId, orderIdx);
         OrderRoomReadyToPayResponseDto cancelReadyToPay = OrderRoomReadyToPayResponseDto.builder()
                 .orderIdx(orderIdx)
@@ -422,6 +422,7 @@ public class OrderRoomService {
                 .totalPrice(orderRoom.getTotalPrice())
                 .currentPrice(orderRoom.getCurrentPrice())
                 .maxMemberCnt(orderRoom.getMaxMemberCnt())
+                .canStartToPay(orderRoom.getTotalPrice() == orderRoom.getCurrentPrice())
                 .type("START_PAY")
                 .build();
 

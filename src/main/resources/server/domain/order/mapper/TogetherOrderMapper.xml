@@ -8,15 +8,16 @@
         <id property="idx" column="idx" />
         <result property="orderIdx" column="order_idx" />
         <result property="memberIdx" column="member_idx" />
+        <result property="price" column="price" />
         <result property="createdAt" column="created_at" />
     </resultMap>
 
     <!-- save TogetherOrder -->
     <insert id="save" parameterType="server.domain.order.domain.TogetherOrder">
         INSERT INTO TogetherOrder (
-            order_idx, member_idx, created_at
+            order_idx, member_idx, price, created_at
         ) VALUES (
-            #{orderIdx}, #{memberIdx}, #{createdAt}
+            #{orderIdx}, #{memberIdx}, #{price}, #{createdAt}
         )
     </insert>
 

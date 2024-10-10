@@ -105,6 +105,7 @@ CREATE TABLE `Order` (
 CREATE TABLE `TogetherOrder` (
                                  `idx` BIGINT AUTO_INCREMENT NOT NULL,
                                  `order_idx` BIGINT NOT NULL,
+                                `price` INT NOT NULL,
                                  `member_idx` BIGINT NOT NULL,
                                  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                  PRIMARY KEY (`idx`),

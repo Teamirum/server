@@ -149,8 +149,10 @@ public class OrderRoomResponseDto {
         private String code;
         private String message;
         private String type;
+        private Boolean isSuccess = false;
 
         public ErrorResponseDto(Long memberIdx, Long orderIdx, ErrorStatus errorStatus) {
+            this.memberIdx = memberIdx;
             this.orderIdx = orderIdx;
             this.status = errorStatus.getHttpStatus().toString();
             this.code = errorStatus.getCode();
@@ -160,12 +162,14 @@ public class OrderRoomResponseDto {
 
         @Override
         public String toString() {
-            return "ErrorResponseDto{" +
-                    "orderIdx=" + orderIdx +
-                    ", status='" + status + '\'' +
-                    ", code='" + code + '\'' +
-                    ", message='" + message + '\'' +
-                    '}';
+            return "{" +
+                    "\"memberIdx\" : " + memberIdx +
+                    "\"orderIdx\" : " + orderIdx +
+                    "\"isSuccess\" : \"" + isSuccess + "\"" +
+                    ", status: \"" + status + "\"" +
+                    ", code: \"" + code + "\"" +
+                    ", message: \"" + message + "\"" +
+                    "}";
         }
     }
 

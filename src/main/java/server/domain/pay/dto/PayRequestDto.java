@@ -13,21 +13,18 @@ public class PayRequestDto {
         Long accountIdx;
         Long creditIdx;
         String payMethod;
-        String payType;
 
         @JsonCreator
         public StartPayRequestDto(
                 @JsonProperty("orderIdx") Long orderIdx,
                 @JsonProperty("accountIdx") Long accountIdx,
                 @JsonProperty("creditIdx") Long creditIdx,
-                @JsonProperty("payMethod") String payMethod,
-                @JsonProperty("payType") String payType
+                @JsonProperty("payMethod") String payMethod
         ) {
             this.orderIdx = orderIdx;
             this.accountIdx = accountIdx;
             this.creditIdx = creditIdx;
             this.payMethod = payMethod;
-            this.payType = payType;
         }
     }
 }

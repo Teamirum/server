@@ -110,6 +110,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ORDER_MENU_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5002", "메뉴 저장에 실패하였습니다."),
     //결제 응답
     PAY_METHOD_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAY4001", "올바르지 않은 결제 방식입니다."),
+    PAY_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "PAY4002", "올바르지 않은 결제 타입입니다."),
 
     PAY_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "PAY5001", "결제 저장에 실패하였습니다."),
 
