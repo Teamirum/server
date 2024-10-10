@@ -72,5 +72,13 @@
         WHERE idx = #{idx}
     </select>
 
+    <select id="findAllFriendBusinessCards" parameterType="Long" resultMap="BusinessCardResultMap">
+        SELECT bc.*
+        FROM BusinessCard bc
+                 JOIN MemberBusinessCard mbc ON bc.idx = mbc.businessCard_idx
+        WHERE mbc.member_idx != #{memberIdx}
+    </select>
+
+
 
 </mapper>

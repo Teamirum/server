@@ -154,4 +154,13 @@ public class BusinessCardController {
         return ApiResponse.onSuccess(businessCard);
     }
 
+    //모든 친구 명함 조회
+    @GetMapping("/friends")
+    public ApiResponse<?> getFriendBusinessCardList() {
+        String loginMemberId = getLoginMemberId();
+        log.info("친구 명함 목록 조회 요청: loginMemberId = {}", loginMemberId);
+        return ApiResponse.onSuccess(businessCardService.getFriendBusinessCards(loginMemberId));
+    }
+
+
 }

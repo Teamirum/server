@@ -60,6 +60,10 @@ public class BusinessCardRepository {
         return businessCard != null;
     }
 
+    public List<BusinessCard> findAllFriendBusinessCards(Long memberIdx) {
+        return businessCardMapper.findAllFriendBusinessCards(memberIdx);
+    }
+
 
 
 
