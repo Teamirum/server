@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import server.domain.order.domain.TogetherOrder;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface TogetherOrderMapper {
@@ -14,7 +15,7 @@ public interface TogetherOrderMapper {
 
     List<TogetherOrder> findByMemberIdx(Long memberIdx);
 
-    TogetherOrder findByMemberIdxAndOrderIdx(Long memberIdx, Long orderIdx);
+    TogetherOrder findByMemberIdxAndOrderIdx(Map<String, Object> map);
 
     void deleteByOrderIdx(Long orderIdx);
 

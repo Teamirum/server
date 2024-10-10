@@ -6,6 +6,7 @@ import server.domain.order.domain.TogetherOrder;
 import server.domain.order.mapper.TogetherOrderMapper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -27,7 +28,8 @@ public class TogetherOrderRepository {
     }
 
     public Optional<TogetherOrder> findByMemberIdxAndOrderIdx(Long memberIdx, Long orderIdx) {
-        TogetherOrder togetherOrder = togetherOrderMapper.findByMemberIdxAndOrderIdx(memberIdx, orderIdx);
+        Map<String, Object> map = Map.of("memberIdx", memberIdx, "orderIdx", orderIdx);
+        TogetherOrder togetherOrder = togetherOrderMapper.findByMemberIdxAndOrderIdx(map);
         if (togetherOrder != null) {
             return Optional.of(togetherOrder);
         }

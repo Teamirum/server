@@ -140,17 +140,17 @@ public class CreditService {
     }
 
     public boolean isAbleToUseCredit(Credit credit) {
-        LocalDateTime expirationDate;
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // 문자열 형식에 맞게 조정
-            expirationDate = LocalDateTime.parse(credit.getExpirationDate(), formatter);
-        } catch (DateTimeParseException e) {
-            throw new ErrorHandler(ErrorStatus.CREDIT_EXPIRATION_DATE_FORMAT_ERROR);
-        }
-
-        if (expirationDate.isBefore(LocalDateTime.now())) {
-            throw new ErrorHandler(ErrorStatus.CREDIT_CARD_EXPIRED);
-        }
+//        LocalDateTime expirationDate;
+//        try {
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // 문자열 형식에 맞게 조정
+//            expirationDate = LocalDateTime.parse(credit.getExpirationDate(), formatter);
+//        } catch (DateTimeParseException e) {
+//            throw new ErrorHandler(ErrorStatus.CREDIT_EXPIRATION_DATE_FORMAT_ERROR);
+//        }
+//
+//        if (expirationDate.isBefore(LocalDateTime.now())) {
+//            throw new ErrorHandler(ErrorStatus.CREDIT_CARD_EXPIRED);
+//        }
         return true;
     }
 

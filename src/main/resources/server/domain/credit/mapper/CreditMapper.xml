@@ -86,6 +86,12 @@
         WHERE member_idx = #{memberIdx} AND credit_number = #{creditNumber}
     </select>
 
+    <select id="payPrice" parameterType="map" resultMap="CreditResultMap">
+        UPDATE Credit
+        SET amount_sum = #{amountSum}
+        WHERE idx = #{idx}
+    </select>
+
 
 
 

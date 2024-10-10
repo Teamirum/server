@@ -63,7 +63,7 @@ public class PayService {
                     .memberIdx(member.getIdx())
                     .creditIdx(requestDto.getCreditIdx())
                     .price(order.getTotalPrice())
-                    .tid(order.getIdx() + " " + member.getIdx())
+                    .tid("TOGETHER" + order.getIdx() + member.getIdx())
                     .payMethod(PayMethod.fromName(requestDto.getPayMethod()))
                     .payType(PayType.TOGETHER)
                     .payStatus(PayStatus.ACCEPT)
@@ -72,9 +72,9 @@ public class PayService {
                     .build();
             payRepository.save(pay);
 
-            payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            Pay savedPay = payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
 
-            return PayDtoConverter.convertToPaySuccessResponseDto(pay, credit.getCreditName(), credit.getCreditNumber());
+            return PayDtoConverter.convertToPaySuccessResponseDto(savedPay, credit.getCreditName(), credit.getCreditNumber());
         }
 
         else if (requestDto.getPayMethod().equals("ACCOUNT")) {
@@ -87,7 +87,7 @@ public class PayService {
                     .memberIdx(member.getIdx())
                     .accountIdx(requestDto.getAccountIdx())
                     .price(order.getTotalPrice())
-                    .tid(order.getIdx() + " " + member.getIdx())
+                    .tid("ALONE" + order.getIdx() + member.getIdx())
                     .payMethod(PayMethod.fromName(requestDto.getPayMethod()))
                     .payType(PayType.TOGETHER)
                     .payStatus(PayStatus.ACCEPT)
@@ -96,9 +96,9 @@ public class PayService {
                     .build();
             payRepository.save(pay);
 
-            payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            Pay savedPay = payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
 
-            return PayDtoConverter.convertToPaySuccessResponseDto(pay, account.getBankName(), account.getAccountNumber());
+            return PayDtoConverter.convertToPaySuccessResponseDto(savedPay, account.getBankName(), account.getAccountNumber());
         }
         throw new ErrorHandler(ErrorStatus.PAY_METHOD_NOT_FOUND);
 
@@ -127,9 +127,9 @@ public class PayService {
                     .build();
             payRepository.save(pay);
 
-            payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            Pay savedPay = payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
 
-            return PayDtoConverter.convertToPaySuccessResponseDto(pay, credit.getCreditName(), credit.getCreditNumber());
+            return PayDtoConverter.convertToPaySuccessResponseDto(savedPay, credit.getCreditName(), credit.getCreditNumber());
         } else if (requestDto.getPayMethod().equals("ACCOUNT")) {
             Account account = accountService.getAccountByIdx(requestDto.getAccountIdx());
             if (accountService.isAbleToUseAccount(account, order.getTotalPrice())) {
@@ -149,9 +149,9 @@ public class PayService {
                     .build();
             payRepository.save(pay);
 
-            payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
+            Pay savedPay = payRepository.findByOrderIdxAndMemberIdx(order.getIdx(), member.getIdx()).orElseThrow(() -> new ErrorHandler(ErrorStatus.PAY_SAVE_FAIL));
 
-            return PayDtoConverter.convertToPaySuccessResponseDto(pay, account.getBankName(), account.getAccountNumber());
+            return PayDtoConverter.convertToPaySuccessResponseDto(savedPay, account.getBankName(), account.getAccountNumber());
         }
         throw new ErrorHandler(ErrorStatus.PAY_METHOD_NOT_FOUND);
     }
