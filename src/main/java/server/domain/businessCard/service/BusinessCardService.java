@@ -109,11 +109,11 @@ public class BusinessCardService {
                 .build();
     }
 
-    public BusinessCard getBusinessCard(Long idx, String loginMemberId) {
-        Long memberIdx = memberRepository.getIdxByMemberId(loginMemberId)
+    public BusinessCard getBusinessCard(Long businessCardIdx, String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(idx)
+        BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(memberIdx)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
 
         return businessCard;
@@ -171,6 +171,12 @@ public class BusinessCardService {
                 .isSuccess(true)
                 .idx(businessCardIdx)
                 .build();
+    }
+
+    public BusinessCardResponseDto.BusinessCardListResponseDto getFriendBusinessCard(Long businessCardIdx) {
+        BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(businessCardIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
+        return BusinessCardDtoConverter.convertToBusinessCardListResponseDto(List.of(businessCard));
     }
 
 

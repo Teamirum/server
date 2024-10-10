@@ -155,7 +155,7 @@ public class BusinessCardController {
     }
 
     //모든 친구 명함 조회
-    @GetMapping("/friends")
+    @GetMapping("/friends/all")
     public ApiResponse<?> getFriendBusinessCardList() {
         String loginMemberId = getLoginMemberId();
         log.info("친구 명함 목록 조회 요청: loginMemberId = {}", loginMemberId);
@@ -169,7 +169,14 @@ public class BusinessCardController {
         log.info("친구 명함 삭제 요청: BusinessCardIdx = {}, loginMemberId = {}", businessCardIdx, loginMemberId);
         return ApiResponse.onSuccess( businessCardService.deleteFriendBusinessCard(businessCardIdx, loginMemberId));
     }
-    
+
+    // 특정 친구 명함 조회
+    @GetMapping("/friends")
+    public ApiResponse<?> getFriendBusinessCard(@RequestParam("businessCardIdx") Long businessCardIdx) {
+        String loginMemberId = getLoginMemberId();
+        log.info("친구 명함 조회 요청: BusinessCardIdx = {}, loginMemberId = {}", businessCardIdx, loginMemberId);
+        return ApiResponse.onSuccess(businessCardService.getFriendBusinessCard(businessCardIdx));
+    }
 
 
 }
