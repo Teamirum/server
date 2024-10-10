@@ -109,13 +109,13 @@ public class BusinessCardService {
     }
 
 
+    // 친구 QR 등록시 사용
     public BusinessCard getBusinessCard(Long idx, String loginMemberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(loginMemberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(idx)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
-
 
         return businessCard;
     }
@@ -174,9 +174,17 @@ public class BusinessCardService {
                 .build();
     }
 
-    public BusinessCardResponseDto.BusinessCardListResponseDto getFriendBusinessCard(Long businessCardIdx) {
+    // 특정 businessCardIdx와 memberId를 통해 명함 조회
+    public BusinessCardResponseDto.BusinessCardListResponseDto getFriendBusinessCard(Long businessCardIdx, String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(businessCardIdx)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
+
+        if (!memberBusinessCardRepository.existsFriendBusinessCardIdx(businessCardIdx, memberIdx)) {
+            throw new ErrorHandler(ErrorStatus.BUSINESS_FRIEND_CARD_NOT_FOUND);
+        }
+
         return BusinessCardDtoConverter.convertToBusinessCardListResponseDto(List.of(businessCard));
     }
 

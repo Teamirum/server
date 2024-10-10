@@ -64,7 +64,4 @@ public class BusinessCardRepository {
         return businessCardMapper.findAllFriendBusinessCards(memberIdx);
     }
 
-
-
-
 }

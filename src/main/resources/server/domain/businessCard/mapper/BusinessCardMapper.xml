@@ -77,6 +77,9 @@
         WHERE mbc.member_idx != #{memberIdx}
     </select>
 
+    <select id="findByFriendBusinessCardIdxAndMemberIdx"
+            parameterType="map" resultMap="BusinessCardResultMap">
 
+    </select>
 
 </mapper>

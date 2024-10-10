@@ -29,5 +29,6 @@ public interface MemberBusinessCardMapper {
 
     MemberBusinessCard findByMemberIdxAndBusinessCardIdx(Map<String, Object> map);
 
+    MemberBusinessCard findByFriendBusinessCardIdx(Map<String, Object> map);
 
 }

@@ -38,6 +38,7 @@ public class BusinessCardController {
         return ApiResponse.onSuccess(businessCardService.upload(requestDto, loginMemberId));
     }
 
+    // 내 명함 조회
     @GetMapping("/myBusinessCard")
     public ApiResponse<?> getBusinessCardList() {
         String loginMemberId = getLoginMemberId();
@@ -175,7 +176,7 @@ public class BusinessCardController {
     public ApiResponse<?> getFriendBusinessCard(@RequestParam("businessCardIdx") Long businessCardIdx) {
         String loginMemberId = getLoginMemberId();
         log.info("친구 명함 조회 요청: BusinessCardIdx = {}, loginMemberId = {}", businessCardIdx, loginMemberId);
-        return ApiResponse.onSuccess(businessCardService.getFriendBusinessCard(businessCardIdx));
+        return ApiResponse.onSuccess(businessCardService.getFriendBusinessCard(businessCardIdx, loginMemberId));
     }
 
 

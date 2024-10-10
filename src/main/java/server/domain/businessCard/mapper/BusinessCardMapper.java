@@ -24,4 +24,7 @@ public interface BusinessCardMapper {
     BusinessCard findByIdxAndMemberIdx(Map<String, Object> map);
 
     List<BusinessCard> findAllFriendBusinessCards(Long memberIdx);
+
+
+
 }
