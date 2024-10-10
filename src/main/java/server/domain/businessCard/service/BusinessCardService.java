@@ -108,12 +108,14 @@ public class BusinessCardService {
                 .build();
     }
 
-    public BusinessCard getBusinessCard(Long businessCardIdx, String memberId) {
-        Long memberIdx = memberRepository.getIdxByMemberId(memberId)
+
+    public BusinessCard getBusinessCard(Long idx, String loginMemberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(loginMemberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(memberIdx)
+        BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(idx)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
+
 
         return businessCard;
     }
