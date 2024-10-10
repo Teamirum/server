@@ -54,7 +54,7 @@
     <!-- delete BusinessCard -->
     <delete id="delete" parameterType="Long">
         DELETE FROM BusinessCard
-        WHERE idx = #{idx}
+        WHERE member_idx = #{memberIdx}
     </delete>
 
     <!-- get BusinessCard by Idx And MemberIdx -->

@@ -45,8 +45,8 @@ public class BusinessCardRepository {
         System.out.println("BusinessCard ID: " + businessCard.getIdx()); // 저장 후 idx 값 확인
     }
 
-    public void delete(Long idx) {
-        businessCardMapper.delete(idx);
+    public void delete(Long memberIdx) {
+        businessCardMapper.delete(memberIdx);
     }
 
     public BusinessCard updateBusinessCard(BusinessCard businessCard) {

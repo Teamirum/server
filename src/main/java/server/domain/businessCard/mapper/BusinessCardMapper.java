@@ -17,7 +17,7 @@ public interface BusinessCardMapper {
 
     void save(BusinessCard businessCard);
 
-    void delete(Long idx);
+    void delete(Long memberIdx);
 
     void updateBusinessCard(BusinessCard businessCard);
 

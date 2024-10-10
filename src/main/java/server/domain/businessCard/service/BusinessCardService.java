@@ -70,14 +70,22 @@ public class BusinessCardService {
         return BusinessCardDtoConverter.convertToBusinessCardListResponseDto(businessCardList);
     }
 
-    public BusinessCardResponseDto.BusinessCardTaskSuccessResponseDto delete(Long idx, String memberId) {
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        if (businessCardRepository.findByBusinessCardIdx(idx).isEmpty()) {
+    public BusinessCardResponseDto.BusinessCardTaskSuccessResponseDto delete(String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (businessCardRepository.findByMemberIdx(memberIdx).isEmpty()) {
             throw new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND);
         }
-        businessCardRepository.delete(idx);
+
+        BusinessCard businessCard = businessCardRepository.findByMemberIdx(memberIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
+
+
+        businessCardRepository.delete(memberIdx);
+
         return BusinessCardResponseDto.BusinessCardTaskSuccessResponseDto.builder()
                 .isSuccess(true)
+                .idx(businessCard.getIdx())
                 .build();
     }
 
@@ -172,6 +180,9 @@ public class BusinessCardService {
         if (memberBusinessCardRepository.findByMemberIdxAndBusinessCardIdx(memberIdx, businessCardIdx).isEmpty()) {
             throw new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND);
         }
+
+
+
         memberBusinessCardRepository.delete(memberIdx, businessCardIdx);
         return MemberBusinessCardResponseDto.MemberBusinessCardTaskSuccessResponseDto.builder()
                 .isSuccess(true)

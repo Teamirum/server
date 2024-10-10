@@ -47,10 +47,10 @@ public class BusinessCardController {
     }
 
     @DeleteMapping
-    public ApiResponse<?> deleteBusinessCard(@RequestParam(value = "idx") Long idx) {
+    public ApiResponse<?> deleteBusinessCard() {
         String loginMemberId = getLoginMemberId();
-        log.info("명함 삭제 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
-        return ApiResponse.onSuccess(businessCardService.delete(idx, loginMemberId));
+        log.info("명함 삭제 요청 : loginMemberId = {}, idx = {}", loginMemberId);
+        return ApiResponse.onSuccess(businessCardService.delete(loginMemberId));
     }
 
     @PatchMapping
