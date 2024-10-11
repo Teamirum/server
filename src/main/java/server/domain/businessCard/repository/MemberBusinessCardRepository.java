@@ -49,8 +49,8 @@ public class MemberBusinessCardRepository {
     }
 
     // 명함 상태 업데이트
-    public void updateStatus(MemberBusinessCard memberBusinessCard) {
-        memberBusinessCardMapper.updateStatus(memberBusinessCard);
+    public void update(MemberBusinessCard memberBusinessCard) {
+        memberBusinessCardMapper.update(memberBusinessCard);
     }
 
     public boolean existsByMemberIdxAndBusinessCardIdx(Long idx, Long memberIdx) {
@@ -59,5 +59,15 @@ public class MemberBusinessCardRepository {
         return businessCard != null;
     }
 
+    public boolean existsFriendBusinessCardIdx(Long businessCardIdx, Long memberIdx) {
+        Map<String, Object> map = Map.of("memberIdx", memberIdx, "businessCardIdx", businessCardIdx);
+        MemberBusinessCard memberBusinessCard = memberBusinessCardMapper.findByFriendBusinessCardIdx(map);
+        return memberBusinessCard != null;
+    }
+
+    public boolean existsByMemberIdxAndStatus(Long memberIdx) {
+        MemberBusinessCard memberBusinessCard = memberBusinessCardMapper.findByMemberIdxAndStatus(memberIdx);
+        return memberBusinessCard!=null;
+    }
 
 }

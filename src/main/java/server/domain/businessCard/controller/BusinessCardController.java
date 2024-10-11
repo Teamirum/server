@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import server.domain.businessCard.domain.BusinessCard;
 import server.domain.businessCard.dto.BusinessCardRequestDto;
 import server.domain.businessCard.dto.BusinessCardResponseDto;
+import server.domain.businessCard.dto.MemberBusinessCardRequestDto;
 import server.domain.businessCard.service.BusinessCardService;
 import server.domain.businessCard.service.QRCodeService;
 import server.global.apiPayload.ApiResponse;
@@ -15,6 +16,8 @@ import server.global.apiPayload.exception.handler.ErrorHandler;
 import server.global.util.SecurityUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @RestController
@@ -38,6 +41,7 @@ public class BusinessCardController {
         return ApiResponse.onSuccess(businessCardService.upload(requestDto, loginMemberId));
     }
 
+    // 내 명함 조회
     @GetMapping("/myBusinessCard")
     public ApiResponse<?> getBusinessCardList() {
         String loginMemberId = getLoginMemberId();
@@ -46,10 +50,10 @@ public class BusinessCardController {
     }
 
     @DeleteMapping
-    public ApiResponse<?> deleteBusinessCard(@RequestParam(value = "idx") Long idx) {
+    public ApiResponse<?> deleteBusinessCard() {
         String loginMemberId = getLoginMemberId();
-        log.info("명함 삭제 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
-        return ApiResponse.onSuccess(businessCardService.delete(idx, loginMemberId));
+        log.info("명함 삭제 요청 : loginMemberId = {}, idx = {}", loginMemberId);
+        return ApiResponse.onSuccess(businessCardService.delete(loginMemberId));
     }
 
     @PatchMapping
@@ -62,34 +66,36 @@ public class BusinessCardController {
 
         // 명함 정보 업데이트
         businessCardService.update(requestDto, loginMemberId);
+
         // 수정된 명함 정보를 가져옴
         BusinessCard updatedCard = businessCardService.getBusinessCard(idx, loginMemberId);
 
-        // 수정된 정보로 QR 코드 데이터를 JSON 형식으로 구조화
-        String qrCodeData = String.format(
+        // 수정된 정보로 QR 코드 데이터를 JSON 형식으로 구조화할 때 UTF-8 인코딩 적용
+        String qrCodeData = new String(String.format(
                 "{\"name\":\"%s\", \"phone\":\"%s\", \"email\":\"%s\", \"position\":\"%s\", \"part\":\"%s\", \"company\":\"%s\", \"address\":\"%s\"}",
-                updatedCard.getName(),
-                updatedCard.getPhoneNum(),
-                updatedCard.getEmail(),
-                updatedCard.getPosition(),
-                updatedCard.getPart(),
-                updatedCard.getCompany(),
-                updatedCard.getAddress()
-        );
+                requestDto.getName(),
+                requestDto.getPhoneNum(),
+                requestDto.getEmail(),
+                requestDto.getPosition(),
+                requestDto.getPart(),
+                requestDto.getCompany(),
+                requestDto.getAddress()
+        ).getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
 
         try {
-            // QR 코드 이미지 생성
+            // UTF-8로 인코딩된 데이터를 그대로 사용하여 QR 코드 생성
             ByteArrayOutputStream outputStream = qrCodeService.generateQRCode(qrCodeData);
 
             // ByteArrayOutputStream을 Base64로 변환
             String qrCodeBase64 = Base64.getEncoder().encodeToString(outputStream.toByteArray());
 
-            return ApiResponse.onSuccess(qrCodeBase64);  // 업데이트된 QR 코드 반환
+            return ApiResponse.onSuccess(qrCodeBase64);
         } catch (Exception e) {
             log.error("QR 코드 생성 중 오류 발생", e);
             return ApiResponse.onFailure("QR_CODE_GENERATION_ERROR", "QR 코드 생성에 실패했습니다.", null);
         }
     }
+
 
     @GetMapping
     public ApiResponse<?> getBusinessCard(@RequestParam(value = "idx") Long idx) {
@@ -108,7 +114,7 @@ public class BusinessCardController {
 
 
         // QR 코드 데이터를 JSON 형식으로 구조화
-        String qrCodeData = String.format(
+        String qrCodeData = new String(String.format(
                 "{\"name\":\"%s\", \"phone\":\"%s\", \"email\":\"%s\", \"position\":\"%s\", \"part\":\"%s\", \"company\":\"%s\", \"address\":\"%s\"}",
                 requestDto.getName(),
                 requestDto.getPhoneNum(),
@@ -117,7 +123,7 @@ public class BusinessCardController {
                 requestDto.getPart(),
                 requestDto.getCompany(),
                 requestDto.getAddress()
-        );
+        ).getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
 
         try {
             // QR 코드 이미지 생성
@@ -131,7 +137,8 @@ public class BusinessCardController {
 
             //MemberBusinessCard 테이블에 저장
             businessCardService.uploadMemberBusinessCard(businessCard);
-
+            log.info("QR 코드 데이터 인코딩 전: {}", qrCodeData);
+            log.info("QR 코드 데이터 인코딩 후: {}", qrCodeBase64);
             return ApiResponse.onSuccess(qrCodeBase64);
         } catch (Exception e) {
             log.error("QR 코드 생성 중 오류 발생", e);
@@ -159,7 +166,7 @@ public class BusinessCardController {
     public ApiResponse<?> getFriendBusinessCardList() {
         String loginMemberId = getLoginMemberId();
         log.info("친구 명함 목록 조회 요청: loginMemberId = {}", loginMemberId);
-        return ApiResponse.onSuccess(businessCardService.getFriendBusinessCards(loginMemberId));
+        return ApiResponse.onSuccess(businessCardService.getAllFriendBusinessCards(loginMemberId));
     }
 
     // 친구 명함 삭제
@@ -175,7 +182,17 @@ public class BusinessCardController {
     public ApiResponse<?> getFriendBusinessCard(@RequestParam("businessCardIdx") Long businessCardIdx) {
         String loginMemberId = getLoginMemberId();
         log.info("친구 명함 조회 요청: BusinessCardIdx = {}, loginMemberId = {}", businessCardIdx, loginMemberId);
-        return ApiResponse.onSuccess(businessCardService.getFriendBusinessCard(businessCardIdx));
+        return ApiResponse.onSuccess(businessCardService.getFriendBusinessCard(businessCardIdx, loginMemberId));
+    }
+
+    // 친구 명함 수정
+    @PatchMapping("/friends")
+    public ApiResponse<?> updateFriendBusinessCard(
+            @RequestParam("businessCardIdx") Long businessCardIdx,
+            @RequestBody MemberBusinessCardRequestDto.UpdateMemberBusinessCardRequestDto requestDto) {
+        String loginMemberId = getLoginMemberId();
+        log.info("친구 명함 수정 요청: BusinessCardIdx = {}, loginMemberId = {}, 수정 내용 = {}", businessCardIdx, loginMemberId, requestDto);
+        return ApiResponse.onSuccess(businessCardService.updateFriendBusinessCard(businessCardIdx, requestDto, loginMemberId));
     }
 
 

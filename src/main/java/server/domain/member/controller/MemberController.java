@@ -6,10 +6,14 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.PATCH;
 import server.domain.member.dto.MemberRequestDto;
 import server.domain.member.service.MemberService;
 import server.global.apiPayload.ApiResponse;
+import server.global.apiPayload.code.status.ErrorStatus;
+import server.global.apiPayload.exception.handler.ErrorHandler;
 import server.global.auth.security.service.JwtService;
+import server.global.util.SecurityUtil;
 
 @RestController
 @RequestMapping("/api/member")
@@ -38,6 +42,17 @@ public class MemberController {
 //        }
 
         return ApiResponse.onSuccess(memberService.signUp(requestDto));
+    }
+
+    @PatchMapping("/connect")
+    public ApiResponse<?> connectMyData() {
+        String loginMemberId = getLoginMemberId();
+        log.info("마이데이터 연동 요청 : loginMemberId = {}", loginMemberId);
+        return ApiResponse.onSuccess(memberService.connectMyData(loginMemberId));
+    }
+
+    private String getLoginMemberId() {
+        return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
 }

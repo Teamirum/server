@@ -106,7 +106,7 @@ CREATE TABLE `Order` (
 CREATE TABLE `TogetherOrder` (
                                  `idx` BIGINT AUTO_INCREMENT NOT NULL,
                                  `order_idx` BIGINT NOT NULL,
-                                `price` INT NOT NULL,
+                                 `price` INT NOT NULL,
                                  `member_idx` BIGINT NOT NULL,
                                  `status` ENUM('WAIT', 'CANCEL', 'COMPLETE') NOT NULL,
                                  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -128,33 +128,33 @@ CREATE TABLE `Menu` (
 
 -- OrderMenu 테이블
 CREATE TABLE `OrderMenu` (
-                            `idx` BIGINT AUTO_INCREMENT NOT NULL,
-                            `order_idx` BIGINT NOT NULL,
-                            `menu_idx` BIGINT NOT NULL,
-                            `menu_name` VARCHAR(100) NOT NULL,
-                            `price` INT NOT NULL,
-                            `amount` INT NOT NULL,
-                            PRIMARY KEY (`idx`),
-                            FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
-                            FOREIGN KEY (`menu_idx`) REFERENCES `Menu`(`idx`) ON DELETE CASCADE
+                             `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                             `order_idx` BIGINT NOT NULL,
+                             `menu_idx` BIGINT NOT NULL,
+                             `menu_name` VARCHAR(100) NOT NULL,
+                             `price` INT NOT NULL,
+                             `amount` INT NOT NULL,
+                             PRIMARY KEY (`idx`),
+                             FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
+                             FOREIGN KEY (`menu_idx`) REFERENCES `Menu`(`idx`) ON DELETE CASCADE
 );
 
 -- OrderRoom 테이블
 
 CREATE TABLE `OrderRoom` (
-                            `idx` BIGINT AUTO_INCREMENT NOT NULL,
-                            `order_idx` BIGINT NOT NULL,
-                            `owner_member_idx` VARCHAR(100) NOT NULL,
-                            `max_member_cnt` INT NOT NULL,
-                            `member_cnt` INT NOT NULL,
-                            `total_price` INT NOT NULL,
-                            `current_price` INT NOT NULL,
-                            `type` ENUM('BY_PRICE', 'BY_MENU') NOT NULL,
-                            `ready_cnt` INT NOT NULL,
-                            `status` ENUM('ACTIVE', 'CANCEL', 'COMPLETE') NOT NULL,
-                            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                            PRIMARY KEY (`idx`),
-                            FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE
+                             `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                             `order_idx` BIGINT NOT NULL,
+                             `owner_member_idx` VARCHAR(100) NOT NULL,
+                             `max_member_cnt` INT NOT NULL,
+                             `member_cnt` INT NOT NULL,
+                             `total_price` INT NOT NULL,
+                             `current_price` INT NOT NULL,
+                             `type` ENUM('BY_PRICE', 'BY_MENU') NOT NULL,
+                             `ready_cnt` INT NOT NULL,
+                             `status` ENUM('ACTIVE', 'CANCEL', 'COMPLETE') NOT NULL,
+                             `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                             PRIMARY KEY (`idx`),
+                             FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE
 );
 
 -- BusinessCard 테이블
@@ -261,3 +261,4 @@ INSERT INTO team.Transaction (idx, member_idx, credit_idx, credit_number, accoun
 INSERT INTO team.Transaction (idx, member_idx, credit_idx, credit_number, account_idx, account_number, time, pay_method, amount, memo, category, tran_id) VALUES (8, 1, 2, '5365-2345-6789-0123', null, null, '2024-10-09 16:59:25', 'CARD', 100, '조아의류', 'ENTERTAINMENT', null);
 INSERT INTO team.Transaction (idx, member_idx, credit_idx, credit_number, account_idx, account_number, time, pay_method, amount, memo, category, tran_id) VALUES (9, 1, 2, '5365-2345-6789-0123', null, null, '2024-10-09 17:00:07', 'CARD', 200, '조아음식', 'ENTERTAINMENT', null);
 INSERT INTO team.Transaction (idx, member_idx, credit_idx, credit_number, account_idx, account_number, time, pay_method, amount, memo, category, tran_id) VALUES (10, 1, 3, '4581-3456-7890-1234', null, null, '2024-10-09 17:00:33', 'CARD', 10000, '훈음료', 'ENTERTAINMENT', null);
+

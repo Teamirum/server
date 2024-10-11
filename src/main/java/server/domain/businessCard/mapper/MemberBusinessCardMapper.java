@@ -24,10 +24,13 @@ public interface MemberBusinessCardMapper {
     // 명함 삭제
     void delete(Map<String, Object> map);
 
-    // 명함 상태 업데이트
-    void updateStatus(MemberBusinessCard memberBusinessCard);
+    // 명함 업데이트
+    void update(MemberBusinessCard memberBusinessCard);
 
     MemberBusinessCard findByMemberIdxAndBusinessCardIdx(Map<String, Object> map);
 
+    MemberBusinessCard findByFriendBusinessCardIdx(Map<String, Object> map);
+
+    MemberBusinessCard findByMemberIdxAndStatus(Long memberIdx);
 
 }

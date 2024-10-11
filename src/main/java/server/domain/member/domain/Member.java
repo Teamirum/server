@@ -31,6 +31,8 @@ public class Member {
 
     private String refreshToken;
 
+    private Boolean isConnected;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime modifiedAt;

@@ -36,6 +36,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4011", "이미 존재하는 회원입니다."),
     MEMBER_AUTHORIZATION_NOT_VALID(HttpStatus.UNAUTHORIZED, "MEMBER4012", "유효하지 않은 인증정보 입니다."),
     MEMBER_PHONE_CONFIRM_BAD_REQUEST(HttpStatus.BAD_REQUEST, "MEMBER4013", "문자 인증 요청이 잘못되었습니다."),
+    MEMBER_ALREADY_CONNECTED(HttpStatus.BAD_REQUEST, "MEMBER4014", "이미 마이데이터가 연동된 계정입니다."),
 
     //권한
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "권한이 없습니다."),
@@ -77,11 +78,12 @@ public enum ErrorStatus implements BaseErrorCode {
     BUSINESS_CARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "BUSINESSCARD4001", "해당 명함이 존재하지 않습니다."),
     BUSINESS_CARD_DUPLICATE(HttpStatus.BAD_REQUEST, "BUSINESSCARD4002", "이미 등록된 명함입니다."),
 
+
     BUSINESS_CARD_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "BUSINESSCARD5001", "명함 저장에 실패하였습니다."),
     BUSINESS_CARD_UPDATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "BUSINESSCARD5002", "명함 수정에 실패하였습니다."),
     BUSINESS_CARD_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "BUSINESSCARD5003", "명함 삭제에 실패하였습니다."),
     BUSINESS_CARD_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "BUSINESSCARD4003", "명함 권한이 없습니다."),
-
+    BUSINESS_FRIEND_CARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "BUSINESSCARD4004", "해당 친구명함이 존재하지 않습니다."),
 
     // 거래 응답
     TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "TRANSACTION4001", "해당 거래가 존재하지 않습니다."),

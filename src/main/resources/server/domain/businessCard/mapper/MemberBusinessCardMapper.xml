@@ -40,11 +40,12 @@
           AND  businessCard_idx = #{businessCardIdx}
     </delete>
 
-    <!-- 명함 상태 업데이트 -->
-    <update id="updateStatus">
+
+    <update id="update">
         UPDATE MemberBusinessCard
-        SET status = #{status}, memo = #{memo}
-        WHERE idx = #{idx}
+        SET memo = #{memo}
+        WHERE  businessCard_idx = #{businessCardIdx}
+          AND member_idx = #{memberIdx}
     </update>
 
 
@@ -53,6 +54,21 @@
         FROM MemberBusinessCard
         WHERE member_idx = #{memberIdx}
           AND businessCard_idx = #{businessCardIdx}
+          AND status = 'NOT_OWNER';
+    </select>
+
+    <select id="findByFriendBusinessCardIdx" parameterType="map" resultMap="MemberBusinessCardResultMap">
+        SELECT *
+        FROM MemberBusinessCard mbc
+        WHERE mbc.businessCard_idx = #{businessCardIdx}
+          AND mbc.member_idx = #{memberIdx}
+          AND mbc.status = 'NOT_OWNER';
+    </select>
+    <select id="findByMemberIdxAndStatus" resultMap="MemberBusinessCardResultMap">
+        SELECT *
+        FROM MemberBusinessCard
+        WHERE member_idx = #{memberIdx}
+          AND status = 'NOT_OWNER';
     </select>
 
 
