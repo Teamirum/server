@@ -10,8 +10,9 @@ public class BusinessCardResponseDto {
     @Data
     @Builder
     public static class BusinessCardTaskSuccessResponseDto {
-        public boolean isSuccess;
         public Long idx;
+        public String imgUrl;
+        public Boolean isSuccess;
     }
 
     @Data

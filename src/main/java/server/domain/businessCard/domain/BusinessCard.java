@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.nio.charset.StandardCharsets;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,5 +32,13 @@ public class BusinessCard {
     private String position;     // 직위
 
     private String address;      // 주소
+
+    private String imgUrl;
+
+    public String getQrData() {
+        return new String(String.format(
+                "{\"idx\":\"%s\"}", this.idx
+        ).getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+    }
 
 }
