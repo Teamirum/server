@@ -108,6 +108,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ORDER_ROOM_PAY_ALREADY_STARTED(HttpStatus.BAD_REQUEST, "ORDER4016", "이미 결제가 진행중인 주문방입니다."),
     ORDER_ROOM_PRICE_NOT_MATCH(HttpStatus.BAD_REQUEST, "ORDER4017", "함께 결제 금액이 일치하지 않습니다."),
     ORDER_ROOM_PRICE_NOT_VALID(HttpStatus.BAD_REQUEST, "ORDER4018", "유효하지 않은 결제 금액입니다."),
+    ORDER_NOT_ORDERED_MENU_CANNOT_CANCELED(HttpStatus.BAD_REQUEST, "ORDER4019", "주문하지 않은 메뉴는 취소할 수 없습니다."),
 
     ORDER_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5001", "주문 저장에 실패하였습니다."),
     ORDER_MENU_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER5002", "메뉴 저장에 실패하였습니다."),

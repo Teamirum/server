@@ -234,6 +234,33 @@ public class OrderRoomService {
         redisPublisher.publish(channelTopic, menuSelect);
     }
 
+    public void cancelOrderMenu(SelectMenuRequestDto requestDto, String memberId) {
+        Member member = getMemberById(memberId);
+        ChannelTopic channelTopic = redisRepository.getTopic(requestDto.getOrderIdx().toString());
+        if (channelTopic == null) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND);
+        }
+
+        if (!redisRepository.existByOrderRoomIdx(requestDto.getOrderIdx())) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_NOT_FOUND));
+            return;
+        }
+        OrderRoom orderRoom = redisRepository.cancelMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice() * -1);
+
+        log.info("{} 님이 주문방에 메뉴를 취소하였습니다. 주문방 ID : {}, 메뉴 이름 : {}", memberId, requestDto.getOrderIdx(), requestDto.getMenuName());
+        OrderRoomMenuSelectionResponseDto menuCancel = OrderRoomMenuSelectionResponseDto.builder()
+                .orderIdx(requestDto.getOrderIdx())
+                .memberIdx(member.getIdx())
+                .menuIdx(requestDto.getMenuIdx())
+                .menuName(requestDto.getMenuName())
+                .currentPrice(orderRoom.getCurrentPrice())
+                .amount(requestDto.getAmount())
+                .type("MENU_CANCEL")
+                .build();
+
+        redisPublisher.publish(channelTopic, menuCancel);
+    }
+
     @Transactional
     public void selectPrice(SelectPriceRequestDto requestDto, String memberId) {
         Member member = getMemberById(memberId);
@@ -261,6 +288,11 @@ public class OrderRoomService {
         }
 
         OrderRoom orderRoom = redisRepository.getOrderRoom(requestDto.getOrderIdx());
+        if (orderRoomRepository.existByOrderIdx(order.getIdx())) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_ALREADY_EXIST));
+            return;
+        }
+
         if (requestDto.getMemberCnt() != orderRoom.getMaxMemberCnt()) {
             redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_MEMBER_CNT_NOT_MATCH));
             return;
@@ -308,32 +340,7 @@ public class OrderRoomService {
         redisPublisher.publish(channelTopic, priceSelect);
     }
 
-    public void cancelOrderMenu(SelectMenuRequestDto requestDto, String memberId) {
-        Member member = getMemberById(memberId);
-        ChannelTopic channelTopic = redisRepository.getTopic(requestDto.getOrderIdx().toString());
-        if (channelTopic == null) {
-            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND);
-        }
 
-        if (!redisRepository.existByOrderRoomIdx(requestDto.getOrderIdx())) {
-            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_NOT_FOUND));
-            return;
-        }
-        OrderRoom orderRoom = redisRepository.cancelMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice() * -1);
-
-        log.info("{} 님이 주문방에 메뉴를 취소하였습니다. 주문방 ID : {}, 메뉴 이름 : {}", memberId, requestDto.getOrderIdx(), requestDto.getMenuName());
-        OrderRoomMenuSelectionResponseDto menuCancel = OrderRoomMenuSelectionResponseDto.builder()
-                .orderIdx(requestDto.getOrderIdx())
-                .memberIdx(member.getIdx())
-                .menuIdx(requestDto.getMenuIdx())
-                .menuName(requestDto.getMenuName())
-                .currentPrice(orderRoom.getCurrentPrice())
-                .amount(requestDto.getAmount())
-                .type("MENU_CANCEL")
-                .build();
-
-        redisPublisher.publish(channelTopic, menuCancel);
-    }
 
     @Transactional
     public void readyToPay(Long orderIdx, String memberId) {
@@ -418,7 +425,7 @@ public class OrderRoomService {
         }
 
         OrderRoom orderRoom = redisRepository.getOrderRoom(order.getIdx());
-        if (orderRoomRepository.findByOrderIdx(order.getIdx()).isPresent()) {
+        if (orderRoomRepository.existByOrderIdx(order.getIdx())) {
             redisPublisher.publish(channelTopic, new ErrorResponseDto(null, orderIdx, ErrorStatus.ORDER_ROOM_ALREADY_EXIST));
             return;
         }
@@ -471,9 +478,28 @@ public class OrderRoomService {
 
     }
 
+    @Transactional
+    public void expireOrderRoom(Long orderIdx, String memberId) {
+        Member member = getMemberById(memberId);
+        ChannelTopic channelTopic = redisRepository.getTopic(orderIdx.toString());
+        if (channelTopic == null) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND);
+        }
+        if (redisRepository.existByOrderRoomIdx(orderIdx)) {
+            OrderRoom orderRoom = redisRepository.getOrderRoom(orderIdx);
+            for (Long memberIdx : orderRoom.getMemberIdxList()) {
+                redisRepository.exitMemberEnterOrderRoom(memberIdx);
+            }
+            redisRepository.deleteOrderRoom(orderIdx);
+        }
+
+
+    }
+
 
     public Member getMemberById(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
+
 
 }

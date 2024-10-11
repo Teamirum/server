@@ -67,6 +67,19 @@ public class OrderRoomController {
         orderRoomService.cancelReadyToPay(requestDto.getOrderIdx(), requestDto.getMemberId());
     }
 
+//    @MessageMapping("/order/room/exit")
+//    public void exitOrderRoom(@Payload ExitOrderRoomRequestDto requestDto) {
+//        log.info("exitOrderRoom : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
+//        orderRoomService.exitOrderRoom(requestDto.getOrderIdx(), requestDto.getMemberId());
+//    }
+
+    @MessageMapping("/order/room/expire")
+    public void expireOrderRoom(@Payload ExpireOrderRoomRequestDto requestDto) {
+        log.info("expireOrderRoom : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
+        orderRoomService.expireOrderRoom(requestDto.getOrderIdx(), requestDto.getMemberId());
+    }
+
+
     public String getLoginMemberId() {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }

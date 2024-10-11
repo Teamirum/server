@@ -114,6 +114,21 @@ public class OrderRoomRequestDto {
     }
 
     @Data
+    public static class ExpireOrderRoomRequestDto {
+        private Long orderIdx;
+        private String memberId;
+
+        @JsonCreator
+        public ExpireOrderRoomRequestDto(
+                @JsonProperty("orderIdx") Long orderIdx,
+                @JsonProperty("memberId") String memberId
+        ) {
+            this.orderIdx = orderIdx;
+            this.memberId = memberId;
+        }
+    }
+
+    @Data
     public static class MemberPriceInfoDto {
         private Long memberIdx;
         private int price;

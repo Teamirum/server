@@ -158,10 +158,16 @@ public class RedisRepository {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         HashMap<Long, List<Long>> menuSelect = orderRoom.getMenuSelect();
         if (!menuSelect.containsKey(menuIdx)) {
+            redisPublisher.publish(topics.get(orderIdx + ""), new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_NOT_FOUND));
             throw new ErrorHandler(ErrorStatus.ORDER_MENU_NOT_FOUND);
         }
         if (menuSelect.get(menuIdx).size() <= 0) {
+            redisPublisher.publish(topics.get(orderIdx + ""), new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR));
             throw new ErrorHandler(ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR);
+        }
+        if (!menuSelect.get(menuIdx).contains(memberIdx)) {
+            redisPublisher.publish(topics.get(orderIdx + ""), new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_NOT_ORDERED_MENU_CANNOT_CANCELED));
+            throw new ErrorHandler(ErrorStatus.ORDER_NOT_ORDERED_MENU_CANNOT_CANCELED);
         }
         menuSelect.get(menuIdx).remove(memberIdx);
         orderRoom.updateCurrentPrice(price);
@@ -185,6 +191,10 @@ public class RedisRepository {
             throw new ErrorHandler(ErrorStatus.ORDER_ROOM_MEMBER_CNT_CANNOT_BE_MINUS);
         }
         opsHashOrderRoom.put(ORDER_ROOMS, orderIdx + "", orderRoom);
+    }
+
+    public void deleteOrderRoom(Long orderIdx) {
+        opsHashOrderRoom.delete(ORDER_ROOMS, orderIdx + "");
     }
 
     // 유저가 입장해 있는 주문방 ID 조회
