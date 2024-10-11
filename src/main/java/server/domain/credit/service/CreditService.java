@@ -27,9 +27,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
-import static server.domain.transaction.domain.Transaction.Category.ENTERTAINMENT;
+import static server.domain.transaction.domain.Transaction.Category;
 import static server.domain.transaction.domain.Transaction.PayMethod.ACCOUNT;
-import static server.domain.transaction.domain.Transaction.PayMethod.CARD;
+import static server.domain.transaction.domain.Transaction.PayMethod;
 
 @Service
 @RequiredArgsConstructor
@@ -128,11 +128,11 @@ public class CreditService {
                 .creditIdx(credit.getIdx())
                 .creditNumber(credit.getCreditNumber())
                 .time(now())
-                .payMethod(CARD)
+                .payMethod(PayMethod.CARD)
                 .amount(amount)
                 .memo(name)
-                .category(ENTERTAINMENT)
-                .build());
+                .category(Category.SHOPPING)
+                .build());  
     }
 
     @Transactional
