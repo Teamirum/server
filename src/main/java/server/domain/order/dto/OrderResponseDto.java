@@ -21,6 +21,7 @@ public class OrderResponseDto {
         public Long idx;
         public Long marketIdx;
         public String name;
+        public String marketName;
         public int totalPrice;
         public int taxFreePrice;
         public int vatPrice;
