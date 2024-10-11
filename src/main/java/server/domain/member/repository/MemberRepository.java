@@ -64,4 +64,8 @@ public class MemberRepository {
         return Optional.empty();
     }
 
+    public void updateConnected(Member member) {
+        memberMapper.updateConnected(member);
+    }
+
 }

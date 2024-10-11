@@ -19,6 +19,8 @@ public class MemberResponseDto {
     @Builder
     public static class MemberTaskSuccessResponseDto {
         private Boolean isSuccess;
+        private Boolean isConnected;
+
     }
 
 }

@@ -14,6 +14,7 @@
         <!-- Role Enum mapping using the key field -->
         <result property="role" column="role"/>
         <result property="refreshToken" column="refresh_token" />
+        <result property="isConnected" column="is_connected" />
         <result property="createdAt" column="created_at" />
         <result property="modifiedAt" column="modified_at" />
         <result property="socialType" column="social_type" typeHandler="server.global.auth.oauth2.model.SocialTypeHandler"/>
@@ -87,5 +88,13 @@
             refresh_token = #{refreshToken}
         WHERE member_id = #{memberId}
     </update>
+
+    <update id="updateConnected" parameterType="map">
+        UPDATE Member
+        SET
+        is_connected = #{isConnected}
+        WHERE idx = #{idx}
+    </update>
+
 
 </mapper>

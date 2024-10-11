@@ -22,4 +22,6 @@ public interface MemberMapper {
 
     Long getIdxByMemberId(String memberId);
 
+    void updateConnected(Member member);
+
 }
