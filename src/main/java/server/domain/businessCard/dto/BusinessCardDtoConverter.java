@@ -17,6 +17,8 @@ public class BusinessCardDtoConverter {
                 .part(businessCard.getPart())
                 .company(businessCard.getCompany())
                 .address(businessCard.getAddress())
+                .imgurl(businessCard.getImgUrl())
+                .qrData(businessCard.getQrData())
                 .build();
     }
 

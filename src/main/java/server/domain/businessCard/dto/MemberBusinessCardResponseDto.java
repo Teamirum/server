@@ -12,6 +12,7 @@ public class MemberBusinessCardResponseDto {
     public static class MemberBusinessCardTaskSuccessResponseDto {
         public boolean isSuccess;
         public Long idx;
+        public String memo;
     }
 
     @Data

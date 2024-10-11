@@ -40,7 +40,7 @@ public class QRCodeService {
     }
 
     // QR 코드를 생성한 후 업로드하고 URL을 반환하는 메서드
-    public String generateAndUploadQRCode(String data, String memberId) throws WriterException, IOException {
+    public String generateAndUploadQRCode(String data, Long businessCardIdx) throws WriterException, IOException {
         // QR 코드 생성
         ByteArrayOutputStream qrCodeStream = generateQRCode(data);
 
@@ -53,7 +53,7 @@ public class QRCodeService {
         );
 
         // 생성된 QR 코드를 업로드하고 URL 반환
-        return imageService.uploadQrImg(qrCodeImage, memberId);
+        return imageService.uploadQrImg(qrCodeImage, businessCardIdx);
     }
 
     // MultipartFile을 직접 구현한 클래스

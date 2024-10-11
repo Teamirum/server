@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import server.domain.businessCard.domain.BusinessCard;
+import server.domain.businessCard.repository.BusinessCardRepository;
 import server.domain.image.dto.ImageResponseDto;
 import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
@@ -29,6 +31,7 @@ public class ImageService {
 
     private static final String DEFAULT_IMG_DIR = "img/";
     private static final String DEFAULT_DOMAIN = "https://storage.googleapis.com/";
+    private final BusinessCardRepository businessCardRepository;
 
     @Value("${spring.cloud.gcp.storage.bucket-name}")
     private String bucketName;
@@ -67,14 +70,21 @@ public class ImageService {
                 .build();
     }
 
-    public String uploadQrImg(MultipartFile image, String memberId) {
-        Member member = getMemberByMemberId(memberId);
+    public String uploadQrImg(MultipartFile image, Long businessCardIdx) {
+        // 명함 객체를 데이터베이스에서 조회
+        BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(businessCardIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
 
+        // 명함의 idx가 null인지 확인하는 로그 추가 (디버깅용)
+        log.info("명함 IDX: {}", businessCard.getIdx());
+
+        // QR 코드 이미지 파일명 생성
         String uuid = UUID.randomUUID().toString();
-        String fileDir = member.getIdx() + "/" + DEFAULT_IMG_DIR;
+        String fileDir = businessCard.getIdx() + "/" + DEFAULT_IMG_DIR;
         String ext = image.getContentType();
         String fileName = fileDir + uuid + image.getOriginalFilename() + "." + ext;
 
+        // 이미지 저장 처리
         BlobId blobId = BlobId.of(bucketName, fileName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
                 .setContentType(ext)
@@ -88,9 +98,16 @@ public class ImageService {
             log.info("이미지 업로드 실패: " + ex.getMessage());
             throw new ErrorHandler(ErrorStatus.IMAGE_UPLOAD_FAIL);
         }
-        String imgUlr = DEFAULT_DOMAIN + bucketName + "/" + fileName;
-        return imgUlr;
+
+        // 이미지 URL 생성
+        String imgUrl = DEFAULT_DOMAIN + bucketName + "/" + fileName;
+
+        // QR 이미지 URL 로그 추가 (디버깅용)
+        log.info("QR 이미지 URL: {}", imgUrl);
+
+        return imgUrl;
     }
+
 
     private Member getMemberByMemberId(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));

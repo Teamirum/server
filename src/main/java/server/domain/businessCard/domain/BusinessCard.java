@@ -36,8 +36,12 @@ public class BusinessCard {
     private String imgUrl;
 
     public String getQrData() {
+        String baseUrl = "http://localhost:5173/friend-card-registration"; // 기본 URL
+        String queryParam = "?idx=" + this.idx; // idx를 쿼리 파라미터로 추가
+        String fullUrl = baseUrl + queryParam; // 완전한 URL 생성
+
         return new String(String.format(
-                "{\"idx\":\"%s\"}", this.idx
+                "{\"url\":\"%s\"}", fullUrl
         ).getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
     }
 
