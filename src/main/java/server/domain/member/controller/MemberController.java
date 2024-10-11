@@ -55,4 +55,12 @@ public class MemberController {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
+    //is_connected가 true인지 false인지 확인하는 api.
+    @GetMapping("/connect/check")
+    public ApiResponse<?> checkConnectMyData() {
+        String loginMemberId = getLoginMemberId();
+        log.info("마이데이터 연동 확인 요청 : loginMemberId = {}", loginMemberId);
+        return ApiResponse.onSuccess(memberService.checkConnectMyData(loginMemberId));
+    }
+
 }
