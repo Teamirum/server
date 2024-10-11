@@ -1,5 +1,6 @@
 package server.domain.businessCard.service;
 
+import com.google.zxing.WriterException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,10 @@ import server.domain.member.repository.MemberRepository;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 import static server.domain.businessCard.domain.MemberBusinessCard.Status.*;
@@ -25,6 +30,7 @@ public class BusinessCardService {
     private final BusinessCardRepository businessCardRepository;
     private final MemberRepository memberRepository;
     private final MemberBusinessCardRepository memberBusinessCardRepository;
+    private final QRCodeService qrCodeService;
 
     public BusinessCardResponseDto.BusinessCardTaskSuccessResponseDto upload(BusinessCardRequestDto.UploadBusinessCardRequestDto requestDto, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId)
@@ -46,16 +52,27 @@ public class BusinessCardService {
 
         businessCardRepository.save(businessCard);
 
-
         BusinessCard savedBusinessCard = businessCardRepository.findByMemberIdx(businessCard.getMemberIdx())
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_SAVE_FAIL));
+
+        String imgUrl = null;
+        try {
+            imgUrl = qrCodeService.generateAndUploadQRCode(businessCard.getQrData(), memberId);
+        } catch (WriterException e) {
+            e.printStackTrace();
+            throw new ErrorHandler(ErrorStatus.QR_CODE_GENERATE_FAIL);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // 이미지 성공적으로 생성되면, savedBusinessCard에 imgUrl 저장하기
 
         return BusinessCardResponseDto.BusinessCardTaskSuccessResponseDto.builder()
                 .isSuccess(true)
                 .idx(savedBusinessCard.getIdx())
+                .imgUrl(imgUrl)
                 .build();
     }
-
     public boolean existsBusinessCardByMemberIdx(Long memberIdx) {
         return businessCardRepository.existsBusinessCardByMemberIdx(memberIdx);
     }

@@ -104,48 +104,6 @@ public class BusinessCardController {
         return ApiResponse.onSuccess(businessCardService.getBusinessCard(idx, loginMemberId));
     }
 
-    //명함 등록시 QR 코드 생성
-    @PostMapping("/qr-code")
-    public ApiResponse<?> generateQRCode(@RequestBody BusinessCardRequestDto.UploadBusinessCardRequestDto requestDto) {
-        String loginMemberId = getLoginMemberId();
-        log.info("QR 코드 생성 요청 : 현재 loginMemberId = {}, businessName = {}", loginMemberId, requestDto.getName());
-
-        businessCardService.upload(requestDto, loginMemberId);
-
-
-        // QR 코드 데이터를 JSON 형식으로 구조화
-        String qrCodeData = new String(String.format(
-                "{\"name\":\"%s\", \"phone\":\"%s\", \"email\":\"%s\", \"position\":\"%s\", \"part\":\"%s\", \"company\":\"%s\", \"address\":\"%s\"}",
-                requestDto.getName(),
-                requestDto.getPhoneNum(),
-                requestDto.getEmail(),
-                requestDto.getPosition(),
-                requestDto.getPart(),
-                requestDto.getCompany(),
-                requestDto.getAddress()
-        ).getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
-
-        try {
-            // QR 코드 이미지 생성
-            ByteArrayOutputStream outputStream = qrCodeService.generateQRCode(qrCodeData);
-
-            // ByteArrayOutputStream을 Base64로 변환
-            String qrCodeBase64 = Base64.getEncoder().encodeToString(outputStream.toByteArray());
-
-
-            BusinessCard businessCard = businessCardService.findMemberIdx(loginMemberId);
-
-            //MemberBusinessCard 테이블에 저장
-            businessCardService.uploadMemberBusinessCard(businessCard);
-            log.info("QR 코드 데이터 인코딩 전: {}", qrCodeData);
-            log.info("QR 코드 데이터 인코딩 후: {}", qrCodeBase64);
-            return ApiResponse.onSuccess(qrCodeBase64);
-        } catch (Exception e) {
-            log.error("QR 코드 생성 중 오류 발생", e);
-            // 실패한 경우 응답 생성
-            return ApiResponse.onFailure("QR_CODE_GENERATION_ERROR", "QR 코드 생성에 실패했습니다.", null);
-        }
-    }
 
     @PostMapping("/scanFriendQrCode")
     public ApiResponse<?> scanFriendBusinessCard(@RequestParam("businessCardIdx") Long businessCardIdx) {

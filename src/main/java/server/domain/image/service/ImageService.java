@@ -67,6 +67,31 @@ public class ImageService {
                 .build();
     }
 
+    public String uploadQrImg(MultipartFile image, String memberId) {
+        Member member = getMemberByMemberId(memberId);
+
+        String uuid = UUID.randomUUID().toString();
+        String fileDir = member.getIdx() + "/" + DEFAULT_IMG_DIR;
+        String ext = image.getContentType();
+        String fileName = fileDir + uuid + image.getOriginalFilename() + "." + ext;
+
+        BlobId blobId = BlobId.of(bucketName, fileName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
+                .setContentType(ext)
+                .build();
+        try (WriteChannel writer = storage.writer(blobInfo)) {
+            byte[] imageData = image.getBytes(); // 이미지 데이터를 byte 배열로 읽어옵니다.
+            writer.write(ByteBuffer.wrap(imageData));
+        } catch (Exception ex) {
+            // 예외 처리 코드
+            ex.printStackTrace();
+            log.info("이미지 업로드 실패: " + ex.getMessage());
+            throw new ErrorHandler(ErrorStatus.IMAGE_UPLOAD_FAIL);
+        }
+        String imgUlr = DEFAULT_DOMAIN + bucketName + "/" + fileName;
+        return imgUlr;
+    }
+
     private Member getMemberByMemberId(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
