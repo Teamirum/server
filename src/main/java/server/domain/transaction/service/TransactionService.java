@@ -105,4 +105,13 @@ public class TransactionService {
                 .idx(transaction.getIdx())
                 .build();
     }
+
+    public TransactionResponseDto.TransactionListResponseDto getTransactionHistory(String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Transaction> transactionList = transactionRepository.findAllTransactionByMemberIdx(memberIdx);
+
+        return TransactionDtoConverter.convertToTransactionListResponseDto(transactionList);
+    }
 }
