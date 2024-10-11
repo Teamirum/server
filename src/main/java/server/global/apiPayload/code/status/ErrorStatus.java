@@ -36,6 +36,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4011", "이미 존재하는 회원입니다."),
     MEMBER_AUTHORIZATION_NOT_VALID(HttpStatus.UNAUTHORIZED, "MEMBER4012", "유효하지 않은 인증정보 입니다."),
     MEMBER_PHONE_CONFIRM_BAD_REQUEST(HttpStatus.BAD_REQUEST, "MEMBER4013", "문자 인증 요청이 잘못되었습니다."),
+    MEMBER_ALREADY_CONNECTED(HttpStatus.BAD_REQUEST, "MEMBER4014", "이미 마이데이터가 연동된 계정입니다."),
 
     //권한
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "권한이 없습니다."),

@@ -13,6 +13,7 @@ CREATE TABLE `Member` (
                           `role` ENUM('ROLE_MEMBER', 'ROLE_ADMIN', 'ROLE_GUEST') NOT NULL,
                           `phone_num` VARCHAR(20) NOT NULL,
                           `social_type` ENUM('KAKAO', 'NAVER', 'GOOGLE', 'LOCAL') NOT NULL,
+                          `is_connected` BOOLEAN NOT NULL DEFAULT FALSE,
                           `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                           `modified_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
                           PRIMARY KEY (`idx`)
@@ -105,7 +106,7 @@ CREATE TABLE `Order` (
 CREATE TABLE `TogetherOrder` (
                                  `idx` BIGINT AUTO_INCREMENT NOT NULL,
                                  `order_idx` BIGINT NOT NULL,
-                                `price` INT NOT NULL,
+                                 `price` INT NOT NULL,
                                  `member_idx` BIGINT NOT NULL,
                                  `status` ENUM('WAIT', 'CANCEL', 'COMPLETE') NOT NULL,
                                  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -127,33 +128,33 @@ CREATE TABLE `Menu` (
 
 -- OrderMenu 테이블
 CREATE TABLE `OrderMenu` (
-                            `idx` BIGINT AUTO_INCREMENT NOT NULL,
-                            `order_idx` BIGINT NOT NULL,
-                            `menu_idx` BIGINT NOT NULL,
-                            `menu_name` VARCHAR(100) NOT NULL,
-                            `price` INT NOT NULL,
-                            `amount` INT NOT NULL,
-                            PRIMARY KEY (`idx`),
-                            FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
-                            FOREIGN KEY (`menu_idx`) REFERENCES `Menu`(`idx`) ON DELETE CASCADE
+                             `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                             `order_idx` BIGINT NOT NULL,
+                             `menu_idx` BIGINT NOT NULL,
+                             `menu_name` VARCHAR(100) NOT NULL,
+                             `price` INT NOT NULL,
+                             `amount` INT NOT NULL,
+                             PRIMARY KEY (`idx`),
+                             FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE,
+                             FOREIGN KEY (`menu_idx`) REFERENCES `Menu`(`idx`) ON DELETE CASCADE
 );
 
 -- OrderRoom 테이블
 
 CREATE TABLE `OrderRoom` (
-                            `idx` BIGINT AUTO_INCREMENT NOT NULL,
-                            `order_idx` BIGINT NOT NULL,
-                            `owner_member_idx` VARCHAR(100) NOT NULL,
-                            `max_member_cnt` INT NOT NULL,
-                            `member_cnt` INT NOT NULL,
-                            `total_price` INT NOT NULL,
-                            `current_price` INT NOT NULL,
-                            `type` ENUM('BY_PRICE', 'BY_MENU') NOT NULL,
-                            `ready_cnt` INT NOT NULL,
-                            `status` ENUM('ACTIVE', 'CANCEL', 'COMPLETE') NOT NULL,
-                            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-                            PRIMARY KEY (`idx`),
-                            FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE
+                             `idx` BIGINT AUTO_INCREMENT NOT NULL,
+                             `order_idx` BIGINT NOT NULL,
+                             `owner_member_idx` VARCHAR(100) NOT NULL,
+                             `max_member_cnt` INT NOT NULL,
+                             `member_cnt` INT NOT NULL,
+                             `total_price` INT NOT NULL,
+                             `current_price` INT NOT NULL,
+                             `type` ENUM('BY_PRICE', 'BY_MENU') NOT NULL,
+                             `ready_cnt` INT NOT NULL,
+                             `status` ENUM('ACTIVE', 'CANCEL', 'COMPLETE') NOT NULL,
+                             `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                             PRIMARY KEY (`idx`),
+                             FOREIGN KEY (`order_idx`) REFERENCES `Order`(`idx`) ON DELETE CASCADE
 );
 
 -- BusinessCard 테이블
@@ -225,3 +226,5 @@ CREATE TABLE `Transaction` (
                                FOREIGN KEY (`credit_idx`) REFERENCES `Credit`(`idx`) ON DELETE CASCADE,
                                FOREIGN KEY (`account_idx`) REFERENCES `Account`(`idx`) ON DELETE CASCADE
 );
+
+
