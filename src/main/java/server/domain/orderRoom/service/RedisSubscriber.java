@@ -57,7 +57,7 @@ public class RedisSubscriber implements MessageListener {
 
             else if (obj instanceof ErrorResponseDto) {
                 ErrorResponseDto dto = (ErrorResponseDto) obj;
-                messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto.toString());
+                messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
                 log.error("Received START_PAY message: {}", dto);
             }
             else {

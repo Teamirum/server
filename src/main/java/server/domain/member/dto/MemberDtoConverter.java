@@ -12,4 +12,14 @@ public class MemberDtoConverter {
                 .isSuccess(true)
                 .build();
     }
+
+    public static MemberResponseDto.MemberInfoResponseDto convertToMemberInfoResponseDto(Member member) {
+        return MemberResponseDto.MemberInfoResponseDto.builder()
+                .idx(member.getIdx())
+                .memberId(member.getMemberId())
+                .name(member.getName())
+                .email(member.getEmail())
+                .createdAt(member.getCreatedAt().toString())
+                .build();
+    }
 }

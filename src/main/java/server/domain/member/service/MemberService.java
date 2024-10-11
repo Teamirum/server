@@ -95,4 +95,9 @@ public class MemberService {
                 .isConnected(member.getIsConnected())
                 .build();
     }
+
+    public MemberResponseDto.MemberInfoResponseDto getMyInfo(String memberId) {
+        Member member = getMemberByMemberId(memberId);
+        return MemberDtoConverter.convertToMemberInfoResponseDto(member);
+    }
 }

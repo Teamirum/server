@@ -159,18 +159,6 @@ public class OrderRoomResponseDto {
             this.message = errorStatus.getMessage();
             this.type = "ERROR";
         }
-
-        @Override
-        public String toString() {
-            return "{" +
-                    "\"memberIdx\" : " + memberIdx +
-                    "\"orderIdx\" : " + orderIdx +
-                    "\"isSuccess\" : \"" + isSuccess + "\"" +
-                    ", status: \"" + status + "\"" +
-                    ", code: \"" + code + "\"" +
-                    ", message: \"" + message + "\"" +
-                    "}";
-        }
     }
 
     @Data

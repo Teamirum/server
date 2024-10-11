@@ -44,6 +44,13 @@ public class MemberController {
         return ApiResponse.onSuccess(memberService.signUp(requestDto));
     }
 
+    @GetMapping("/my")
+    public ApiResponse<?> getMyInfo() {
+        String loginMemberId = getLoginMemberId();
+        log.info("내 정보 조회 요청 : loginMemberId = {}", loginMemberId);
+        return ApiResponse.onSuccess(memberService.getMyInfo(loginMemberId));
+    }
+
     @PatchMapping("/connect")
     public ApiResponse<?> connectMyData() {
         String loginMemberId = getLoginMemberId();
