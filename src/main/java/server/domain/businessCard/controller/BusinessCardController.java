@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/businessCard")
@@ -38,7 +39,14 @@ public class BusinessCardController {
     public ApiResponse<?> uploadBusinessCard(@RequestBody BusinessCardRequestDto.UploadBusinessCardRequestDto requestDto) {
         String loginMemberId = getLoginMemberId();
         log.info("명함 업로드 요청 : 현재loginMemberId = {}, businessName = {}", loginMemberId ,requestDto.name);
-        return ApiResponse.onSuccess(businessCardService.upload(requestDto, loginMemberId));
+        businessCardService.upload(requestDto, loginMemberId);
+
+        BusinessCard businessCard = businessCardService.findMemberIdx(loginMemberId);
+
+        //MemberBusinessCard 테이블에 저장
+        businessCardService.uploadMemberBusinessCard(businessCard);
+
+        return ApiResponse.onSuccess(businessCard);
     }
 
     // 내 명함 조회
@@ -70,30 +78,7 @@ public class BusinessCardController {
         // 수정된 명함 정보를 가져옴
         BusinessCard updatedCard = businessCardService.getBusinessCard(idx, loginMemberId);
 
-        // 수정된 정보로 QR 코드 데이터를 JSON 형식으로 구조화할 때 UTF-8 인코딩 적용
-        String qrCodeData = new String(String.format(
-                "{\"name\":\"%s\", \"phone\":\"%s\", \"email\":\"%s\", \"position\":\"%s\", \"part\":\"%s\", \"company\":\"%s\", \"address\":\"%s\"}",
-                requestDto.getName(),
-                requestDto.getPhoneNum(),
-                requestDto.getEmail(),
-                requestDto.getPosition(),
-                requestDto.getPart(),
-                requestDto.getCompany(),
-                requestDto.getAddress()
-        ).getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
-
-        try {
-            // UTF-8로 인코딩된 데이터를 그대로 사용하여 QR 코드 생성
-            ByteArrayOutputStream outputStream = qrCodeService.generateQRCode(qrCodeData);
-
-            // ByteArrayOutputStream을 Base64로 변환
-            String qrCodeBase64 = Base64.getEncoder().encodeToString(outputStream.toByteArray());
-
-            return ApiResponse.onSuccess(qrCodeBase64);
-        } catch (Exception e) {
-            log.error("QR 코드 생성 중 오류 발생", e);
-            return ApiResponse.onFailure("QR_CODE_GENERATION_ERROR", "QR 코드 생성에 실패했습니다.", null);
-        }
+        return ApiResponse.onSuccess(updatedCard);
     }
 
 
@@ -110,10 +95,8 @@ public class BusinessCardController {
         String loginMemberId = getLoginMemberId();
         log.info("친구 명함 추가 요청: businessCardIdx = {}, loginMemberId = {}", businessCardIdx, loginMemberId);
 
-        // 1. QR 코드로 명함 정보 가져오기
         BusinessCard businessCard = businessCardService.getBusinessCard(businessCardIdx, loginMemberId);
 
-        // 2. 해당 명함을 MemberBusinessCard에 저장 (상태는 NOT_OWNER)
         businessCardService.addFriendBusinessCard(businessCardIdx, loginMemberId);
 
         return ApiResponse.onSuccess(businessCard);
@@ -124,7 +107,9 @@ public class BusinessCardController {
     public ApiResponse<?> getFriendBusinessCardList() {
         String loginMemberId = getLoginMemberId();
         log.info("친구 명함 목록 조회 요청: loginMemberId = {}", loginMemberId);
-        return ApiResponse.onSuccess(businessCardService.getAllFriendBusinessCards(loginMemberId));
+        // 모든 비즈니스 카드 목록을 가져오기
+        BusinessCardResponseDto.BusinessCardListResponseDto businessCards = businessCardService.getAllFriendBusinessCards(loginMemberId);
+        return ApiResponse.onSuccess(businessCards); // 모든 비즈니스 카드 목록 반환
     }
 
     // 친구 명함 삭제
