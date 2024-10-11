@@ -1,5 +1,6 @@
 package server.domain.order.dto;
 
+import server.domain.market.domain.Market;
 import server.domain.order.domain.Order;
 import server.domain.order.domain.OrderMenu;
 
@@ -7,11 +8,12 @@ import java.util.List;
 
 public class OrderDtoConverter {
 
-    public static OrderResponseDto.OrderInfoResponseDto convertToOrderInfoResponseDto(Order order, List<OrderResponseDto.OrderMenuResponseDto> menuResponseDtoList) {
+    public static OrderResponseDto.OrderInfoResponseDto convertToOrderInfoResponseDto(Order order, Market market, List<OrderResponseDto.OrderMenuResponseDto> menuResponseDtoList) {
         return OrderResponseDto.OrderInfoResponseDto.builder()
                 .idx(order.getIdx())
                 .marketIdx(order.getMarketIdx())
                 .name(order.getName())
+                .marketName(market.getName())
                 .totalPrice(order.getTotalPrice())
                 .taxFreePrice(order.getTaxFreePrice())
                 .vatPrice(order.getVatPrice())
