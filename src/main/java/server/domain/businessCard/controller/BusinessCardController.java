@@ -38,6 +38,7 @@ public class BusinessCardController {
         return ApiResponse.onSuccess(businessCardService.upload(requestDto, loginMemberId));
     }
 
+    // 내 명함 조회
     @GetMapping("/myBusinessCard")
     public ApiResponse<?> getBusinessCardList() {
         String loginMemberId = getLoginMemberId();
@@ -46,10 +47,10 @@ public class BusinessCardController {
     }
 
     @DeleteMapping
-    public ApiResponse<?> deleteBusinessCard(@RequestParam(value = "idx") Long idx) {
+    public ApiResponse<?> deleteBusinessCard() {
         String loginMemberId = getLoginMemberId();
-        log.info("명함 삭제 요청 : loginMemberId = {}, idx = {}", loginMemberId, idx);
-        return ApiResponse.onSuccess(businessCardService.delete(idx, loginMemberId));
+        log.info("명함 삭제 요청 : loginMemberId = {}, idx = {}", loginMemberId);
+        return ApiResponse.onSuccess(businessCardService.delete(loginMemberId));
     }
 
     @PatchMapping
@@ -159,7 +160,7 @@ public class BusinessCardController {
     public ApiResponse<?> getFriendBusinessCardList() {
         String loginMemberId = getLoginMemberId();
         log.info("친구 명함 목록 조회 요청: loginMemberId = {}", loginMemberId);
-        return ApiResponse.onSuccess(businessCardService.getFriendBusinessCards(loginMemberId));
+        return ApiResponse.onSuccess(businessCardService.getAllFriendBusinessCards(loginMemberId));
     }
 
     // 친구 명함 삭제
@@ -175,7 +176,7 @@ public class BusinessCardController {
     public ApiResponse<?> getFriendBusinessCard(@RequestParam("businessCardIdx") Long businessCardIdx) {
         String loginMemberId = getLoginMemberId();
         log.info("친구 명함 조회 요청: BusinessCardIdx = {}, loginMemberId = {}", businessCardIdx, loginMemberId);
-        return ApiResponse.onSuccess(businessCardService.getFriendBusinessCard(businessCardIdx));
+        return ApiResponse.onSuccess(businessCardService.getFriendBusinessCard(businessCardIdx, loginMemberId));
     }
 
 

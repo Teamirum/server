@@ -53,6 +53,21 @@
         FROM MemberBusinessCard
         WHERE member_idx = #{memberIdx}
           AND businessCard_idx = #{businessCardIdx}
+          AND status = 'NOT_OWNER';
+    </select>
+
+    <select id="findByFriendBusinessCardIdx" parameterType="map" resultMap="MemberBusinessCardResultMap">
+        SELECT *
+        FROM MemberBusinessCard mbc
+        WHERE mbc.businessCard_idx = #{businessCardIdx}
+          AND mbc.member_idx = #{memberIdx}
+          AND mbc.status = 'NOT_OWNER';
+    </select>
+    <select id="findByMemberIdxAndStatus" resultMap="MemberBusinessCardResultMap">
+        SELECT *
+        FROM MemberBusinessCard
+        WHERE member_idx = #{memberIdx}
+          AND status = 'NOT_OWNER';
     </select>
 
 

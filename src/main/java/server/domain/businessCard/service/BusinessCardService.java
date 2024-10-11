@@ -70,14 +70,22 @@ public class BusinessCardService {
         return BusinessCardDtoConverter.convertToBusinessCardListResponseDto(businessCardList);
     }
 
-    public BusinessCardResponseDto.BusinessCardTaskSuccessResponseDto delete(Long idx, String memberId) {
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        if (businessCardRepository.findByBusinessCardIdx(idx).isEmpty()) {
+    public BusinessCardResponseDto.BusinessCardTaskSuccessResponseDto delete(String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (businessCardRepository.findByMemberIdx(memberIdx).isEmpty()) {
             throw new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND);
         }
-        businessCardRepository.delete(idx);
+
+        BusinessCard businessCard = businessCardRepository.findByMemberIdx(memberIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
+
+
+        businessCardRepository.delete(memberIdx);
+
         return BusinessCardResponseDto.BusinessCardTaskSuccessResponseDto.builder()
                 .isSuccess(true)
+                .idx(businessCard.getIdx())
                 .build();
     }
 
@@ -108,11 +116,13 @@ public class BusinessCardService {
                 .build();
     }
 
-    public BusinessCard getBusinessCard(Long businessCardIdx, String memberId) {
-        Long memberIdx = memberRepository.getIdxByMemberId(memberId)
+
+    // 친구 QR 등록시 사용
+    public BusinessCard getBusinessCard(Long idx, String loginMemberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(loginMemberId)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(memberIdx)
+        BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(idx)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
 
         return businessCard;
@@ -152,8 +162,13 @@ public class BusinessCardService {
                 .build());
     }
 
-    public BusinessCardResponseDto.BusinessCardListResponseDto getFriendBusinessCards(String memberId) {
+    public BusinessCardResponseDto.BusinessCardListResponseDto getAllFriendBusinessCards(String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if(!memberBusinessCardRepository.existsByMemberIdxAndStatus(memberIdx)) {
+            throw new ErrorHandler(ErrorStatus.BUSINESS_FRIEND_CARD_NOT_FOUND);
+        }
+
         List<BusinessCard> businessCardList = businessCardRepository.findAllFriendBusinessCards(memberIdx);
         return BusinessCardDtoConverter.convertToBusinessCardListResponseDto(businessCardList);
     }
@@ -165,6 +180,9 @@ public class BusinessCardService {
         if (memberBusinessCardRepository.findByMemberIdxAndBusinessCardIdx(memberIdx, businessCardIdx).isEmpty()) {
             throw new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND);
         }
+
+
+
         memberBusinessCardRepository.delete(memberIdx, businessCardIdx);
         return MemberBusinessCardResponseDto.MemberBusinessCardTaskSuccessResponseDto.builder()
                 .isSuccess(true)
@@ -172,9 +190,17 @@ public class BusinessCardService {
                 .build();
     }
 
-    public BusinessCardResponseDto.BusinessCardListResponseDto getFriendBusinessCard(Long businessCardIdx) {
+    // 특정 businessCardIdx와 memberId를 통해 명함 조회
+    public BusinessCardResponseDto.BusinessCardListResponseDto getFriendBusinessCard(Long businessCardIdx, String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         BusinessCard businessCard = businessCardRepository.findByBusinessCardIdx(businessCardIdx)
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
+
+        if (!memberBusinessCardRepository.existsFriendBusinessCardIdx(businessCardIdx, memberIdx)) {
+            throw new ErrorHandler(ErrorStatus.BUSINESS_FRIEND_CARD_NOT_FOUND);
+        }
+
         return BusinessCardDtoConverter.convertToBusinessCardListResponseDto(List.of(businessCard));
     }
 

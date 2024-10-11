@@ -59,5 +59,15 @@ public class MemberBusinessCardRepository {
         return businessCard != null;
     }
 
+    public boolean existsFriendBusinessCardIdx(Long businessCardIdx, Long memberIdx) {
+        Map<String, Object> map = Map.of("memberIdx", memberIdx, "businessCardIdx", businessCardIdx);
+        MemberBusinessCard memberBusinessCard = memberBusinessCardMapper.findByFriendBusinessCardIdx(map);
+        return memberBusinessCard != null;
+    }
+
+    public boolean existsByMemberIdxAndStatus(Long memberIdx) {
+        MemberBusinessCard memberBusinessCard = memberBusinessCardMapper.findByMemberIdxAndStatus(memberIdx);
+        return memberBusinessCard!=null;
+    }
 
 }

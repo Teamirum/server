@@ -77,11 +77,12 @@ public enum ErrorStatus implements BaseErrorCode {
     BUSINESS_CARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "BUSINESSCARD4001", "해당 명함이 존재하지 않습니다."),
     BUSINESS_CARD_DUPLICATE(HttpStatus.BAD_REQUEST, "BUSINESSCARD4002", "이미 등록된 명함입니다."),
 
+
     BUSINESS_CARD_SAVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "BUSINESSCARD5001", "명함 저장에 실패하였습니다."),
     BUSINESS_CARD_UPDATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "BUSINESSCARD5002", "명함 수정에 실패하였습니다."),
     BUSINESS_CARD_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "BUSINESSCARD5003", "명함 삭제에 실패하였습니다."),
     BUSINESS_CARD_ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "BUSINESSCARD4003", "명함 권한이 없습니다."),
-
+    BUSINESS_FRIEND_CARD_NOT_FOUND(HttpStatus.BAD_REQUEST, "BUSINESSCARD4004", "해당 친구명함이 존재하지 않습니다."),
 
     // 거래 응답
     TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "TRANSACTION4001", "해당 거래가 존재하지 않습니다."),

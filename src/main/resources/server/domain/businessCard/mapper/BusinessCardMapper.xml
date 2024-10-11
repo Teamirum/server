@@ -54,7 +54,7 @@
     <!-- delete BusinessCard -->
     <delete id="delete" parameterType="Long">
         DELETE FROM BusinessCard
-        WHERE idx = #{idx}
+        WHERE member_idx = #{memberIdx}
     </delete>
 
     <!-- get BusinessCard by Idx And MemberIdx -->
@@ -71,12 +71,19 @@
     </select>
 
     <select id="findAllFriendBusinessCards" parameterType="Long" resultMap="BusinessCardResultMap">
-        SELECT bc.*
-        FROM BusinessCard bc
-                 JOIN MemberBusinessCard mbc ON bc.idx = mbc.businessCard_idx
-        WHERE mbc.member_idx != #{memberIdx}
+        SELECT b.*
+        FROM BusinessCard b
+        WHERE b.idx IN (
+            SELECT mbc.businessCard_idx
+            FROM MemberBusinessCard mbc
+            WHERE mbc.member_idx = #{memberIdx}
+              AND mbc.status = 'NOT_OWNER'
+        )
     </select>
 
+    <select id="findByFriendBusinessCardIdxAndMemberIdx"
+            parameterType="map" resultMap="BusinessCardResultMap">
 
+    </select>
 
 </mapper>
