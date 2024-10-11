@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import server.domain.businessCard.domain.BusinessCard;
 import server.domain.businessCard.domain.MemberBusinessCard;
-import server.domain.businessCard.dto.BusinessCardDtoConverter;
-import server.domain.businessCard.dto.BusinessCardRequestDto;
-import server.domain.businessCard.dto.BusinessCardResponseDto;
-import server.domain.businessCard.dto.MemberBusinessCardResponseDto;
+import server.domain.businessCard.dto.*;
 import server.domain.businessCard.repository.BusinessCardRepository;
 import server.domain.businessCard.repository.MemberBusinessCardRepository;
 import server.domain.member.domain.Member;
@@ -202,6 +199,25 @@ public class BusinessCardService {
         }
 
         return BusinessCardDtoConverter.convertToBusinessCardListResponseDto(List.of(businessCard));
+    }
+
+    public MemberBusinessCardResponseDto.MemberBusinessCardTaskSuccessResponseDto updateFriendBusinessCard(Long businessCardIdx, MemberBusinessCardRequestDto.UpdateMemberBusinessCardRequestDto requestDto, String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (memberBusinessCardRepository.findByMemberIdxAndBusinessCardIdx(memberIdx, businessCardIdx).isEmpty()) {
+            throw new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND);
+        }
+
+        MemberBusinessCard memberBusinessCard = memberBusinessCardRepository.findByMemberIdxAndBusinessCardIdx(memberIdx, businessCardIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND));
+
+        memberBusinessCard.setMemo(requestDto.getMemo());
+        memberBusinessCardRepository.update(memberBusinessCard);
+
+        return MemberBusinessCardResponseDto.MemberBusinessCardTaskSuccessResponseDto.builder()
+                .isSuccess(true)
+                .idx(businessCardIdx)
+                .build();
     }
 
 

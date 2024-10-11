@@ -40,11 +40,12 @@
           AND  businessCard_idx = #{businessCardIdx}
     </delete>
 
-    <!-- 명함 상태 업데이트 -->
-    <update id="updateStatus">
+
+    <update id="update">
         UPDATE MemberBusinessCard
-        SET status = #{status}, memo = #{memo}
-        WHERE idx = #{idx}
+        SET memo = #{memo}
+        WHERE  businessCard_idx = #{businessCardIdx}
+          AND member_idx = #{memberIdx}
     </update>
 
 

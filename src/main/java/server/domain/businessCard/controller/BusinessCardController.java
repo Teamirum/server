@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import server.domain.businessCard.domain.BusinessCard;
 import server.domain.businessCard.dto.BusinessCardRequestDto;
 import server.domain.businessCard.dto.BusinessCardResponseDto;
+import server.domain.businessCard.dto.MemberBusinessCardRequestDto;
 import server.domain.businessCard.service.BusinessCardService;
 import server.domain.businessCard.service.QRCodeService;
 import server.global.apiPayload.ApiResponse;
@@ -182,6 +183,16 @@ public class BusinessCardController {
         String loginMemberId = getLoginMemberId();
         log.info("친구 명함 조회 요청: BusinessCardIdx = {}, loginMemberId = {}", businessCardIdx, loginMemberId);
         return ApiResponse.onSuccess(businessCardService.getFriendBusinessCard(businessCardIdx, loginMemberId));
+    }
+
+    // 친구 명함 수정
+    @PatchMapping("/friends")
+    public ApiResponse<?> updateFriendBusinessCard(
+            @RequestParam("businessCardIdx") Long businessCardIdx,
+            @RequestBody MemberBusinessCardRequestDto.UpdateMemberBusinessCardRequestDto requestDto) {
+        String loginMemberId = getLoginMemberId();
+        log.info("친구 명함 수정 요청: BusinessCardIdx = {}, loginMemberId = {}, 수정 내용 = {}", businessCardIdx, loginMemberId, requestDto);
+        return ApiResponse.onSuccess(businessCardService.updateFriendBusinessCard(businessCardIdx, requestDto, loginMemberId));
     }
 
 
