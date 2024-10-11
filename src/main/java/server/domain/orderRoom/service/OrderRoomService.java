@@ -22,6 +22,7 @@ import server.domain.orderRoom.domain.OrderRoom;
 import server.domain.orderRoom.dto.OrderRoomDataDto;
 import server.domain.orderRoom.dto.OrderRoomResponseDto.*;
 import server.domain.orderRoom.dto.OrderRoomRequestDto.*;
+import server.domain.orderRoom.dto.OrderRoomResponseDto.OrderRoomInfoResponseDto.ParticipantMemberInfo;
 import server.domain.orderRoom.model.OrderRoomStatus;
 import server.domain.orderRoom.model.OrderRoomType;
 import server.domain.orderRoom.repository.OrderRoomRepository;
@@ -146,8 +147,40 @@ public class OrderRoomService {
 
         if (isFull && orderRoom.getType().equals(OrderRoomType.BY_MENU)) {
             sendOrderRoomMenu(orderRoom, channelTopic);
+        } else if (isFull && orderRoom.getType().equals(OrderRoomType.BY_PRICE)) {
+            sendOrderRoomInfo(orderRoom, channelTopic);
         }
 
+    }
+
+    private void sendOrderRoomInfo(OrderRoom orderRoom, ChannelTopic channelTopic) {
+        List<ParticipantMemberInfo> memberPriceInfoList = new ArrayList<>();
+        int price = orderRoom.getTotalPrice() / orderRoom.getMaxMemberCnt();
+        int remainPrice = orderRoom.getTotalPrice() % orderRoom.getMaxMemberCnt();
+        for (Long memberIdx : orderRoom.getMemberIdxList()) {
+            Member member = memberRepository.findByIdx(memberIdx).orElse(null);
+            if (member == null) {
+                redisPublisher.publish(channelTopic, new ErrorResponseDto(memberIdx, orderRoom.getOrderIdx(), ErrorStatus.MEMBER_NOT_FOUND));
+                return;
+            }
+            ParticipantMemberInfo participantMemberInfo = ParticipantMemberInfo.builder()
+                    .memberIdx(member.getIdx())
+                    .memberId(member.getMemberId())
+                    .memberName(member.getName())
+                    .price(orderRoom.getOwnerMemberIdx() == member.getIdx() ? price + remainPrice : price)
+                    .build();
+            memberPriceInfoList.add(participantMemberInfo);
+        }
+        OrderRoomInfoResponseDto orderRoomInfoResponseDto = OrderRoomInfoResponseDto.builder()
+                .orderIdx(orderRoom.getOrderIdx())
+                .ownerMemberIdx(orderRoom.getOwnerMemberIdx())
+                .maxMemberCnt(orderRoom.getMaxMemberCnt())
+                .totalPrice(orderRoom.getTotalPrice())
+                .memberList(memberPriceInfoList)
+                .type("PARTICIPANT_INFO")
+                .build();
+
+        redisPublisher.publish(channelTopic, orderRoomInfoResponseDto);
     }
 
     private void sendOrderRoomMenu(OrderRoom orderRoom, ChannelTopic channelTopic) {
@@ -385,6 +418,10 @@ public class OrderRoomService {
         }
 
         OrderRoom orderRoom = redisRepository.getOrderRoom(order.getIdx());
+        if (orderRoomRepository.findByOrderIdx(order.getIdx()).isPresent()) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(null, orderIdx, ErrorStatus.ORDER_ROOM_ALREADY_EXIST));
+            return;
+        }
         List<OrderMenu> orderMenuList = orderMenuRepository.findAllByOrderIdx(orderRoom.getOrderIdx());
         if (orderMenuList.isEmpty()) {
             redisPublisher.publish(channelTopic, new ErrorResponseDto(null, orderIdx, ErrorStatus.ORDER_MENU_NOT_FOUND));
