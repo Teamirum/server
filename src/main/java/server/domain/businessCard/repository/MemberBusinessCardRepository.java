@@ -49,8 +49,8 @@ public class MemberBusinessCardRepository {
     }
 
     // 명함 상태 업데이트
-    public void updateStatus(MemberBusinessCard memberBusinessCard) {
-        memberBusinessCardMapper.updateStatus(memberBusinessCard);
+    public void update(MemberBusinessCard memberBusinessCard) {
+        memberBusinessCardMapper.update(memberBusinessCard);
     }
 
     public boolean existsByMemberIdxAndBusinessCardIdx(Long idx, Long memberIdx) {
