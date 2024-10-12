@@ -39,12 +39,14 @@ public class OrderResponseDto {
         public String menuName;
         public int price;
         public int amount;
+        public String imgUrl;
     }
 
     @Data
     @Builder
     public static class OrderTaskSuccessResponseDto {
         public Long idx;
+        public String imgUrl;
         public Boolean isSuccess;
     }
 }

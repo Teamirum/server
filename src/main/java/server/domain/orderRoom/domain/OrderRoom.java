@@ -9,6 +9,7 @@ import server.domain.orderRoom.model.OrderRoomType;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +51,8 @@ public class OrderRoom implements Serializable {
 
     private String createdAt;
 
+    private String imgUrl;
+
     public void updateCurrentPrice(int price) {
         currentPrice += price;
     }
@@ -90,7 +93,5 @@ public class OrderRoom implements Serializable {
         readyCnt--;
         return true;
     }
-
-
 
 }

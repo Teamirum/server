@@ -48,6 +48,7 @@ public class OrderRequestDto {
         private Long menuIdx;
         private int amount;
 
+
         @JsonCreator
         public OrderMenuDto(
                 @JsonProperty("menuIdx") Long menuIdx,
