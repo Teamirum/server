@@ -23,4 +23,14 @@ public class MemberResponseDto {
 
     }
 
+    @Data
+    @Builder
+    public static class MemberInfoResponseDto {
+        private Long idx;
+        private String memberId;
+        private String name;
+        private String email;
+        private String createdAt;
+    }
+
 }

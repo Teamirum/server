@@ -45,23 +45,40 @@ public class OrderRoomController {
 
     @MessageMapping("/order/room/cancel")
     public void cancelOrderMenu(@Payload SelectMenuRequestDto requestDto) {
+        log.info("cancelOrderMenu : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
         orderRoomService.cancelOrderMenu(requestDto, requestDto.getMemberId());
     }
 
     @MessageMapping("/order/room/price")
     public void selectPrice(@Payload SelectPriceRequestDto requestDto) {
+        log.info("selectPrice : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
         orderRoomService.selectPrice(requestDto, requestDto.getMemberId());
     }
 
     @MessageMapping("/order/room/ready")
     public void readyOrderRoom(@Payload ReadyOrderRoomRequestDto requestDto) {
+        log.info("readyOrderRoom : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
         orderRoomService.readyToPay(requestDto.getOrderIdx(), requestDto.getMemberId());
     }
 
-    @MessageMapping("/order/room/ready/cancel/{orderIdx}")
+    @MessageMapping("/order/room/ready/cancel")
     public void cancelReadyOrderRoom(@Payload ReadyOrderRoomRequestDto requestDto) {
+        log.info("cancelReadyOrderRoom : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
         orderRoomService.cancelReadyToPay(requestDto.getOrderIdx(), requestDto.getMemberId());
     }
+
+//    @MessageMapping("/order/room/exit")
+//    public void exitOrderRoom(@Payload ExitOrderRoomRequestDto requestDto) {
+//        log.info("exitOrderRoom : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
+//        orderRoomService.exitOrderRoom(requestDto.getOrderIdx(), requestDto.getMemberId());
+//    }
+
+    @MessageMapping("/order/room/expire")
+    public void expireOrderRoom(@Payload ExpireOrderRoomRequestDto requestDto) {
+        log.info("expireOrderRoom : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
+        orderRoomService.expireOrderRoom(requestDto.getOrderIdx(), requestDto.getMemberId());
+    }
+
 
     public String getLoginMemberId() {
         return SecurityUtil.getLoginMemberId().orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));

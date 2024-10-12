@@ -22,7 +22,7 @@ public class OrderRoom implements Serializable {
     @Serial
     private static final long serialVersionUID = 6494678977089006639L;
 
-//    private Long idx;
+    private Long idx;
 
     private Long orderIdx;
 

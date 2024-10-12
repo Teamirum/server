@@ -87,6 +87,35 @@ public class OrderRoomResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class OrderRoomInfoResponseDto implements Serializable {
+        private Long orderIdx;
+        private Long ownerMemberIdx;
+        private int maxMemberCnt;
+        private int totalPrice;
+        List<ParticipantMemberInfo> memberList;
+
+        // PARTICIPANT_INFO 로 고정
+        private String type;
+
+        @Data
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public static class ParticipantMemberInfo implements Serializable {
+            private Long memberIdx;
+            private String memberId;
+            private String memberName;
+            private int price;
+        }
+    }
+
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class OrderRoomMenuSelectionResponseDto implements Serializable {
 
         private Long orderIdx;
@@ -158,18 +187,6 @@ public class OrderRoomResponseDto {
             this.code = errorStatus.getCode();
             this.message = errorStatus.getMessage();
             this.type = "ERROR";
-        }
-
-        @Override
-        public String toString() {
-            return "{" +
-                    "\"memberIdx\" : " + memberIdx +
-                    "\"orderIdx\" : " + orderIdx +
-                    "\"isSuccess\" : \"" + isSuccess + "\"" +
-                    ", status: \"" + status + "\"" +
-                    ", code: \"" + code + "\"" +
-                    ", message: \"" + message + "\"" +
-                    "}";
         }
     }
 

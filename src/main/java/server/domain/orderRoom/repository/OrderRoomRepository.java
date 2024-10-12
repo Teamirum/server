@@ -31,6 +31,10 @@ public class OrderRoomRepository {
         return Optional.empty();
     }
 
+    public boolean existByOrderIdx(Long orderIdx) {
+        return orderRoomMapper.findByOrderIdx(orderIdx) != null;
+    }
+
     public Optional<OrderRoom> findByOwnerMemberIdxAndOrderIdx(Long ownerMemberIdx, Long orderIdx) {
         Map<String, Object> map = Map.of("ownerMemberIdx", ownerMemberIdx, "orderIdx", orderIdx);
         OrderRoom orderRoom = orderRoomMapper.findByOwnerMemberIdxAndOrderIdx(map);
