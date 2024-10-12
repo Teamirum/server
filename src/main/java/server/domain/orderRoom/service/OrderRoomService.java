@@ -1,5 +1,6 @@
 package server.domain.orderRoom.service;
 
+import com.google.zxing.WriterException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -7,6 +8,10 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import server.domain.businessCard.domain.BusinessCard;
+import server.domain.businessCard.dto.BusinessCardRequestDto;
+import server.domain.businessCard.dto.BusinessCardResponseDto;
+import server.domain.businessCard.service.QRCodeService;
 import server.domain.member.domain.Member;
 import server.domain.member.repository.MemberRepository;
 import server.domain.menu.domain.Menu;
@@ -31,6 +36,8 @@ import server.global.aop.annotation.RedisLock;
 import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,6 +59,7 @@ public class OrderRoomService {
     private final RedisSubscriber redisSubscriber;
     private final RedisPublisher redisPublisher;
     private final OrderRoomRepository orderRoomRepository;
+    private final QRCodeService qrCodeService;
 
 
     public CreateOrderRoomResponseDto createOrderRoom(CreateOrderRoomRequestDto requestDto, String memberId) {
@@ -112,9 +120,27 @@ public class OrderRoomService {
                 .orderMenuList(orderMenuResponseDtoList)
                 .totalPrice(order.getTotalPrice())
                 .menuCnt(orderMenuList.size())
+                .imgUrl(getRoomQR(order.getIdx(), order.getMarketIdx(), memberId))
                 .isSuccess(true)
                 .build();
 
+    }
+
+    public String getRoomQR(Long orderIdx, Long marketIdx, String memberId) {
+        String imgUrl = null;
+
+        try {
+            imgUrl = qrCodeService.getOrderRoomQRImage(orderIdx, marketIdx, memberId);
+        } catch (WriterException e) {
+            e.printStackTrace();
+            throw new ErrorHandler(ErrorStatus.QR_CODE_GENERATE_FAIL);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
+        return imgUrl;
     }
 
     public void enterOrderRoom(Long orderIdx, String memberId) {

@@ -56,6 +56,27 @@ public class QRCodeService {
         return imageService.uploadQrImg(qrCodeImage, businessCardIdx);
     }
 
+    public String getOrderRoomQRImage(Long orderIdx, Long marketIdx, String memberId) throws WriterException, IOException {
+        String baseUrl = "http://localhost:5173/payment-waiting"; // 기본 URL
+        String queryParam = "?orderIdx=" + orderIdx + "&marketIdx=" + marketIdx; // idx를 쿼리 파라미터로 추가
+        String fullUrl = baseUrl + queryParam; // 완전한 URL 생성
+
+        String info = new String(String.format(
+                "{\"url\":\"%s\"}", fullUrl
+        ).getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+        ByteArrayOutputStream qrCodeStream = generateQRCode(info);
+
+        // ByteArrayOutputStream을 MultipartFile로 변환
+        MultipartFile qrCodeImage = new ByteArrayMultipartFile(
+                "qrCode.png",                   // 파일 이름
+                "qrCode.png",                   // 원본 파일 이름
+                "image/png",                    // 콘텐츠 타입
+                qrCodeStream.toByteArray()      // byte 배열로 변환
+        );
+
+        return imageService.uploadImg(qrCodeImage, memberId).getImgUrl();
+    }
+
     // MultipartFile을 직접 구현한 클래스
     public class ByteArrayMultipartFile implements MultipartFile {
 

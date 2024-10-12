@@ -21,6 +21,7 @@ public class OrderRoomResponseDto {
         private int totalPrice;
         private int menuCnt;
         private boolean isSuccess;
+        private String imgUrl;
     }
 
     @Data
