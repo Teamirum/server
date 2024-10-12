@@ -55,9 +55,12 @@ public class BusinessCardService {
         BusinessCard savedBusinessCard = businessCardRepository.findByMemberIdx(businessCard.getMemberIdx())
                 .orElseThrow(() -> new ErrorHandler(ErrorStatus.BUSINESS_CARD_SAVE_FAIL));
 
+
         String imgUrl = null;
         try {
-            imgUrl = qrCodeService.generateAndUploadQRCode(businessCard.getQrData(), memberId);
+            imgUrl = qrCodeService.generateAndUploadQRCode(savedBusinessCard.getQrData(), savedBusinessCard.getIdx());
+            savedBusinessCard.setImgUrl(imgUrl);
+            businessCardRepository.updateBusinessCard(savedBusinessCard);
         } catch (WriterException e) {
             e.printStackTrace();
             throw new ErrorHandler(ErrorStatus.QR_CODE_GENERATE_FAIL);
@@ -65,7 +68,7 @@ public class BusinessCardService {
             throw new RuntimeException(e);
         }
 
-        // 이미지 성공적으로 생성되면, savedBusinessCard에 imgUrl 저장하기
+
 
         return BusinessCardResponseDto.BusinessCardTaskSuccessResponseDto.builder()
                 .isSuccess(true)
@@ -157,6 +160,7 @@ public class BusinessCardService {
                 .memberIdx(businessCard.getMemberIdx())
                 .businessCardIdx(businessCard.getIdx())
                 .status(OWNER)
+
                 .memo("")
                 .build());
     }
@@ -176,16 +180,21 @@ public class BusinessCardService {
                 .build());
     }
 
-    public BusinessCardResponseDto.BusinessCardListResponseDto getAllFriendBusinessCards(String memberId) {
-        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public  BusinessCardResponseDto.BusinessCardListResponseDto getAllFriendBusinessCards(String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        if(!memberBusinessCardRepository.existsByMemberIdxAndStatus(memberIdx)) {
+        List<BusinessCard> businessCardList = businessCardRepository.findAllFriendBusinessCards(memberIdx);
+
+        if (businessCardList.isEmpty()) {
             throw new ErrorHandler(ErrorStatus.BUSINESS_FRIEND_CARD_NOT_FOUND);
         }
 
-        List<BusinessCard> businessCardList = businessCardRepository.findAllFriendBusinessCards(memberIdx);
+        // 비즈니스 카드 수와 목록을 포함하는 응답 생성
         return BusinessCardDtoConverter.convertToBusinessCardListResponseDto(businessCardList);
     }
+
+
 
     public MemberBusinessCardResponseDto.MemberBusinessCardTaskSuccessResponseDto deleteFriendBusinessCard(Long businessCardIdx, String memberId) {
         log.info("서비스에서 전달된 BusinessCardIdx: {}", businessCardIdx);
@@ -194,8 +203,6 @@ public class BusinessCardService {
         if (memberBusinessCardRepository.findByMemberIdxAndBusinessCardIdx(memberIdx, businessCardIdx).isEmpty()) {
             throw new ErrorHandler(ErrorStatus.BUSINESS_CARD_NOT_FOUND);
         }
-
-
 
         memberBusinessCardRepository.delete(memberIdx, businessCardIdx);
         return MemberBusinessCardResponseDto.MemberBusinessCardTaskSuccessResponseDto.builder()
@@ -234,6 +241,7 @@ public class BusinessCardService {
         return MemberBusinessCardResponseDto.MemberBusinessCardTaskSuccessResponseDto.builder()
                 .isSuccess(true)
                 .idx(businessCardIdx)
+                .memo(requestDto.getMemo())
                 .build();
     }
 

@@ -66,5 +66,12 @@ public class TransactionController {
         return ApiResponse.onSuccess(transactionService.update(requestDto, loginMemberId));
     }
 
+    @GetMapping("/history/all")
+    public ApiResponse<?> getTransactionHistory() {
+        String loginMemberId = getLoginMemberId();
+        log.info("거래 내역 조회 요청 : loginMemberId = {}", loginMemberId);
+        return ApiResponse.onSuccess(transactionService.getTransactionHistory(loginMemberId));
+    }
+
 
 }

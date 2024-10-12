@@ -96,8 +96,20 @@ public class MemberService {
                 .build();
     }
 
+
     public MemberResponseDto.MemberInfoResponseDto getMyInfo(String memberId) {
         Member member = getMemberByMemberId(memberId);
         return MemberDtoConverter.convertToMemberInfoResponseDto(member);
+    }
+
+    public MemberResponseDto.MemberTaskSuccessResponseDto checkConnectMyData(String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Member member = memberRepository.findByIdx(memberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return MemberResponseDto.MemberTaskSuccessResponseDto.builder()
+                .isSuccess(true)
+                .isConnected(member.getIsConnected())
+                .build();
     }
 }

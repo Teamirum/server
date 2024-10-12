@@ -35,15 +35,26 @@ public class TransactionService {
                 .category(Transaction.Category.valueOf(requestDto.getCategory()))
                 .build();
 
+        // 트랜잭션을 저장합니다. 이 때, JPA가 ID를 자동으로 설정합니다.
         transactionRepository.save(transaction);
+
+        // 저장된 트랜잭션 객체에서 ID를 가져옵니다.
+        Long transactionIdx = transaction.getIdx(); // 이 때 ID는 null입니다.
+
+        // ID를 가져오고, 이후 findByTransactionIdx로 확인합니다.
+        Transaction savedTransaction = transactionRepository.findByTransactionIdx(transactionIdx)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.TRANSACTION_SAVE_FAIL));
+
+        System.out.println(" @@@@@= " + savedTransaction.getIdx());
 
         return TransactionResponseDto.TransactionTaskSuccessResponseDto.builder()
                 .isSuccess(true)
-                .idx(transaction.getIdx())
+                .idx(savedTransaction.getIdx())
                 .build();
     }
 
-   public Transaction getTransaction(Long idx, String loginMemberId) {
+
+    public Transaction getTransaction(Long idx, String loginMemberId) {
        Long memberIdx = memberRepository.getIdxByMemberId(loginMemberId)
                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -104,5 +115,14 @@ public class TransactionService {
                 .isSuccess(true)
                 .idx(transaction.getIdx())
                 .build();
+    }
+
+    public TransactionResponseDto.TransactionListResponseDto getTransactionHistory(String memberId) {
+        Long memberIdx = memberRepository.getIdxByMemberId(memberId)
+                .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Transaction> transactionList = transactionRepository.findAllTransactionByMemberIdx(memberIdx);
+
+        return TransactionDtoConverter.convertToTransactionListResponseDto(transactionList);
     }
 }

@@ -44,8 +44,19 @@ public class Transaction {
     }
 
     public enum Category {
-        FOOD, TRANSPORT, ENTERTAINMENT, UNCATEGORIZED
+        SALARY,
+        INTEREST,
+        ALLOWANCE,
+        FOOD,
+        SHOPPING,
+        TRANSPORT,
+        ENTERTAINMENT,
+        COMMUNICATION,
+        UNCATEGORIZED
     }
+
+
+
 
 
 }
