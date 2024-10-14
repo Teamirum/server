@@ -571,7 +571,7 @@ public class OrderRoomService {
         // 랜덤으로 한 명 뽑기
         if (!memberIdxList.isEmpty()) {
             Random random = new Random();
-            int randomIndex = random.nextInt(0, memberIdxList.size() - 1);
+            int randomIndex = random.nextInt(memberIdxList.size()); // 올바른 범위 지정
             Long selectedMemberIdx = memberIdxList.get(randomIndex);
 
             // 선택된 멤버의 인덱스를 사용하여 추가 작업 수행 가능
@@ -579,7 +579,7 @@ public class OrderRoomService {
             OrderRoomGameResultResponseDto gameResult = OrderRoomGameResultResponseDto.builder()
                     .orderIdx(orderIdx)
                     .memberIdx(selectedMember.getIdx())
-                    .memberName(selectedMember.getMemberId())
+                    .memberName(selectedMember.getName())
                     .type("GAME_RESULT")
                     .build();
 
@@ -588,6 +588,7 @@ public class OrderRoomService {
             System.out.println("멤버 리스트가 비어 있습니다.");
         }
     }
+
 
 
     public Member getMemberById(String memberId) {
