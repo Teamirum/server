@@ -42,6 +42,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -551,6 +552,41 @@ public class OrderRoomService {
                 .type("MEMBER_LIST_INFO")
                 .build();
         redisPublisher.publish(channelTopic, memberInfoListResponseDto);
+    }
+
+    public void startGame(Long orderIdx, String memberId) {
+        Member member = getMemberById(memberId);
+        ChannelTopic channelTopic = redisRepository.getTopic(orderIdx.toString());
+        if (channelTopic == null) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND);
+        }
+        if (!redisRepository.existByOrderRoomIdx(orderIdx)) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), orderIdx, ErrorStatus.ORDER_ROOM_NOT_FOUND));
+            return;
+        }
+
+        OrderRoom orderRoom = redisRepository.getOrderRoom(orderIdx);
+        List<Long> memberIdxList = orderRoom.getMemberIdxList();
+
+        // 랜덤으로 한 명 뽑기
+        if (!memberIdxList.isEmpty()) {
+            Random random = new Random();
+            int randomIndex = random.nextInt(0, memberIdxList.size() - 1);
+            Long selectedMemberIdx = memberIdxList.get(randomIndex);
+
+            // 선택된 멤버의 인덱스를 사용하여 추가 작업 수행 가능
+            Member selectedMember = memberRepository.findByIdx(selectedMemberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            OrderRoomGameResultResponseDto gameResult = OrderRoomGameResultResponseDto.builder()
+                    .orderIdx(orderIdx)
+                    .memberIdx(selectedMember.getIdx())
+                    .memberName(selectedMember.getMemberId())
+                    .type("GAME_RESULT")
+                    .build();
+
+            redisPublisher.publish(channelTopic, gameResult);
+        } else {
+            System.out.println("멤버 리스트가 비어 있습니다.");
+        }
     }
 
 
