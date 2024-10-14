@@ -59,7 +59,7 @@
     <select id="findAllByMemberIdx" parameterType="Long" resultMap="TransactionResultMap">
         SELECT *
         FROM Transaction
-        WHERE member_idx = #{memberIdx} ORDER BY idx DESC
+        WHERE member_idx = #{memberIdx} ORDER BY time DESC;
     </select>
 
     <!-- Update Transaction -->
