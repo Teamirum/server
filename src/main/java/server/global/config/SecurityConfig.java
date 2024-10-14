@@ -80,8 +80,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .exceptionHandling()
-                    .accessDeniedHandler(new CustomAccessDeniedHandler(jwtService))
-                    .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+                .accessDeniedHandler(new CustomAccessDeniedHandler(jwtService))
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
 
         http
                 .addFilterAfter(jsonUsernamePasswordLoginFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -151,7 +151,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS","PATCH"));
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174", "http://172.30.1.76:3000", "http://localhost:3000"));
         corsConfiguration.setExposedHeaders(Arrays.asList("Authorization", "Authorization-refresh"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setMaxAge(corsConfiguration.getMaxAge());
