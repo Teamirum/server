@@ -57,8 +57,11 @@ public class RedisSubscriber implements MessageListener {
                 OrderRoomPriceSelectionResponseDto dto = (OrderRoomPriceSelectionResponseDto) obj;
                 messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
                 log.info("Received PRICE_SELECT message: {}", dto);
+            } else if (obj instanceof OrderRoomMemberInfoListResponseDto) {
+                OrderRoomMemberInfoListResponseDto dto = (OrderRoomMemberInfoListResponseDto) obj;
+                messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
+                log.info("Received MEMBER_LIST_INFO message: {}", dto);
             }
-
             else if (obj instanceof ErrorResponseDto) {
                 ErrorResponseDto dto = (ErrorResponseDto) obj;
                 messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);

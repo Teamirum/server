@@ -212,4 +212,28 @@ public class OrderRoomResponseDto {
         private Long memberIdx;
         private int price;
     }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class OrderRoomMemberInfoListResponseDto implements Serializable {
+        private Long orderIdx;
+        private List<OrderRoomMemberInfoDto> memberInfoList;
+        // MEMBER_LIST_INFO 로 고정
+        private String type;
+
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class OrderRoomMemberInfoDto implements Serializable {
+        private Long memberIdx;
+        private String memberId;
+        private String memberName;
+    }
 }

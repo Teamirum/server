@@ -522,10 +522,42 @@ public class OrderRoomService {
 
     }
 
+    public void getOrderRoomMember(Long orderIdx, String memberId) {
+        Member member = getMemberById(memberId);
+        ChannelTopic channelTopic = redisRepository.getTopic(orderIdx.toString());
+        if (channelTopic == null) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND);
+        }
+        if (!redisRepository.existByOrderRoomIdx(orderIdx)) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), orderIdx, ErrorStatus.ORDER_ROOM_NOT_FOUND));
+            return;
+        }
+
+        OrderRoom orderRoom = redisRepository.getOrderRoom(orderIdx);
+        List<OrderRoomMemberInfoDto> memberInfoList = new ArrayList<>();
+
+        for (Long memberIdx : orderRoom.getMemberIdxList()) {
+            Member memberInfo = memberRepository.findByIdx(memberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            OrderRoomMemberInfoDto memberInfoDto = OrderRoomMemberInfoDto.builder()
+                    .memberIdx(memberInfo.getIdx())
+                    .memberId(memberInfo.getMemberId())
+                    .memberName(memberInfo.getName())
+                    .build();
+            memberInfoList.add(memberInfoDto);
+        }
+        OrderRoomMemberInfoListResponseDto memberInfoListResponseDto = OrderRoomMemberInfoListResponseDto.builder()
+                .orderIdx(orderIdx)
+                .memberInfoList(memberInfoList)
+                .type("MEMBER_LIST_INFO")
+                .build();
+        redisPublisher.publish(channelTopic, memberInfoListResponseDto);
+    }
+
 
     public Member getMemberById(String memberId) {
         return memberRepository.findByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
+
 
 
 }

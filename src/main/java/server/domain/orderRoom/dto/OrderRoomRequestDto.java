@@ -38,7 +38,7 @@ public class OrderRoomRequestDto {
 
         @JsonCreator
         public EnterOrderRoomRequestDto(
-                @JsonProperty("memberIdx") String memberId,
+                @JsonProperty("memberId") String memberId,
                 @JsonProperty("orderIdx") Long orderIdx
         ) {
             this.memberId = memberId;
@@ -143,6 +143,20 @@ public class OrderRoomRequestDto {
         }
     }
 
+    @Data
+    public static class GetMemberListRequestDto {
+        private Long orderIdx;
+        private String memberId;
 
+        @JsonCreator
+        public GetMemberListRequestDto(
+                @JsonProperty("orderIdx") Long orderIdx,
+                @JsonProperty("memberId") String memberId
+        ) {
+            this.orderIdx = orderIdx;
+            this.memberId = memberId;
+        }
+
+    }
 
 }
