@@ -61,9 +61,7 @@ public class QRCodeService {
         String queryParam = "?orderIdx=" + orderIdx + "&marketIdx=" + marketIdx; // idx를 쿼리 파라미터로 추가
         String fullUrl = baseUrl + queryParam; // 완전한 URL 생성
 
-        String info = new String(String.format(
-                "{\"url\":\"%s\"}", fullUrl
-        ).getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+        String info = new String(String.format(fullUrl).getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
         ByteArrayOutputStream qrCodeStream = generateQRCode(info);
 
         // ByteArrayOutputStream을 MultipartFile로 변환
