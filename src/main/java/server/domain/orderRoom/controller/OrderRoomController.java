@@ -73,6 +73,13 @@ public class OrderRoomController {
         orderRoomService.getOrderRoomMember(requestDto.getOrderIdx(), requestDto.getMemberId());
     }
 
+    @MessageMapping("/order/room/game/start")
+    // dto 그냥 재사용
+    public void startGame(@Payload GetMemberListRequestDto requestDto) {
+        log.info("startGame : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
+        orderRoomService.startGame(requestDto.getOrderIdx(), requestDto.getMemberId());
+    }
+
 //    @MessageMapping("/order/room/exit")
 //    public void exitOrderRoom(@Payload ExitOrderRoomRequestDto requestDto) {
 //        log.info("exitOrderRoom : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());

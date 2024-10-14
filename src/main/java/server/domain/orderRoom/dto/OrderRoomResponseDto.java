@@ -236,4 +236,17 @@ public class OrderRoomResponseDto {
         private String memberId;
         private String memberName;
     }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class OrderRoomGameResultResponseDto implements Serializable {
+        private Long orderIdx;
+        private Long memberIdx;
+        private String memberName;
+        // GAME_RESULT 로 고정
+        private String type;
+    }
 }
