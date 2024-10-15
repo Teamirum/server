@@ -40,7 +40,7 @@ public class OrderRoomResponseDto {
         private Long ownerMemberIdx;
         private int maxMemberCnt;
         private int totalPrice;
-        private boolean isSuccess;
+        private Boolean isSuccess;
     }
 
     @Data
