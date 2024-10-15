@@ -30,8 +30,8 @@ public class OrderRoomController {
         return ApiResponse.onSuccess(orderRoomService.createOrderRoom(requestDto, memberId));
     }
 
-    @GetMapping("/api/order/room?orderIdx={orderIdx}")
-    public ApiResponse<?> getOrderRoom(@PathVariable(value = "orderIdx") Long orderIdx) {
+    @GetMapping("/api/order/room")
+    public ApiResponse<?> getOrderRoom(@RequestParam Long orderIdx) {
         String memberId = getLoginMemberId();
         log.info("getOrderRoom : memberId = {}", memberId);
         return ApiResponse.onSuccess(orderRoomService.getSimpleOrderRoomInfo(orderIdx, memberId));
