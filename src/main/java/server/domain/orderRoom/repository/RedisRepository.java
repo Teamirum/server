@@ -14,6 +14,7 @@ import server.global.apiPayload.code.status.ErrorStatus;
 import server.global.apiPayload.exception.handler.ErrorHandler;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,12 +139,22 @@ public class RedisRepository {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         HashMap<Long, List<Long>> menuSelect = orderRoom.getMenuSelect();
         HashMap<Long, Integer> menuAmount = orderRoom.getMenuAmount();
+        List<OrderRoomResponseDto.SelectedMenuInfoDto> selectedMenuInfoList = new ArrayList<>();
+        for (Long idx : orderRoom.getMenuSelect().keySet()) {
+            List<Long> memberIdxList = orderRoom.getMenuSelect().get(idx);
+            OrderRoomResponseDto.SelectedMenuInfoDto selectedMenuInfo = OrderRoomResponseDto.SelectedMenuInfoDto.builder()
+                    .menuIdx(idx)
+                    .currentAmount(memberIdxList.size())
+                    .memberIdxList(memberIdxList)
+                    .build();
+            selectedMenuInfoList.add(selectedMenuInfo);
+        }
         if (!menuSelect.containsKey(menuIdx)) {
-            redisPublisher.publish(topic, new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_NOT_FOUND));
+            redisPublisher.publish(topic, new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_NOT_FOUND, selectedMenuInfoList));
             throw new ErrorHandler(ErrorStatus.ORDER_MENU_NOT_FOUND);
         }
         if (menuSelect.get(menuIdx).size() >= menuAmount.get(menuIdx)) {
-            redisPublisher.publish(topic, new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR));
+            redisPublisher.publish(topic, new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR, selectedMenuInfoList));
             throw new ErrorHandler(ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR);
         }
         menuSelect.get(menuIdx).add(memberIdx);
@@ -157,16 +168,26 @@ public class RedisRepository {
     public OrderRoom cancelMenu(Long orderIdx, Long menuIdx, Long memberIdx, int price) {
         OrderRoom orderRoom = getOrderRoom(orderIdx);
         HashMap<Long, List<Long>> menuSelect = orderRoom.getMenuSelect();
+        List<OrderRoomResponseDto.SelectedMenuInfoDto> selectedMenuInfoList = new ArrayList<>();
+        for (Long idx : orderRoom.getMenuSelect().keySet()) {
+            List<Long> memberIdxList = orderRoom.getMenuSelect().get(idx);
+            OrderRoomResponseDto.SelectedMenuInfoDto selectedMenuInfo = OrderRoomResponseDto.SelectedMenuInfoDto.builder()
+                    .menuIdx(idx)
+                    .currentAmount(memberIdxList.size())
+                    .memberIdxList(memberIdxList)
+                    .build();
+            selectedMenuInfoList.add(selectedMenuInfo);
+        }
         if (!menuSelect.containsKey(menuIdx)) {
-            redisPublisher.publish(topics.get(orderIdx + ""), new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_NOT_FOUND));
+            redisPublisher.publish(topics.get(orderIdx + ""), new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_NOT_FOUND, selectedMenuInfoList));
             throw new ErrorHandler(ErrorStatus.ORDER_MENU_NOT_FOUND);
         }
         if (menuSelect.get(menuIdx).size() <= 0) {
-            redisPublisher.publish(topics.get(orderIdx + ""), new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR));
+            redisPublisher.publish(topics.get(orderIdx + ""), new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR, selectedMenuInfoList));
             throw new ErrorHandler(ErrorStatus.ORDER_MENU_MEMBER_CNT_ERROR);
         }
         if (!menuSelect.get(menuIdx).contains(memberIdx)) {
-            redisPublisher.publish(topics.get(orderIdx + ""), new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_NOT_ORDERED_MENU_CANNOT_CANCELED));
+            redisPublisher.publish(topics.get(orderIdx + ""), new OrderRoomResponseDto.ErrorResponseDto(memberIdx, orderIdx, ErrorStatus.ORDER_NOT_ORDERED_MENU_CANNOT_CANCELED, selectedMenuInfoList));
             throw new ErrorHandler(ErrorStatus.ORDER_NOT_ORDERED_MENU_CANNOT_CANCELED);
         }
         menuSelect.get(menuIdx).remove(memberIdx);

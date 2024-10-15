@@ -249,6 +249,17 @@ public class OrderRoomService {
         OrderRoom orderRoom = redisRepository.selectMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice() * requestDto.getAmount(), channelTopic);
 
         log.info("{} 님이 주문방에 메뉴를 선택하였습니다. 주문방 ID : {}, 메뉴 이름 : {}", memberId, requestDto.getOrderIdx(), requestDto.getMenuName());
+
+        List<SelectedMenuInfoDto> selectedMenuInfoList = new ArrayList<>();
+        for (Long menuIdx : orderRoom.getMenuSelect().keySet()) {
+            List<Long> memberIdxList = orderRoom.getMenuSelect().get(menuIdx);
+            SelectedMenuInfoDto selectedMenuInfo = SelectedMenuInfoDto.builder()
+                    .menuIdx(menuIdx)
+                    .currentAmount(memberIdxList.size())
+                    .memberIdxList(memberIdxList)
+                    .build();
+            selectedMenuInfoList.add(selectedMenuInfo);
+        }
         OrderRoomMenuSelectionResponseDto menuSelect = OrderRoomMenuSelectionResponseDto.builder()
                 .orderIdx(requestDto.getOrderIdx())
                 .memberIdx(member.getIdx())
@@ -256,6 +267,7 @@ public class OrderRoomService {
                 .menuName(requestDto.getMenuName())
                 .currentPrice(orderRoom.getCurrentPrice())
                 .amount(requestDto.getAmount())
+                .selectedMenuList(selectedMenuInfoList)
                 .type("MENU_SELECT")
                 .build();
         redisPublisher.publish(channelTopic, menuSelect);
@@ -275,6 +287,16 @@ public class OrderRoomService {
         OrderRoom orderRoom = redisRepository.cancelMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice() * -1);
 
         log.info("{} 님이 주문방에 메뉴를 취소하였습니다. 주문방 ID : {}, 메뉴 이름 : {}", memberId, requestDto.getOrderIdx(), requestDto.getMenuName());
+        List<SelectedMenuInfoDto> selectedMenuInfoList = new ArrayList<>();
+        for (Long menuIdx : orderRoom.getMenuSelect().keySet()) {
+            List<Long> memberIdxList = orderRoom.getMenuSelect().get(menuIdx);
+            SelectedMenuInfoDto selectedMenuInfo = SelectedMenuInfoDto.builder()
+                    .menuIdx(menuIdx)
+                    .currentAmount(memberIdxList.size())
+                    .memberIdxList(memberIdxList)
+                    .build();
+            selectedMenuInfoList.add(selectedMenuInfo);
+        }
         OrderRoomMenuSelectionResponseDto menuCancel = OrderRoomMenuSelectionResponseDto.builder()
                 .orderIdx(requestDto.getOrderIdx())
                 .memberIdx(member.getIdx())
@@ -282,6 +304,7 @@ public class OrderRoomService {
                 .menuName(requestDto.getMenuName())
                 .currentPrice(orderRoom.getCurrentPrice())
                 .amount(requestDto.getAmount())
+                .selectedMenuList(selectedMenuInfoList)
                 .type("MENU_CANCEL")
                 .build();
 

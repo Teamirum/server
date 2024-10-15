@@ -131,9 +131,25 @@ public class OrderRoomResponseDto {
 
         private int amount;
 
+        List<SelectedMenuInfoDto> selectedMenuList;
+
+
+
         // MENU_SELECT, MENU_CANCEL 로 고정
         private String type;
     }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class SelectedMenuInfoDto implements Serializable {
+        private Long menuIdx;
+        private int currentAmount;
+        List<Long> memberIdxList;
+    }
+
 
     @Data
     @Builder
@@ -180,6 +196,7 @@ public class OrderRoomResponseDto {
         private String message;
         private String type;
         private Boolean isSuccess = false;
+        List<SelectedMenuInfoDto> selectedMenuList;
 
         public ErrorResponseDto(Long memberIdx, Long orderIdx, ErrorStatus errorStatus) {
             this.memberIdx = memberIdx;
@@ -188,6 +205,16 @@ public class OrderRoomResponseDto {
             this.code = errorStatus.getCode();
             this.message = errorStatus.getMessage();
             this.type = "ERROR";
+        }
+
+        public ErrorResponseDto(Long memberIdx, Long orderIdx, ErrorStatus errorStatus, List<SelectedMenuInfoDto> selectedMenuList) {
+            this.memberIdx = memberIdx;
+            this.orderIdx = orderIdx;
+            this.status = errorStatus.getHttpStatus().toString();
+            this.code = errorStatus.getCode();
+            this.message = errorStatus.getMessage();
+            this.type = "ERROR";
+            this.selectedMenuList = selectedMenuList;
         }
     }
 
