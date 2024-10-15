@@ -258,6 +258,18 @@ public class OrderRoomResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class IsGameRoomResponseDto implements Serializable {
+        private Long orderIdx;
+        private Boolean isGame;
+        // IS_GAME 로 고정
+        private String type;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class OrderRoomMemberInfoDto implements Serializable {
         private Long memberIdx;
         private String memberId;

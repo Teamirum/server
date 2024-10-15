@@ -67,6 +67,12 @@ public class OrderRoomController {
         orderRoomService.cancelReadyToPay(requestDto.getOrderIdx(), requestDto.getMemberId());
     }
 
+    @MessageMapping("/order/room/isGame")
+    public void isGame(@Payload IsGameRequestDto requestDto) {
+        log.info("isGame : orderIdx = {}, memberId = {}", requestDto.getOrderIdx(), requestDto.getMemberId());
+        orderRoomService.isGame(requestDto.getOrderIdx(), requestDto.getMemberId(), requestDto.isGame());
+    }
+
     @MessageMapping("/order/room/list")
     public void getOrderRoomMember(@Payload GetMemberListRequestDto requestDto) {
         log.info("getOrderRoomMember : orderIdx = {}", requestDto.getOrderIdx());

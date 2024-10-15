@@ -546,6 +546,30 @@ public class OrderRoomService {
 
     }
 
+    public void isGame(Long orderIdx, String memberId, boolean isGame) {
+        Member member = getMemberById(memberId);
+        ChannelTopic channelTopic = redisRepository.getTopic(orderIdx.toString());
+        if (channelTopic == null) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_CHANNEL_TOPIC_NOT_FOUND);
+        }
+        if (!redisRepository.existByOrderRoomIdx(orderIdx)) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), orderIdx, ErrorStatus.ORDER_ROOM_NOT_FOUND));
+            return;
+        }
+//        OrderRoom orderRoom = redisRepository.getOrderRoom(orderIdx);
+//        if (orderRoom.getOwnerMemberIdx() != member.getIdx()) {
+//            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), orderIdx, ErrorStatus.ORDER_ROOM_NOT_OWNER));
+//            return;
+//        }
+        IsGameRoomResponseDto isGameRoomResponseDto = IsGameRoomResponseDto.builder()
+                .orderIdx(orderIdx)
+                .isGame(isGame)
+                .type("IS_GAME")
+                .build();
+        redisPublisher.publish(channelTopic, isGameRoomResponseDto);
+
+    }
+
     public void getOrderRoomMember(Long orderIdx, String memberId) {
         Member member = getMemberById(memberId);
         ChannelTopic channelTopic = redisRepository.getTopic(orderIdx.toString());
@@ -603,15 +627,13 @@ public class OrderRoomService {
             Member selectedMember = memberRepository.findByIdx(selectedMemberIdx)
                     .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-            int winnerIdx = memberIdxList.indexOf(selectedMemberIdx); // 당첨자 인덱스
-            double arc = 2 * Math.PI / memberIdxList.size(); // 각 세그먼트의 각도 크기
+            int winnerIdx = memberIdxList.indexOf(selectedMemberIdx);
+            double arc = 2 * Math.PI / memberIdxList.size(); // 각도를 나눌 범위
 
-            // 기본 회전 각도를 더 다양하게 설정
-            double baseAngle = (3 + random.nextInt(5)) * 2 * Math.PI; // 3에서 7번 회전하도록 설정
-            double randomWithinSegment = random.nextDouble() * arc; // 세그먼트 내 무작위 각도
-
-            // 최종 타겟 각도 계산
-            double targetAngle = baseAngle + (winnerIdx * arc) + randomWithinSegment;
+            // 랜덤한 각도를 각도 범위 내에서 생성
+            double randomWithinSegment = random.nextDouble() * arc;
+            // 각도 계산이 매번 동일하지 않도록 개선된 랜덤성 제공
+            double targetAngle = 5 * 2 * Math.PI + winnerIdx * arc + randomWithinSegment + Math.PI / 2;
 
 
             OrderRoomGameResultResponseDto gameResult = OrderRoomGameResultResponseDto.builder()
