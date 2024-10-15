@@ -35,6 +35,16 @@ public class OrderRoomResponseDto {
 
     @Data
     @Builder
+    public static class OrderRoomSimpleInfoResponseDto {
+        private Long orderIdx;
+        private Long ownerMemberIdx;
+        private int maxMemberCnt;
+        private int totalPrice;
+        private boolean isSuccess;
+    }
+
+    @Data
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class EnterOrderRoomResponseDto implements Serializable {

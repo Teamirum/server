@@ -1,13 +1,12 @@
 package server.domain.orderRoom.controller;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import server.domain.orderRoom.dto.OrderRoomRequestDto.*;
 import server.domain.orderRoom.service.OrderRoomService;
 import server.global.apiPayload.ApiResponse;
@@ -29,6 +28,13 @@ public class OrderRoomController {
         String memberId = getLoginMemberId();
         log.info("createOrderRoom : memberId = {}", memberId);
         return ApiResponse.onSuccess(orderRoomService.createOrderRoom(requestDto, memberId));
+    }
+
+    @GetMapping("/api/order/room?orderIdx={orderIdx}")
+    public ApiResponse<?> getOrderRoom(@PathVariable(value = "orderIdx") Long orderIdx) {
+        String memberId = getLoginMemberId();
+        log.info("getOrderRoom : memberId = {}", memberId);
+        return ApiResponse.onSuccess(orderRoomService.getSimpleOrderRoomInfo(orderIdx, memberId));
     }
 
     @MessageMapping("/order/room/enter")

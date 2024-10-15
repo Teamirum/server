@@ -144,6 +144,21 @@ public class OrderRoomService {
         return imgUrl;
     }
 
+    public OrderRoomSimpleInfoResponseDto getSimpleOrderRoomInfo(Long orderIdx, String memberId) {
+        OrderRoom orderRoom = redisRepository.getOrderRoom(orderIdx);
+        if (orderRoom == null) {
+            throw new ErrorHandler(ErrorStatus.ORDER_ROOM_NOT_FOUND);
+        }
+        return OrderRoomSimpleInfoResponseDto.builder()
+                .orderIdx(orderRoom.getOrderIdx())
+                .ownerMemberIdx(orderRoom.getOwnerMemberIdx())
+                .maxMemberCnt(orderRoom.getMaxMemberCnt())
+                .totalPrice(orderRoom.getTotalPrice())
+                .isSuccess(true)
+                .build();
+
+    }
+
     public void enterOrderRoom(Long orderIdx, String memberId) {
         Member member = getMemberById(memberId);
         ChannelTopic channelTopic = redisRepository.enterOrderRoom(member.getIdx(), orderIdx);
