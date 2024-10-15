@@ -65,12 +65,6 @@
         WHERE idx = #{idx} AND member_idx = #{memberIdx}
     </select>
 
-    <select id="findByIdxAndMemberIdxAndStatus" parameterType="map" resultMap="BusinessCardResultMap">
-        SELECT *
-        FROM BusinessCard
-        WHERE businessCard_idx = #{idx} AND member_idx = #{memberIdx}
-    </select>
-
     <select id="findByBusinessCardIdx" parameterType="Long" resultMap="BusinessCardResultMap">
         SELECT *
         FROM BusinessCard
@@ -93,6 +87,5 @@
             parameterType="map" resultMap="BusinessCardResultMap">
 
     </select>
-
 
 </mapper>
