@@ -131,9 +131,24 @@ public class OrderRoomResponseDto {
 
         private int amount;
 
+        List<SelectedMenuInfoDto> selectedMenuList;
+
+
+
         // MENU_SELECT, MENU_CANCEL 로 고정
         private String type;
     }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class SelectedMenuInfoDto implements Serializable {
+        private Long menuIdx;
+        private int currentAmount;
+    }
+
 
     @Data
     @Builder
