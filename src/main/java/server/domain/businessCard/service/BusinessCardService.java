@@ -168,12 +168,6 @@ public class BusinessCardService {
     public void addFriendBusinessCard(Long businessCardIdx, String memberId) {
         Long memberIdx = memberRepository.getIdxByMemberId(memberId).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        // 이미 등록된 명함인지 확인
-        if(memberBusinessCardRepository.existsByMemberIdxAndBusinessCardIdx(businessCardIdx, memberIdx)) {
-            throw new ErrorHandler(ErrorStatus.BUSINESS_CARD_DUPLICATE);
-        }
-
-
         if (businessCardRepository.existsByMemberIdxAndBusinessCardIdx(businessCardIdx, memberIdx)) {
             throw new ErrorHandler(ErrorStatus.BUSINESS_CARD_DUPLICATE);
         }
