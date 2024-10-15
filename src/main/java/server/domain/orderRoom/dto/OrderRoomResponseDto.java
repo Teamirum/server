@@ -196,6 +196,7 @@ public class OrderRoomResponseDto {
         private String message;
         private String type;
         private Boolean isSuccess = false;
+        List<SelectedMenuInfoDto> selectedMenuList;
 
         public ErrorResponseDto(Long memberIdx, Long orderIdx, ErrorStatus errorStatus) {
             this.memberIdx = memberIdx;
@@ -204,6 +205,16 @@ public class OrderRoomResponseDto {
             this.code = errorStatus.getCode();
             this.message = errorStatus.getMessage();
             this.type = "ERROR";
+        }
+
+        public ErrorResponseDto(Long memberIdx, Long orderIdx, ErrorStatus errorStatus, List<SelectedMenuInfoDto> selectedMenuList) {
+            this.memberIdx = memberIdx;
+            this.orderIdx = orderIdx;
+            this.status = errorStatus.getHttpStatus().toString();
+            this.code = errorStatus.getCode();
+            this.message = errorStatus.getMessage();
+            this.type = "ERROR";
+            this.selectedMenuList = selectedMenuList;
         }
     }
 
