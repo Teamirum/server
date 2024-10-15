@@ -10,7 +10,7 @@ public enum SocialType {
             "https://kapi.kakao.com/v2/user/me",
             "https://kapi.kakao.com/v1/user/unlink",
             "https://kauth.kakao.com/oauth/token",
-            "http://localhost:5173/login",
+            "https://together-pay-app.vercel.app/login",
             HttpMethod.GET,
             HttpMethod.POST
     ),
@@ -20,7 +20,7 @@ public enum SocialType {
             "https://www.googleapis.com/oauth2/v3/userinfo",
             "https://accounts.google.com/o/oauth2/revoke",
             "https://oauth2.googleapis.com/token",
-            "http://localhost:5173/login",
+            "https://together-pay-app.vercel.app/login",
             HttpMethod.GET,
             HttpMethod.POST
     ),
@@ -30,7 +30,7 @@ public enum SocialType {
             "https://openapi.naver.com/v1/nid/me",
             "https://nid.naver.com/oauth2.0/token",
             "https://nid.naver.com/oauth2.0/authorize",
-            "http://localhost:5173/login",
+            "https://together-pay-app.vercel.app/login",
             HttpMethod.GET,
             HttpMethod.POST
     ),
