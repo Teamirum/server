@@ -603,15 +603,16 @@ public class OrderRoomService {
             Member selectedMember = memberRepository.findByIdx(selectedMemberIdx)
                     .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-            int winnerIdx = memberIdxList.indexOf(selectedMemberIdx);
-            double arc = 2 * Math.PI / memberIdxList.size();
+            int winnerIdx = memberIdxList.indexOf(selectedMemberIdx); // 당첨자 인덱스
+            double arc = 2 * Math.PI / memberIdxList.size(); // 각 세그먼트의 각도 크기
 
-            // 더 넓은 범위에서 무작위 각도를 생성하도록 개선
-            double randomWithinSegment = random.nextDouble() * arc; // Random 객체 사용
-            double baseAngle = 5 * 2 * Math.PI; // 기본 회전 각도 (룰렛이 여러 번 돌도록)
+            // 기본 회전 각도를 더 다양하게 설정
+            double baseAngle = (3 + random.nextInt(5)) * 2 * Math.PI; // 3에서 7번 회전하도록 설정
+            double randomWithinSegment = random.nextDouble() * arc; // 세그먼트 내 무작위 각도
 
-            // 타겟 각도를 좀 더 랜덤하고 다이내믹하게 생성
-            double targetAngle = baseAngle + winnerIdx * arc + randomWithinSegment + Math.PI / 2;
+            // 최종 타겟 각도 계산
+            double targetAngle = baseAngle + (winnerIdx * arc) + randomWithinSegment;
+
 
             OrderRoomGameResultResponseDto gameResult = OrderRoomGameResultResponseDto.builder()
                     .orderIdx(orderIdx)
