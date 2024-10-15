@@ -65,8 +65,11 @@ public class RedisSubscriber implements MessageListener {
                 OrderRoomGameResultResponseDto dto = (OrderRoomGameResultResponseDto) obj;
                 messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
                 log.info("Received GAME_RESULT message: {}", dto);
-            }
-            else if (obj instanceof ErrorResponseDto) {
+            } else if (obj instanceof IsGameRoomResponseDto) {
+                IsGameRoomResponseDto dto = (IsGameRoomResponseDto) obj;
+                messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
+                log.info("Received IS_GAME message: {}", dto);
+            } else if (obj instanceof ErrorResponseDto) {
                 ErrorResponseDto dto = (ErrorResponseDto) obj;
                 messagingTemplate.convertAndSend("/sub/order/room/" + dto.getOrderIdx(), dto);
                 log.error("Received START_PAY message: {}", dto);
