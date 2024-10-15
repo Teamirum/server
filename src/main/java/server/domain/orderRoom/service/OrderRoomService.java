@@ -591,6 +591,8 @@ public class OrderRoomService {
         OrderRoom orderRoom = redisRepository.getOrderRoom(orderIdx);
         List<Long> memberIdxList = orderRoom.getMemberIdxList();
 
+
+
         // 랜덤으로 한 명 뽑기
         if (!memberIdxList.isEmpty()) {
             Random random = new Random();
@@ -599,10 +601,19 @@ public class OrderRoomService {
 
             // 선택된 멤버의 인덱스를 사용하여 추가 작업 수행 가능
             Member selectedMember = memberRepository.findByIdx(selectedMemberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+            int winnerIdx = memberIdxList.indexOf(selectedMemberIdx);
+            double arc = 2 * Math.PI / memberIdxList.size();
+
+            double randomWithinSegment = Math.random() * arc;
+            double targetAngle = 5 * 2 * Math.PI + winnerIdx * arc + randomWithinSegment + Math.PI / 2;
+
             OrderRoomGameResultResponseDto gameResult = OrderRoomGameResultResponseDto.builder()
                     .orderIdx(orderIdx)
                     .memberIdx(selectedMember.getIdx())
                     .memberName(selectedMember.getName())
+                    .winnerIdx(winnerIdx)
+                    .targetAngle(targetAngle)
                     .type("GAME_RESULT")
                     .build();
 
