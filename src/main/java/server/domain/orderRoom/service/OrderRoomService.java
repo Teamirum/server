@@ -256,6 +256,7 @@ public class OrderRoomService {
             SelectedMenuInfoDto selectedMenuInfo = SelectedMenuInfoDto.builder()
                     .menuIdx(menuIdx)
                     .currentAmount(memberIdxList.size())
+                    .memberIdxList(memberIdxList)
                     .build();
             selectedMenuInfoList.add(selectedMenuInfo);
         }
@@ -292,6 +293,7 @@ public class OrderRoomService {
             SelectedMenuInfoDto selectedMenuInfo = SelectedMenuInfoDto.builder()
                     .menuIdx(menuIdx)
                     .currentAmount(memberIdxList.size())
+                    .memberIdxList(memberIdxList)
                     .build();
             selectedMenuInfoList.add(selectedMenuInfo);
         }

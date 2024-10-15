@@ -147,6 +147,7 @@ public class OrderRoomResponseDto {
     public static class SelectedMenuInfoDto implements Serializable {
         private Long menuIdx;
         private int currentAmount;
+        List<Long> memberIdxList;
     }
 
 
