@@ -55,7 +55,7 @@ public class MemberBusinessCardRepository {
 
     public boolean existsByMemberIdxAndBusinessCardIdx(Long idx, Long memberIdx) {
         Map<String, Object> map = Map.of("idx", idx, "memberIdx", memberIdx);
-        BusinessCard businessCard = BusinessCardMapper.findByIdxAndMemberIdx(map);
+        BusinessCard businessCard = BusinessCardMapper.findByIdxAndMemberIdxAndStatus(map);
         return businessCard != null;
     }
 
