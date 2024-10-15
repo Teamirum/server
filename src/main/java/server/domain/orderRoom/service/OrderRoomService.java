@@ -636,26 +636,20 @@ public class OrderRoomService {
         if (!memberIdxList.isEmpty()) {
             Random random = new Random();
             int randomIndex = random.nextInt(memberIdxList.size()); // 멤버 중에서 무작위 인덱스 선택
-            Long selectedMemberIdx = memberIdxList.get(randomIndex);
-
             // 선택된 멤버의 인덱스를 사용하여 추가 작업 수행 가능
-            Member selectedMember = memberRepository.findByIdx(selectedMemberIdx)
-                    .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-            int winnerIdx = memberIdxList.indexOf(selectedMemberIdx);
             double arc = 2 * Math.PI / memberIdxList.size(); // 각도를 나눌 범위
 
             // 랜덤한 각도를 각도 범위 내에서 생성
             double randomWithinSegment = random.nextDouble() * arc;
             // 각도 계산이 매번 동일하지 않도록 개선된 랜덤성 제공
-            double targetAngle = 5 * 2 * Math.PI + winnerIdx * arc + randomWithinSegment + Math.PI / 2;
+            double targetAngle = 5 * 2 * Math.PI + randomIndex * arc + randomWithinSegment + Math.PI / 2;
 
 
             OrderRoomGameResultResponseDto gameResult = OrderRoomGameResultResponseDto.builder()
                     .orderIdx(orderIdx)
-                    .memberIdx(selectedMember.getIdx())
-                    .memberName(selectedMember.getName())
-                    .winnerIdx(winnerIdx)
+                    .memberIdx(member.getIdx())
+                    .winnerIdx(randomIndex)
                     .targetAngle(targetAngle)
                     .type("GAME_RESULT")
                     .build();

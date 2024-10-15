@@ -294,7 +294,6 @@ public class OrderRoomResponseDto {
     public static class OrderRoomGameResultResponseDto implements Serializable {
         private Long orderIdx;
         private Long memberIdx;
-        private String memberName;
         private double targetAngle;
         private int winnerIdx;
         // GAME_RESULT 로 고정
