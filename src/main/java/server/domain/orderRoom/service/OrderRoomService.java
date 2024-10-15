@@ -596,17 +596,22 @@ public class OrderRoomService {
         // 랜덤으로 한 명 뽑기
         if (!memberIdxList.isEmpty()) {
             Random random = new Random();
-            int randomIndex = random.nextInt(memberIdxList.size()); // 올바른 범위 지정
+            int randomIndex = random.nextInt(memberIdxList.size()); // 멤버 중에서 무작위 인덱스 선택
             Long selectedMemberIdx = memberIdxList.get(randomIndex);
 
             // 선택된 멤버의 인덱스를 사용하여 추가 작업 수행 가능
-            Member selectedMember = memberRepository.findByIdx(selectedMemberIdx).orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            Member selectedMember = memberRepository.findByIdx(selectedMemberIdx)
+                    .orElseThrow(() -> new ErrorHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
             int winnerIdx = memberIdxList.indexOf(selectedMemberIdx);
             double arc = 2 * Math.PI / memberIdxList.size();
 
-            double randomWithinSegment = Math.random() * arc;
-            double targetAngle = 5 * 2 * Math.PI + winnerIdx * arc + randomWithinSegment + Math.PI / 2;
+            // 더 넓은 범위에서 무작위 각도를 생성하도록 개선
+            double randomWithinSegment = random.nextDouble() * arc; // Random 객체 사용
+            double baseAngle = 5 * 2 * Math.PI; // 기본 회전 각도 (룰렛이 여러 번 돌도록)
+
+            // 타겟 각도를 좀 더 랜덤하고 다이내믹하게 생성
+            double targetAngle = baseAngle + winnerIdx * arc + randomWithinSegment + Math.PI / 2;
 
             OrderRoomGameResultResponseDto gameResult = OrderRoomGameResultResponseDto.builder()
                     .orderIdx(orderIdx)
