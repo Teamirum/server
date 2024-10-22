@@ -261,7 +261,12 @@ public class OrderRoomService {
             redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_NOT_FOUND));
             return;
         }
-        OrderRoom orderRoom = redisRepository.selectMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice() * requestDto.getAmount(), channelTopic);
+        Menu menu = menuRepository.findByIdx(requestDto.getMenuIdx()).orElse(null);
+        if (menu == null) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.MENU_NOT_FOUND));
+            return;
+        }
+        OrderRoom orderRoom = redisRepository.selectMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), menu.getPrice(), channelTopic);
 
         log.info("{} 님이 주문방에 메뉴를 선택하였습니다. 주문방 ID : {}, 메뉴 이름 : {}", memberId, requestDto.getOrderIdx(), requestDto.getMenuName());
 
@@ -299,7 +304,13 @@ public class OrderRoomService {
             redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.ORDER_ROOM_NOT_FOUND));
             return;
         }
-        OrderRoom orderRoom = redisRepository.cancelMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), requestDto.getMenuPrice() * -1);
+
+        Menu menu = menuRepository.findByIdx(requestDto.getMenuIdx()).orElse(null);
+        if (menu == null) {
+            redisPublisher.publish(channelTopic, new ErrorResponseDto(member.getIdx(), requestDto.getOrderIdx(), ErrorStatus.MENU_NOT_FOUND));
+            return;
+        }
+        OrderRoom orderRoom = redisRepository.cancelMenu(requestDto.getOrderIdx(), requestDto.getMenuIdx(), member.getIdx(), menu.getPrice() * -1);
 
         log.info("{} 님이 주문방에 메뉴를 취소하였습니다. 주문방 ID : {}, 메뉴 이름 : {}", memberId, requestDto.getOrderIdx(), requestDto.getMenuName());
         List<SelectedMenuInfoDto> selectedMenuInfoList = new ArrayList<>();
