@@ -65,6 +65,17 @@ public class StompHandler implements ChannelInterceptor {
 
             String memberId = jwtService.extractMemberId(accessToken.get()).orElse(null);
 
+            String sessionId = (String) message.getHeaders().get("simpSessionId");
+
+            if (sessionId == null) {
+                log.error("Stomp Handler : sessionId를 찾을 수 없습니다.");
+                throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
+            }
+
+            if (!redisRepository.existMySessionInfo(sessionId)) {
+                redisRepository.saveMySessionInfo(sessionId, memberId);
+            }
+
             if (!jwtService.isTokenValid(accessToken.get()) || !memberId.equals(getMemberId)) {
                 log.error("Stomp Handler : 유효하지 않은 토큰입니다. memberId : {}", getMemberId);
                 throw new MessageDeliveryException(ErrorStatus._UNAUTHORIZED.getMessage());
@@ -86,7 +97,16 @@ public class StompHandler implements ChannelInterceptor {
         } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
             // DISCONNECT 메시지 처리
             String memberId = accessor.getFirstNativeHeader("MemberId");
+
+            String sessionId = (String) message.getHeaders().get("simpSessionId");
+            if (memberId == null) {
+                memberId = redisRepository.getMySessionInfo(sessionId);
+            }
+
             log.info("Stomp Handler : DISCONNECT. memberId : {}", memberId);
+
+
+
             if (memberId != null) {
 
                 Member member = memberRepository.findByMemberId(memberId)
@@ -107,6 +127,7 @@ public class StompHandler implements ChannelInterceptor {
                     }
 
                     redisRepository.minusMemberCnt(orderIdx, member.getIdx());
+                    redisRepository.deleteMySessionInfo(sessionId);
                 }
             } else {
                 log.error("Stomp Handler : 사용자 정보를 찾을 수 없습니다.");

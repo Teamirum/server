@@ -29,10 +29,13 @@ public class RedisRepository {
     // Redis
     private static final String ORDER_ROOMS = "ORDER_ROOM";
     public static final String ENTER_INFO = "ENTER_INFO"; // 채팅룸에 입장한 클라이언트의 sessionId와 채팅룸 id를 맵핑한 정보 저장
+    public static final String MEMBER_INFO = "MEMBER_INFO"; // 채팅룸에 입장한 클라이언트의 sessionId와 채팅룸 id를 맵핑한 정보 저장
     private final RedisTemplate<String, Object> redisTemplate;
     private HashOperations<String, String, OrderRoom> opsHashOrderRoom;
     // 채팅방 입장 정보 <ENTER_INFO, memberIdx, orderIdx>
     private HashOperations<String, String, Long> opsHashEnterInfo;
+    // 채팅방 세션 멤버 정보 <MEMBER_INFO, SessionId, memberId>
+    private HashOperations<String, String, String> opsHashMemberSessionInfo;
     // 채팅방의 대화 메시지를 발행하기 위한 redis topic 정보. 서버별로 채팅방에 매치되는 topic 정보를 Map에 넣어 roomId로 찾을수 있도록 한다.
     private Map<String, ChannelTopic> topics;
 
@@ -40,6 +43,7 @@ public class RedisRepository {
     private void init() {
         opsHashOrderRoom = redisTemplate.opsForHash();
         opsHashEnterInfo = redisTemplate.opsForHash();
+        opsHashMemberSessionInfo = redisTemplate.opsForHash();
         topics = new HashMap<>();
     }
 
@@ -239,6 +243,22 @@ public class RedisRepository {
     // 이미 참여중인지
     public boolean existMyInfo(Long memberIdx) {
         return opsHashEnterInfo.hasKey(ENTER_INFO, memberIdx + "");
+    }
+
+    public void saveMySessionInfo(String sessionId, String memberId) {
+        opsHashMemberSessionInfo.put(MEMBER_INFO, sessionId, memberId);
+    }
+
+    public boolean existMySessionInfo(String sessionId) {
+        return opsHashMemberSessionInfo.hasKey(MEMBER_INFO, sessionId);
+    }
+
+    public String getMySessionInfo(String sessionId) {
+        return opsHashMemberSessionInfo.get(MEMBER_INFO, sessionId);
+    }
+
+    public void deleteMySessionInfo(String sessionId) {
+        opsHashMemberSessionInfo.delete(MEMBER_INFO, sessionId);
     }
 
 
